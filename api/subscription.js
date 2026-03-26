@@ -1,26 +1,28 @@
-import { kv } from "@vercel/kv";
+import Redis from "ioredis";
 
 const GITHUB_RAW_URL =
   "https://raw.githubusercontent.com/FivFiv133/PiskoVPN/refs/heads/main/PiskoVPN.txt";
 
+let redis;
+function getRedis() {
+  if (!redis) {
+    redis = new Redis(process.env.REDIS_URL, { lazyConnect: true });
+  }
+  return redis;
+}
+
 export default async function handler(req, res) {
   try {
-    // Определяем устройство
     const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
     const ua = req.headers["user-agent"] || "unknown";
     const hwid = req.headers["x-hwid"] || req.headers["hwid"] || null;
-
-    // Уникальный ключ устройства
     const deviceId = hwid || `${ip}_${ua}`;
 
-    // Сохраняем устройство в KV с временем последнего запроса
-    await kv.hset("devices", { [deviceId]: Date.now() });
+    const r = getRedis();
+    await r.hset("devices", deviceId, Date.now().toString());
 
-    // Считаем общее количество устройств
-    const allDevices = await kv.hgetall("devices") || {};
-    const deviceCount = Object.keys(allDevices).length;
+    const deviceCount = await r.hlen("devices");
 
-    // Получаем подписку с GitHub
     const response = await fetch(GITHUB_RAW_URL, {
       headers: { "Cache-Control": "no-cache" },
     });
@@ -31,9 +33,8 @@ export default async function handler(req, res) {
 
     const body = await response.text();
 
-    console.log(`[SUB] ${new Date().toISOString()} | Device: ${deviceId} | Total devices: ${deviceCount}`);
+    console.log(`[SUB] ${new Date().toISOString()} | Device: ${deviceId} | Total: ${deviceCount}`);
 
-    // HTTP-заголовки для HAPP
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
     res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN"');
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
