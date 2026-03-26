@@ -46,15 +46,17 @@ export default async function handler(req, res) {
       });
     }
 
-    res.setHeader("Content-Type", "application/json");
-    res.status(200).json({
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    const data = {
       total_devices: devices.length,
       active_24h: active24h,
       active_7d: active7d,
       by_platform: { mobile, desktop, unknown },
       devices,
       updated: new Date().toISOString(),
-    });
+    };
+    res.status(200).send(JSON.stringify(data, null, 2));
   } catch (err) {
     console.error("[STATS] Error:", err.message);
     res.status(500).json({ error: "Internal server error" });
