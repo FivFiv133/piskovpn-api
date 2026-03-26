@@ -11,15 +11,34 @@ function getRedis() {
   return redis;
 }
 
+function detectPlatform(ua) {
+  const lower = ua.toLowerCase();
+  if (lower.includes("android") || lower.includes("iphone") || lower.includes("ipad") || lower.includes("mobile")) {
+    return "mobile";
+  }
+  if (lower.includes("windows") || lower.includes("macintosh") || lower.includes("linux") || lower.includes("desktop")) {
+    return "desktop";
+  }
+  return "unknown";
+}
+
 export default async function handler(req, res) {
   try {
     const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
     const ua = req.headers["user-agent"] || "unknown";
     const hwid = req.headers["x-hwid"] || req.headers["hwid"] || null;
     const deviceId = hwid || `${ip}_${ua}`;
+    const platform = detectPlatform(ua);
+
+    const deviceInfo = JSON.stringify({
+      ip,
+      ua,
+      platform,
+      lastSeen: Date.now(),
+    });
 
     const r = getRedis();
-    await r.hset("devices", deviceId, Date.now().toString());
+    await r.hset("devices", deviceId, deviceInfo);
 
     const deviceCount = await r.hlen("devices");
 
@@ -33,7 +52,7 @@ export default async function handler(req, res) {
 
     const body = await response.text();
 
-    console.log(`[SUB] ${new Date().toISOString()} | Device: ${deviceId} | Total: ${deviceCount}`);
+    console.log(`[SUB] ${new Date().toISOString()} | ${platform} | IP: ${ip} | Total: ${deviceCount}`);
 
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
     res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN"');

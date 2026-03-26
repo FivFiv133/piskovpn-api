@@ -13,16 +13,46 @@ export default async function handler(req, res) {
     const r = getRedis();
     const allDevices = await r.hgetall("devices");
     const now = Date.now();
-    const entries = Object.entries(allDevices);
 
-    const active24h = entries.filter(([, ts]) => now - Number(ts) < 86400000).length;
-    const active7d = entries.filter(([, ts]) => now - Number(ts) < 604800000).length;
+    const devices = [];
+    let mobile = 0;
+    let desktop = 0;
+    let unknown = 0;
+    let active24h = 0;
+    let active7d = 0;
+
+    for (const [id, raw] of Object.entries(allDevices)) {
+      let info;
+      try {
+        info = JSON.parse(raw);
+      } catch {
+        info = { ip: "unknown", platform: "unknown", lastSeen: Number(raw) || 0 };
+      }
+
+      const lastSeen = info.lastSeen || 0;
+      const age = now - lastSeen;
+
+      if (age < 86400000) active24h++;
+      if (age < 604800000) active7d++;
+
+      if (info.platform === "mobile") mobile++;
+      else if (info.platform === "desktop") desktop++;
+      else unknown++;
+
+      devices.push({
+        ip: info.ip || "unknown",
+        platform: info.platform || "unknown",
+        lastSeen: lastSeen ? new Date(lastSeen).toISOString() : "unknown",
+      });
+    }
 
     res.setHeader("Content-Type", "application/json");
     res.status(200).json({
-      total_devices: entries.length,
+      total_devices: devices.length,
       active_24h: active24h,
       active_7d: active7d,
+      by_platform: { mobile, desktop, unknown },
+      devices,
       updated: new Date().toISOString(),
     });
   } catch (err) {
