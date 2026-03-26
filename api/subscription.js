@@ -1,7 +1,6 @@
 import Redis from "ioredis";
-
-const GITHUB_RAW_URL =
-  "https://raw.githubusercontent.com/FivFiv133/PiskoVPN/refs/heads/main/PiskoVPN.txt";
+import { readFileSync } from "fs";
+import { join } from "path";
 
 let redis;
 function getRedis() {
@@ -39,18 +38,11 @@ export default async function handler(req, res) {
 
     const r = getRedis();
     await r.hset("devices", deviceId, deviceInfo);
-
     const deviceCount = await r.hlen("devices");
 
-    const response = await fetch(GITHUB_RAW_URL, {
-      headers: { "Cache-Control": "no-cache" },
-    });
-
-    if (!response.ok) {
-      return res.status(502).send("Failed to fetch subscription");
-    }
-
-    const body = await response.text();
+    // Читаем файл подписки из репозитория
+    const filePath = join(process.cwd(), "PiskoVPN.txt");
+    const body = readFileSync(filePath, "utf-8");
 
     console.log(`[SUB] ${new Date().toISOString()} | ${platform} | IP: ${ip} | Total: ${deviceCount}`);
 
