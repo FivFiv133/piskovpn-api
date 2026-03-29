@@ -50,7 +50,7 @@ export default async function handler(req, res) {
     res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN"');
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.setHeader("profile-update-interval", "5");
-    res.setHeader("ProviderID", "2HaFyVl0");
+    res.setHeader("providerid", "2HaFyVl0");
     res.status(200).send(body);
   } catch (err) {
     console.error("[SUB] Error:", err.message);
