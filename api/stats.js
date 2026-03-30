@@ -123,20 +123,24 @@ async function apiPurge(req, res) {
   return res.status(200).json({ removed });
 }
 
-// API: получить текст подписки
+// API: получить текст подписки (самый свежий — панель или GitHub)
 async function apiGetSub(req, res) {
   const r = getRedis();
-  const text = await r.get("subscription_text") || "";
-  return res.status(200).json({ text });
+  // Импортируем общую логику из subscription.js
+  const { getLatestSubscription } = await import("./subscription.js");
+  const { text, source, ts } = await getLatestSubscription(r);
+  return res.status(200).json({ text, source, ts });
 }
 
-// API: обновить текст подписки
+// API: обновить текст подписки (сохраняем с timestamp)
 async function apiUpdateSub(req, res) {
   const { text } = req.body || {};
   if (typeof text !== "string") return res.status(400).json({ error: "text required" });
   const r = getRedis();
+  const now = Date.now();
   await r.set("subscription_text", text);
-  return res.status(200).json({ ok: true });
+  await r.set("subscription_updated", String(now));
+  return res.status(200).json({ ok: true, ts: now });
 }
 
 // Главный handler
@@ -244,12 +248,13 @@ function getLoginHTML() {
   .login-box button:hover { opacity: 0.9; }
   .login-box button:disabled { opacity: 0.5; cursor: not-allowed; }
   .error-msg { color: #f87171; font-size: 13px; margin-top: 12px; min-height: 18px; }
-  .shield { font-size: 40px; margin-bottom: 12px; }
+  .shield { margin-bottom: 12px; display:flex; justify-content:center; }
+  .shield svg { width:48px; height:48px; stroke:#a78bfa; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 </style>
 </head>
 <body>
 <div class="login-box">
-  <div class="shield">🔐</div>
+  <div class="shield"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><rect x="10" y="10" width="4" height="5" rx="1"/><circle cx="12" cy="8" r="1.5"/></svg></div>
   <h1><span>PiskoVPN</span> Admin</h1>
   <div class="sub">Введите данные для входа</div>
   <form id="loginForm">
@@ -318,9 +323,9 @@ function getPanelHTML() {
     flex-shrink: 0;
   }
   .icon svg { width: 18px; height: 18px; }
-  .icon.purple { background: linear-gradient(135deg, #7c5cfc33, #a78bfa22); box-shadow: 0 0 8px #7c5cfc44; }
-  .icon.green { background: linear-gradient(135deg, #34d39933, #10b98122); box-shadow: 0 0 8px #34d39944; }
-  .icon.yellow { background: linear-gradient(135deg, #fbbf2433, #f59e0b22); box-shadow: 0 0 8px #fbbf2444; }
+  .icon.purple { background: linear-gradient(135deg, #7c5cfc33, #a78bfa22); box-shadow: 0 0 8px #7c5cfc44; color: #a78bfa; }
+  .icon.green { background: linear-gradient(135deg, #34d39933, #10b98122); box-shadow: 0 0 8px #34d39944; color: #34d399; }
+  .icon.yellow { background: linear-gradient(135deg, #fbbf2433, #f59e0b22); box-shadow: 0 0 8px #fbbf2444; color: #fbbf24; }
   .icon-lg { width: 36px; height: 36px; border-radius: 10px; }
   .icon-lg svg { width: 22px; height: 22px; }
   .header {
@@ -398,6 +403,7 @@ function getPanelHTML() {
     margin: 0;
     background: none;
     box-shadow: none;
+    color: #888;
   }
   .toolbar input {
     background: #1a1a2e;
@@ -497,59 +503,60 @@ function getPanelHTML() {
 <body>
 
 <svg style="display:none">
-  <defs>
-    <linearGradient id="gPurple" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#7c5cfc"/></linearGradient>
-    <linearGradient id="gGreen" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6ee7b7"/><stop offset="100%" stop-color="#34d399"/></linearGradient>
-    <linearGradient id="gYellow" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fde68a"/><stop offset="100%" stop-color="#fbbf24"/></linearGradient>
-  </defs>
-  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
   </symbol>
-  <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
   </symbol>
-  <symbol id="i-activity" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="i-activity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
   </symbol>
-  <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
   </symbol>
-  <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
   </symbol>
-  <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
   </symbol>
-  <symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
   </symbol>
-  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
   </symbol>
-  <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
   </symbol>
-  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
   </symbol>
-  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
   </symbol>
-  <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+  </symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+  </symbol>
+  <symbol id="i-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
   </symbol>
 </svg>
 
 <div class="header">
   <div class="header-left">
-    <span class="icon icon-lg purple"><svg><use href="#i-shield" stroke="url(#gPurple)"></use></svg></span>
+    <span class="icon icon-lg purple"><svg><use href="#i-shield"></use></svg></span>
     <h1><span>PiskoVPN</span> Admin</h1>
   </div>
   <div class="header-right">
     <span class="version" id="ver">...</span>
     <span style="color:#666;font-size:12px" id="updated"></span>
     <button class="btn-logout" onclick="location.href='/stats?action=logout'">
-      <svg style="width:16px;height:16px"><use href="#i-logout" stroke="currentColor"></use></svg> Выйти
+      <svg style="width:16px;height:16px"><use href="#i-logout"></use></svg> Выйти
     </button>
   </div>
 </div>
@@ -558,7 +565,7 @@ function getPanelHTML() {
 
 <div class="toolbar">
   <div class="search-wrap">
-    <span class="icon"><svg><use href="#i-search" stroke="#888"></use></svg></span>
+    <span class="icon"><svg><use href="#i-search"></use></svg></span>
     <input type="text" id="search" placeholder="Поиск по IP, платформе, User-Agent…">
   </div>
   <select id="filterPlatform">
@@ -573,8 +580,8 @@ function getPanelHTML() {
     <option value="recent">Недавно (24ч)</option>
     <option value="offline">Offline</option>
   </select>
-  <button class="btn refresh" onclick="loadData()"><svg><use href="#i-refresh" stroke="currentColor"></use></svg> Обновить</button>
-  <button class="btn danger" onclick="purgeOld()"><svg><use href="#i-trash" stroke="currentColor"></use></svg> Очистить 30д+</button>
+  <button class="btn refresh" onclick="loadData()"><svg><use href="#i-refresh"></use></svg> Обновить</button>
+  <button class="btn danger" onclick="purgeOld()"><svg><use href="#i-trash"></use></svg> Очистить 30д+</button>
 </div>
 
 <div class="table-wrap">
@@ -595,11 +602,11 @@ function getPanelHTML() {
 
 <div style="padding:0 30px 20px">
   <details>
-    <summary style="cursor:pointer;color:#a78bfa;font-size:14px;margin-bottom:12px;user-select:none">📝 Редактор подписки</summary>
+    <summary style="cursor:pointer;color:#a78bfa;font-size:14px;margin-bottom:12px;user-select:none;display:flex;align-items:center;gap:8px"><span class="icon purple"><svg><use href="#i-edit"></use></svg></span> Редактор подписки</summary>
     <div style="background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:16px">
       <textarea id="subText" style="width:100%;min-height:200px;background:#0f0f1a;border:1px solid #2a2a4a;color:#e0e0e0;padding:12px;border-radius:8px;font-family:monospace;font-size:13px;resize:vertical" placeholder="Загрузка..."></textarea>
       <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
-        <button class="btn refresh" onclick="saveSub()">💾 Сохранить</button>
+        <button class="btn refresh" onclick="saveSub()"><svg><use href="#i-save"></use></svg> Сохранить</button>
         <span id="subStatus" style="font-size:13px;color:#666"></span>
       </div>
     </div>
@@ -610,15 +617,15 @@ function getPanelHTML() {
 
 <script>
 const IC = {
-  users: '<span class="icon icon-lg purple"><svg><use href="#i-users" stroke="url(#gPurple)"></use></svg></span>',
-  activity: '<span class="icon icon-lg green"><svg><use href="#i-activity" stroke="url(#gGreen)"></use></svg></span>',
-  calendar: '<span class="icon icon-lg yellow"><svg><use href="#i-calendar" stroke="url(#gYellow)"></use></svg></span>',
-  phone: '<svg style="width:14px;height:14px"><use href="#i-phone" stroke="currentColor"></use></svg>',
-  monitor: '<svg style="width:14px;height:14px"><use href="#i-monitor" stroke="currentColor"></use></svg>',
-  help: '<svg style="width:14px;height:14px"><use href="#i-help" stroke="currentColor"></use></svg>',
-  phoneLg: '<span class="icon icon-lg purple"><svg><use href="#i-phone" stroke="url(#gPurple)"></use></svg></span>',
-  monitorLg: '<span class="icon icon-lg green"><svg><use href="#i-monitor" stroke="url(#gGreen)"></use></svg></span>',
-  helpLg: '<span class="icon icon-lg yellow"><svg><use href="#i-help" stroke="url(#gYellow)"></use></svg></span>',
+  users: '<span class="icon icon-lg purple"><svg><use href="#i-users"></use></svg></span>',
+  activity: '<span class="icon icon-lg green"><svg><use href="#i-activity"></use></svg></span>',
+  calendar: '<span class="icon icon-lg yellow"><svg><use href="#i-calendar"></use></svg></span>',
+  phone: '<svg style="width:14px;height:14px"><use href="#i-phone"></use></svg>',
+  monitor: '<svg style="width:14px;height:14px"><use href="#i-monitor"></use></svg>',
+  help: '<svg style="width:14px;height:14px"><use href="#i-help"></use></svg>',
+  phoneLg: '<span class="icon icon-lg purple"><svg><use href="#i-phone"></use></svg></span>',
+  monitorLg: '<span class="icon icon-lg green"><svg><use href="#i-monitor"></use></svg></span>',
+  helpLg: '<span class="icon icon-lg yellow"><svg><use href="#i-help"></use></svg></span>',
 };
 
 let allDevices = [];
@@ -715,7 +722,7 @@ function renderTable() {
         <td>\${platformBadge(d.platform)}</td>
         <td title="\${esc(d.ua)}">\${esc(uaShort)}</td>
         <td>\${timeAgo(d.lastSeen)}</td>
-        <td><button class="btn del-row" onclick="deleteDevice('\${idEnc}')"><svg><use href="#i-x" stroke="currentColor"></use></svg></button></td>
+        <td><button class="btn del-row" onclick="deleteDevice('\${idEnc}')"><svg><use href="#i-x"></use></svg></button></td>
       </tr>\`;
     }).join("");
   }
@@ -767,6 +774,10 @@ async function loadSub() {
     const r = await fetch("/stats?action=getSub");
     const d = await r.json();
     document.getElementById("subText").value = d.text || "";
+    const src = d.source === "github" ? "GitHub" : d.source === "panel" ? "Админка" : "Файл";
+    const time = d.ts ? new Date(d.ts).toLocaleString("ru") : "";
+    document.getElementById("subStatus").textContent = "Источник: " + src + (time ? " · " + time : "");
+    document.getElementById("subStatus").style.color = "#666";
   } catch(e) { console.error(e); }
 }
 
