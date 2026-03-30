@@ -123,6 +123,22 @@ async function apiPurge(req, res) {
   return res.status(200).json({ removed });
 }
 
+// API: получить текст подписки
+async function apiGetSub(req, res) {
+  const r = getRedis();
+  const text = await r.get("subscription_text") || "";
+  return res.status(200).json({ text });
+}
+
+// API: обновить текст подписки
+async function apiUpdateSub(req, res) {
+  const { text } = req.body || {};
+  if (typeof text !== "string") return res.status(400).json({ error: "text required" });
+  const r = getRedis();
+  await r.set("subscription_text", text);
+  return res.status(200).json({ ok: true });
+}
+
 // Главный handler
 export default async function handler(req, res) {
   const url = new URL(req.url, `http://${req.headers.host}`);
@@ -157,6 +173,8 @@ export default async function handler(req, res) {
     if (action === "data") return await apiData(req, res);
     if (action === "delete" && req.method === "POST") return await apiDeleteDevice(req, res);
     if (action === "purge") return await apiPurge(req, res);
+    if (action === "getSub") return await apiGetSub(req, res);
+    if (action === "updateSub" && req.method === "POST") return await apiUpdateSub(req, res);
 
     // Отдаём HTML-панель
     res.setHeader("Content-Type", "text/html; charset=utf-8");
@@ -575,6 +593,19 @@ function getPanelHTML() {
   </table>
 </div>
 
+<div style="padding:0 30px 20px">
+  <details>
+    <summary style="cursor:pointer;color:#a78bfa;font-size:14px;margin-bottom:12px;user-select:none">📝 Редактор подписки</summary>
+    <div style="background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:16px">
+      <textarea id="subText" style="width:100%;min-height:200px;background:#0f0f1a;border:1px solid #2a2a4a;color:#e0e0e0;padding:12px;border-radius:8px;font-family:monospace;font-size:13px;resize:vertical" placeholder="Загрузка..."></textarea>
+      <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
+        <button class="btn refresh" onclick="saveSub()">💾 Сохранить</button>
+        <span id="subStatus" style="font-size:13px;color:#666"></span>
+      </div>
+    </div>
+  </details>
+</div>
+
 <div class="footer">PiskoVPN Admin Panel · <span id="totalFooter">0</span> устройств</div>
 
 <script>
@@ -731,7 +762,33 @@ async function deleteDevice(idEnc) {
   } catch(e) { alert("Ошибка: " + e.message); }
 }
 
+async function loadSub() {
+  try {
+    const r = await fetch("/stats?action=getSub");
+    const d = await r.json();
+    document.getElementById("subText").value = d.text || "";
+  } catch(e) { console.error(e); }
+}
+
+async function saveSub() {
+  const st = document.getElementById("subStatus");
+  st.textContent = "Сохранение...";
+  st.style.color = "#fbbf24";
+  try {
+    const r = await fetch("/stats?action=updateSub", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: document.getElementById("subText").value }),
+    });
+    const d = await r.json();
+    if (d.ok) { st.textContent = "✓ Сохранено"; st.style.color = "#34d399"; }
+    else { st.textContent = "Ошибка"; st.style.color = "#f87171"; }
+  } catch(e) { st.textContent = "Ошибка: " + e.message; st.style.color = "#f87171"; }
+  setTimeout(() => { st.textContent = ""; }, 3000);
+}
+
 loadData();
+loadSub();
 setInterval(loadData, 30000);
 </script>
 </body>

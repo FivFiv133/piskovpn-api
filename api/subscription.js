@@ -1,9 +1,4 @@
 import Redis from "ioredis";
-import { readFileSync } from "fs";
-import { dirname, join } from "path";
-import { fileURLToPath } from "url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 let redis;
 function getRedis() {
@@ -32,6 +27,51 @@ function detectPlatform(ua) {
   return "unknown";
 }
 
+async function getSubscriptionText(r) {
+  // 1. Пробуем из Redis (обновляется мгновенно)
+  const cached = await r.get("subscription_text");
+  if (cached) return cached;
+
+  // 2. Фетчим из GitHub raw (всегда актуальная версия)
+  const rawUrl = process.env.RAW_SUB_URL || "https://raw.githubusercontent.com/FivFiv133/piskovpn-api/refs/heads/main/PiskoVPN.txt";
+  if (rawUrl) {
+    try {
+      const resp = await fetch(rawUrl, {
+        headers: { "Cache-Control": "no-cache" },
+      });
+      if (resp.ok) {
+        const text = await resp.text();
+        // Кешируем в Redis на 5 минут
+        await r.set("subscription_text", text, "EX", 300);
+        return text;
+      }
+    } catch (e) {
+      console.error("[SUB] Failed to fetch from RAW_SUB_URL:", e.message);
+    }
+  }
+
+  // 3. Fallback — файл из бандла (обновляется только при деплое)
+  try {
+    const { readFileSync } = await import("fs");
+    const { dirname, join } = await import("path");
+    const { fileURLToPath } = await import("url");
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const candidates = [
+      join(__dirname, "..", "PiskoVPN.txt"),
+      join(__dirname, "..", "..", "PiskoVPN.txt"),
+      join(process.cwd(), "PiskoVPN.txt"),
+    ];
+    for (const p of candidates) {
+      try {
+        const text = readFileSync(p, "utf-8");
+        return text;
+      } catch {}
+    }
+  } catch {}
+
+  throw new Error("Subscription text not found");
+}
+
 export default async function handler(req, res) {
   try {
     const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
@@ -51,28 +91,19 @@ export default async function handler(req, res) {
     await r.hset("devices", deviceId, deviceInfo);
     const deviceCount = await r.hlen("devices");
 
-    // Читаем файл подписки — пробуем несколько путей для совместимости
-    const candidates = [
-      join(__dirname, "..", "PiskoVPN.txt"),       // piskovpn-api/PiskoVPN.txt
-      join(__dirname, "..", "..", "PiskoVPN.txt"),  // корень репо
-      join(process.cwd(), "PiskoVPN.txt"),          // cwd fallback
-    ];
-    let filePath;
-    for (const p of candidates) {
-      try { readFileSync(p); filePath = p; break; } catch {}
-    }
-    if (!filePath) throw new Error("PiskoVPN.txt not found in any expected location");
-    const body = readFileSync(filePath, "utf-8");
+    const body = await getSubscriptionText(r);
 
     console.log(`[SUB] ${new Date().toISOString()} | ${platform} | IP: ${ip} | Total: ${deviceCount}`);
 
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
     res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN"');
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
     res.setHeader("profile-update-interval", "5");
     res.status(200).send(body);
   } catch (err) {
-    console.error("[SUB] Error:", err.message, "| cwd:", process.cwd(), "| __dirname:", __dirname);
+    console.error("[SUB] Error:", err.message);
     res.status(500).send("Internal server error");
   }
 }
