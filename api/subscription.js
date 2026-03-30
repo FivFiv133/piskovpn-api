@@ -25,62 +25,20 @@ function detectPlatform(ua) {
   return "unknown";
 }
 
-async function fetchRaw() {
+// Фетчим подписку из GitHub raw, кешируем в Redis на 60 сек
+export async function getSubscriptionText(r) {
+  const cached = await r.get("sub_cache");
+  if (cached) return cached;
+
   try {
     const resp = await fetch(RAW_URL, { headers: { "Cache-Control": "no-cache" } });
-    if (!resp.ok) return null;
-    const text = await resp.text();
-    const lastMod = resp.headers.get("last-modified");
-    const ts = lastMod ? new Date(lastMod).getTime() : Date.now();
-    return { text, ts };
+    if (resp.ok) {
+      const text = await resp.text();
+      await r.set("sub_cache", text, "EX", 60);
+      return text;
+    }
   } catch (e) {
     console.error("[SUB] Failed to fetch raw:", e.message);
-    return null;
-  }
-}
-
-// Получить самый свежий текст подписки: сравниваем Redis (панель) vs GitHub raw
-export async function getLatestSubscription(r) {
-  // Данные из Redis (сохранённые через админку)
-  const [redisText, redisTs] = await Promise.all([
-    r.get("subscription_text"),
-    r.get("subscription_updated"),
-  ]);
-  const redisTime = redisTs ? parseInt(redisTs, 10) : 0;
-
-  // Проверяем кеш raw (чтобы не фетчить каждый запрос)
-  const rawCache = await r.get("raw_cache_text");
-  const rawCacheTs = await r.get("raw_cache_ts");
-  const rawCacheTime = rawCacheTs ? parseInt(rawCacheTs, 10) : 0;
-  const cacheAge = Date.now() - rawCacheTime;
-
-  let rawText = null;
-  let rawTime = 0;
-
-  // Обновляем raw-кеш каждые 60 секунд
-  if (rawCache && cacheAge < 60000) {
-    rawText = rawCache;
-    rawTime = rawCacheTime;
-  } else {
-    const raw = await fetchRaw();
-    if (raw) {
-      rawText = raw.text;
-      rawTime = raw.ts;
-      // Кешируем
-      await r.set("raw_cache_text", raw.text);
-      await r.set("raw_cache_ts", String(raw.ts));
-    }
-  }
-
-  // Сравниваем: кто свежее
-  if (redisText && redisTime >= rawTime) {
-    return { text: redisText, source: "panel", ts: redisTime };
-  }
-  if (rawText) {
-    return { text: rawText, source: "github", ts: rawTime };
-  }
-  if (redisText) {
-    return { text: redisText, source: "panel", ts: redisTime };
   }
 
   // Fallback — файл из бандла
@@ -88,9 +46,9 @@ export async function getLatestSubscription(r) {
     const { readFileSync } = await import("fs");
     const { dirname, join } = await import("path");
     const { fileURLToPath } = await import("url");
-    const __dirname = dirname(fileURLToPath(import.meta.url));
-    for (const p of [join(__dirname, "..", "PiskoVPN.txt"), join(process.cwd(), "PiskoVPN.txt")]) {
-      try { return { text: readFileSync(p, "utf-8"), source: "file", ts: 0 }; } catch {}
+    const dir = dirname(fileURLToPath(import.meta.url));
+    for (const p of [join(dir, "..", "PiskoVPN.txt"), join(process.cwd(), "PiskoVPN.txt")]) {
+      try { return readFileSync(p, "utf-8"); } catch {}
     }
   } catch {}
 
@@ -109,7 +67,7 @@ export default async function handler(req, res) {
     await r.hset("devices", deviceId, JSON.stringify({ ip, ua, platform, lastSeen: Date.now() }));
     const deviceCount = await r.hlen("devices");
 
-    const { text: body } = await getLatestSubscription(r);
+    const body = await getSubscriptionText(r);
 
     console.log(`[SUB] ${new Date().toISOString()} | ${platform} | IP: ${ip} | Total: ${deviceCount}`);
 

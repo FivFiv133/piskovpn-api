@@ -123,24 +123,63 @@ async function apiPurge(req, res) {
   return res.status(200).json({ removed });
 }
 
-// API: получить текст подписки (самый свежий — панель или GitHub)
+// API: получить текст подписки из GitHub raw
 async function apiGetSub(req, res) {
   const r = getRedis();
-  // Импортируем общую логику из subscription.js
-  const { getLatestSubscription } = await import("./subscription.js");
-  const { text, source, ts } = await getLatestSubscription(r);
-  return res.status(200).json({ text, source, ts });
+  const { getSubscriptionText } = await import("./subscription.js");
+  const text = await getSubscriptionText(r);
+  return res.status(200).json({ text });
 }
 
-// API: обновить текст подписки (сохраняем с timestamp)
+// API: обновить текст подписки — пушим в GitHub + сбрасываем кеш
 async function apiUpdateSub(req, res) {
   const { text } = req.body || {};
   if (typeof text !== "string") return res.status(400).json({ error: "text required" });
   const r = getRedis();
-  const now = Date.now();
-  await r.set("subscription_text", text);
-  await r.set("subscription_updated", String(now));
-  return res.status(200).json({ ok: true, ts: now });
+
+  // Сбрасываем кеш чтобы следующий запрос взял свежее из raw
+  await r.del("sub_cache");
+
+  // Пушим в GitHub если есть токен
+  let github = null;
+  const ghToken = process.env.GITHUB_TOKEN;
+  if (ghToken) {
+    try {
+      const repo = process.env.GITHUB_REPO || "FivFiv133/piskovpn-api";
+      const path = process.env.GITHUB_FILE_PATH || "PiskoVPN.txt";
+      const apiUrl = `https://api.github.com/repos/${repo}/contents/${path}`;
+
+      // Получаем текущий sha файла
+      const getResp = await fetch(apiUrl, {
+        headers: { Authorization: `Bearer ${ghToken}`, "User-Agent": "PiskoVPN-Admin" },
+      });
+      const fileData = await getResp.json();
+      const sha = fileData.sha;
+
+      // Коммитим
+      const putResp = await fetch(apiUrl, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${ghToken}`,
+          "User-Agent": "PiskoVPN-Admin",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: "Update subscription via admin panel",
+          content: Buffer.from(text).toString("base64"),
+          sha,
+        }),
+      });
+      const putData = await putResp.json();
+      github = putResp.ok ? { ok: true, commit: putData.commit?.sha?.slice(0, 7) } : { ok: false, error: putData.message };
+    } catch (e) {
+      github = { ok: false, error: e.message };
+    }
+  } else {
+    github = { ok: false, error: "GITHUB_TOKEN не настроен" };
+  }
+
+  return res.status(200).json({ ok: github?.ok || false, github });
 }
 
 // Главный handler
@@ -774,10 +813,6 @@ async function loadSub() {
     const r = await fetch("/stats?action=getSub");
     const d = await r.json();
     document.getElementById("subText").value = d.text || "";
-    const src = d.source === "github" ? "GitHub" : d.source === "panel" ? "Админка" : "Файл";
-    const time = d.ts ? new Date(d.ts).toLocaleString("ru") : "";
-    document.getElementById("subStatus").textContent = "Источник: " + src + (time ? " · " + time : "");
-    document.getElementById("subStatus").style.color = "#666";
   } catch(e) { console.error(e); }
 }
 
@@ -792,10 +827,17 @@ async function saveSub() {
       body: JSON.stringify({ text: document.getElementById("subText").value }),
     });
     const d = await r.json();
-    if (d.ok) { st.textContent = "✓ Сохранено"; st.style.color = "#34d399"; }
+    if (d.ok) {
+      let msg = "✓ Сохранено в Redis";
+      if (d.github) {
+        msg += d.github.ok ? " + GitHub (" + d.github.commit + ")" : " (GitHub: " + d.github.error + ")";
+      }
+      st.textContent = msg;
+      st.style.color = d.github && !d.github.ok ? "#fbbf24" : "#34d399";
+    }
     else { st.textContent = "Ошибка"; st.style.color = "#f87171"; }
   } catch(e) { st.textContent = "Ошибка: " + e.message; st.style.color = "#f87171"; }
-  setTimeout(() => { st.textContent = ""; }, 3000);
+  setTimeout(() => { st.textContent = ""; }, 5000);
 }
 
 loadData();
