@@ -1,11 +1,22 @@
 import Redis from "ioredis";
 import { readFileSync } from "fs";
-import { join } from "path";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 let redis;
 function getRedis() {
   if (!redis) {
-    redis = new Redis(process.env.REDIS_URL, { lazyConnect: true });
+    redis = new Redis(process.env.REDIS_URL, {
+      lazyConnect: true,
+      maxRetriesPerRequest: 3,
+      retryStrategy(times) {
+        if (times > 3) return null;
+        return Math.min(times * 200, 2000);
+      },
+    });
+    redis.on("error", (err) => console.error("[REDIS] Connection error:", err.message));
   }
   return redis;
 }
@@ -40,8 +51,8 @@ export default async function handler(req, res) {
     await r.hset("devices", deviceId, deviceInfo);
     const deviceCount = await r.hlen("devices");
 
-    // Читаем файл подписки из репозитория
-    const filePath = join(process.cwd(), "PiskoVPN.txt");
+    // Читаем файл подписки относительно модуля, а не cwd
+    const filePath = join(__dirname, "..", "..", "PiskoVPN.txt");
     const body = readFileSync(filePath, "utf-8");
 
     console.log(`[SUB] ${new Date().toISOString()} | ${platform} | IP: ${ip} | Total: ${deviceCount}`);
