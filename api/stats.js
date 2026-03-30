@@ -1,4 +1,5 @@
 import Redis from "ioredis";
+import crypto from "crypto";
 
 let redis;
 function getRedis() {
@@ -18,13 +19,39 @@ function getRedis() {
 
 const ADMIN_USER = process.env.ADMIN_USER || "admin";
 const ADMIN_PASS = process.env.ADMIN_PASS || "admin";
+const TOKEN_SECRET = process.env.TOKEN_SECRET || "piskovpn-secret-key-change-me";
 
-function checkAuth(req) {
-  const auth = req.headers["authorization"];
-  if (!auth || !auth.startsWith("Basic ")) return false;
-  const decoded = Buffer.from(auth.split(" ")[1], "base64").toString();
-  const [user, pass] = decoded.split(":");
-  return user === ADMIN_USER && pass === ADMIN_PASS;
+function makeToken(user) {
+  const payload = user + ":" + Date.now();
+  const hmac = crypto.createHmac("sha256", TOKEN_SECRET).update(payload).digest("hex");
+  return Buffer.from(payload + ":" + hmac).toString("base64");
+}
+
+function verifyToken(token) {
+  try {
+    const decoded = Buffer.from(token, "base64").toString();
+    const parts = decoded.split(":");
+    if (parts.length < 3) return false;
+    const hmac = parts.pop();
+    const payload = parts.join(":");
+    const expected = crypto.createHmac("sha256", TOKEN_SECRET).update(payload).digest("hex");
+    return hmac === expected;
+  } catch { return false; }
+}
+
+function parseCookies(req) {
+  const obj = {};
+  const header = req.headers.cookie || "";
+  header.split(";").forEach(c => {
+    const [k, ...v] = c.trim().split("=");
+    if (k) obj[k.trim()] = decodeURIComponent(v.join("="));
+  });
+  return obj;
+}
+
+function isAuthed(req) {
+  const cookies = parseCookies(req);
+  return cookies.auth_token && verifyToken(cookies.auth_token);
 }
 
 // API: возвращает JSON-данные
@@ -98,16 +125,35 @@ async function apiPurge(req, res) {
 
 // Главный handler
 export default async function handler(req, res) {
-  // Basic Auth
-  if (!checkAuth(req)) {
-    res.setHeader("WWW-Authenticate", 'Basic realm="PiskoVPN Admin"');
-    return res.status(401).send("Unauthorized");
-  }
-
   const url = new URL(req.url, `http://${req.headers.host}`);
   const action = url.searchParams.get("action");
 
   try {
+    // Логин — не требует авторизации
+    if (action === "login" && req.method === "POST") {
+      const { user, pass } = req.body || {};
+      if (user === ADMIN_USER && pass === ADMIN_PASS) {
+        const token = makeToken(user);
+        res.setHeader("Set-Cookie", `auth_token=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Strict; Max-Age=86400`);
+        return res.status(200).json({ ok: true });
+      }
+      return res.status(401).json({ error: "Неверный логин или пароль" });
+    }
+
+    // Логаут — не требует авторизации
+    if (action === "logout") {
+      res.setHeader("Set-Cookie", "auth_token=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0");
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      return res.status(200).send('<meta http-equiv="refresh" content="0;url=/stats">');
+    }
+
+    // Всё остальное — проверяем авторизацию
+    if (!isAuthed(req)) {
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      return res.status(200).send(getLoginHTML());
+    }
+
     if (action === "data") return await apiData(req, res);
     if (action === "delete" && req.method === "POST") return await apiDeleteDevice(req, res);
     if (action === "purge") return await apiPurge(req, res);
@@ -115,14 +161,120 @@ export default async function handler(req, res) {
     // Отдаём HTML-панель
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    return res.status(200).send(getHTML());
+    return res.status(200).send(getPanelHTML());
   } catch (err) {
     console.error("[STATS] Error:", err.message);
     res.status(500).json({ error: "Internal server error" });
   }
 }
 
-function getHTML() {
+function getLoginHTML() {
+  return `<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiskoVPN — Вход</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f1a;
+    color: #e0e0e0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .login-box {
+    background: #1a1a2e;
+    border: 1px solid #2a2a4a;
+    border-radius: 16px;
+    padding: 40px;
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+  }
+  .login-box h1 { font-size: 24px; color: #fff; margin-bottom: 6px; }
+  .login-box h1 span { color: #7c5cfc; }
+  .login-box .sub { color: #666; font-size: 13px; margin-bottom: 28px; }
+  .login-box input {
+    width: 100%;
+    background: #0f0f1a;
+    border: 1px solid #2a2a4a;
+    color: #e0e0e0;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 15px;
+    margin-bottom: 14px;
+    transition: border-color 0.2s;
+  }
+  .login-box input:focus { outline: none; border-color: #7c5cfc; }
+  .login-box button {
+    width: 100%;
+    background: linear-gradient(135deg, #7c5cfc, #6d4de8);
+    color: #fff;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-top: 4px;
+  }
+  .login-box button:hover { opacity: 0.9; }
+  .login-box button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .error-msg { color: #f87171; font-size: 13px; margin-top: 12px; min-height: 18px; }
+  .shield { font-size: 40px; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<div class="login-box">
+  <div class="shield">🔐</div>
+  <h1><span>PiskoVPN</span> Admin</h1>
+  <div class="sub">Введите данные для входа</div>
+  <form id="loginForm">
+    <input type="text" id="user" placeholder="Логин" autocomplete="username" required>
+    <input type="password" id="pass" placeholder="Пароль" autocomplete="current-password" required>
+    <button type="submit" id="loginBtn">Войти</button>
+  </form>
+  <div class="error-msg" id="err"></div>
+</div>
+<script>
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById("loginBtn");
+  const err = document.getElementById("err");
+  btn.disabled = true;
+  err.textContent = "";
+  try {
+    const r = await fetch("/stats?action=login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user: document.getElementById("user").value,
+        pass: document.getElementById("pass").value,
+      }),
+    });
+    const d = await r.json();
+    if (d.ok) {
+      window.location.href = "/stats";
+    } else {
+      err.textContent = d.error || "Ошибка входа";
+      btn.disabled = false;
+    }
+  } catch(ex) {
+    err.textContent = "Ошибка соединения";
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>`;
+}
+
+function getPanelHTML() {
   return `<!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -151,9 +303,6 @@ function getHTML() {
   .icon.purple { background: linear-gradient(135deg, #7c5cfc33, #a78bfa22); box-shadow: 0 0 8px #7c5cfc44; }
   .icon.green { background: linear-gradient(135deg, #34d39933, #10b98122); box-shadow: 0 0 8px #34d39944; }
   .icon.yellow { background: linear-gradient(135deg, #fbbf2433, #f59e0b22); box-shadow: 0 0 8px #fbbf2444; }
-  .icon.red { background: linear-gradient(135deg, #f8717133, #ef444422); box-shadow: 0 0 8px #f8717144; }
-  .icon.blue { background: linear-gradient(135deg, #60a5fa33, #3b82f622); box-shadow: 0 0 8px #60a5fa44; }
-  .icon.gray { background: linear-gradient(135deg, #9ca3af33, #6b728022); box-shadow: 0 0 8px #9ca3af44; }
   .icon-lg { width: 36px; height: 36px; border-radius: 10px; }
   .icon-lg svg { width: 22px; height: 22px; }
   .header {
@@ -165,6 +314,7 @@ function getHTML() {
     border-bottom: 1px solid #2a2a4a;
   }
   .header-left { display: flex; align-items: center; gap: 12px; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
   .header h1 { font-size: 22px; color: #fff; }
   .header h1 span { color: #7c5cfc; }
   .header .version {
@@ -174,6 +324,20 @@ function getHTML() {
     border-radius: 20px;
     font-size: 13px;
   }
+  .btn-logout {
+    background: none;
+    border: 1px solid #f8717155;
+    color: #f87171;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-logout:hover { background: #f8717122; border-color: #f87171; }
   .cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -319,64 +483,56 @@ function getHTML() {
     <linearGradient id="gPurple" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#7c5cfc"/></linearGradient>
     <linearGradient id="gGreen" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6ee7b7"/><stop offset="100%" stop-color="#34d399"/></linearGradient>
     <linearGradient id="gYellow" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fde68a"/><stop offset="100%" stop-color="#fbbf24"/></linearGradient>
-    <linearGradient id="gRed" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fca5a5"/><stop offset="100%" stop-color="#f87171"/></linearGradient>
-    <linearGradient id="gBlue" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#93c5fd"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient>
-    <linearGradient id="gGray" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#d1d5db"/><stop offset="100%" stop-color="#9ca3af"/></linearGradient>
   </defs>
-  <!-- shield -->
   <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
   </symbol>
-  <!-- users -->
   <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
   </symbol>
-  <!-- activity -->
   <symbol id="i-activity" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
   </symbol>
-  <!-- calendar -->
   <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
   </symbol>
-  <!-- smartphone -->
   <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
   </symbol>
-  <!-- monitor -->
   <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
   </symbol>
-  <!-- help-circle -->
   <symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
   </symbol>
-  <!-- search -->
   <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
   </symbol>
-  <!-- refresh -->
   <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
   </symbol>
-  <!-- trash -->
   <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
   </symbol>
-  <!-- x -->
   <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
   </symbol>
 </svg>
 
 <div class="header">
   <div class="header-left">
-    <span class="icon icon-lg purple"><svg><use href="#i-shield" stroke="url(#gPurple)"/></svg></span>
+    <span class="icon icon-lg purple"><svg><use href="#i-shield" stroke="url(#gPurple)"></use></svg></span>
     <h1><span>PiskoVPN</span> Admin</h1>
   </div>
-  <div>
+  <div class="header-right">
     <span class="version" id="ver">...</span>
-    <span style="margin-left:8px;color:#666;font-size:12px" id="updated"></span>
+    <span style="color:#666;font-size:12px" id="updated"></span>
+    <button class="btn-logout" onclick="location.href='/stats?action=logout'">
+      <svg style="width:16px;height:16px"><use href="#i-logout" stroke="currentColor"></use></svg> Выйти
+    </button>
   </div>
 </div>
 
@@ -384,7 +540,7 @@ function getHTML() {
 
 <div class="toolbar">
   <div class="search-wrap">
-    <span class="icon"><svg><use href="#i-search" stroke="#888"/></svg></span>
+    <span class="icon"><svg><use href="#i-search" stroke="#888"></use></svg></span>
     <input type="text" id="search" placeholder="Поиск по IP, платформе, User-Agent…">
   </div>
   <select id="filterPlatform">
@@ -399,8 +555,8 @@ function getHTML() {
     <option value="recent">Недавно (24ч)</option>
     <option value="offline">Offline</option>
   </select>
-  <button class="btn refresh" onclick="loadData()"><svg><use href="#i-refresh" stroke="currentColor"/></svg> Обновить</button>
-  <button class="btn danger" onclick="purgeOld()"><svg><use href="#i-trash" stroke="currentColor"/></svg> Очистить 30д+</button>
+  <button class="btn refresh" onclick="loadData()"><svg><use href="#i-refresh" stroke="currentColor"></use></svg> Обновить</button>
+  <button class="btn danger" onclick="purgeOld()"><svg><use href="#i-trash" stroke="currentColor"></use></svg> Очистить 30д+</button>
 </div>
 
 <div class="table-wrap">
@@ -423,15 +579,15 @@ function getHTML() {
 
 <script>
 const IC = {
-  users: '<span class="icon icon-lg purple"><svg><use href="#i-users" stroke="url(#gPurple)"/></svg></span>',
-  activity: '<span class="icon icon-lg green"><svg><use href="#i-activity" stroke="url(#gGreen)"/></svg></span>',
-  calendar: '<span class="icon icon-lg yellow"><svg><use href="#i-calendar" stroke="url(#gYellow)"/></svg></span>',
-  phone: '<svg style="width:14px;height:14px"><use href="#i-phone" stroke="currentColor"/></svg>',
-  monitor: '<svg style="width:14px;height:14px"><use href="#i-monitor" stroke="currentColor"/></svg>',
-  help: '<svg style="width:14px;height:14px"><use href="#i-help" stroke="currentColor"/></svg>',
-  phoneLg: '<span class="icon icon-lg purple"><svg><use href="#i-phone" stroke="url(#gPurple)"/></svg></span>',
-  monitorLg: '<span class="icon icon-lg green"><svg><use href="#i-monitor" stroke="url(#gGreen)"/></svg></span>',
-  helpLg: '<span class="icon icon-lg yellow"><svg><use href="#i-help" stroke="url(#gYellow)"/></svg></span>',
+  users: '<span class="icon icon-lg purple"><svg><use href="#i-users" stroke="url(#gPurple)"></use></svg></span>',
+  activity: '<span class="icon icon-lg green"><svg><use href="#i-activity" stroke="url(#gGreen)"></use></svg></span>',
+  calendar: '<span class="icon icon-lg yellow"><svg><use href="#i-calendar" stroke="url(#gYellow)"></use></svg></span>',
+  phone: '<svg style="width:14px;height:14px"><use href="#i-phone" stroke="currentColor"></use></svg>',
+  monitor: '<svg style="width:14px;height:14px"><use href="#i-monitor" stroke="currentColor"></use></svg>',
+  help: '<svg style="width:14px;height:14px"><use href="#i-help" stroke="currentColor"></use></svg>',
+  phoneLg: '<span class="icon icon-lg purple"><svg><use href="#i-phone" stroke="url(#gPurple)"></use></svg></span>',
+  monitorLg: '<span class="icon icon-lg green"><svg><use href="#i-monitor" stroke="url(#gGreen)"></use></svg></span>',
+  helpLg: '<span class="icon icon-lg yellow"><svg><use href="#i-help" stroke="url(#gYellow)"></use></svg></span>',
 };
 
 let allDevices = [];
@@ -440,6 +596,7 @@ let sortCol = "lastSeen", sortDir = "desc";
 async function loadData() {
   try {
     const r = await fetch("/stats?action=data");
+    if (r.status === 401 || r.redirected) { location.href = "/stats"; return; }
     const d = await r.json();
     allDevices = d.devices || [];
     document.getElementById("ver").textContent = d.version;
@@ -527,7 +684,7 @@ function renderTable() {
         <td>\${platformBadge(d.platform)}</td>
         <td title="\${esc(d.ua)}">\${esc(uaShort)}</td>
         <td>\${timeAgo(d.lastSeen)}</td>
-        <td><button class="btn del-row" onclick="deleteDevice('\${idEnc}')"><svg><use href="#i-x" stroke="currentColor"/></svg></button></td>
+        <td><button class="btn del-row" onclick="deleteDevice('\${idEnc}')"><svg><use href="#i-x" stroke="currentColor"></use></svg></button></td>
       </tr>\`;
     }).join("");
   }
