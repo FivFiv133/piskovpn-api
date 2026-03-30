@@ -137,8 +137,8 @@ async function apiUpdateSub(req, res) {
   if (typeof text !== "string") return res.status(400).json({ error: "text required" });
   const r = getRedis();
 
-  // Сбрасываем кеш чтобы следующий запрос взял свежее из raw
-  await r.del("sub_cache");
+  // Сбрасываем кеш и сразу записываем свежий текст
+  await r.set("sub_cache", text, "EX", 300);
 
   // Пушим в GitHub если есть токен
   let github = null;
