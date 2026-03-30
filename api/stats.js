@@ -49,7 +49,7 @@ async function apiData(req, res) {
     else unknown++;
 
     devices.push({
-      id: id.substring(0, 16) + "…",
+      id,
       ip: info.ip || "unknown",
       ua: info.ua || "unknown",
       platform: info.platform || "unknown",
@@ -316,6 +316,7 @@ function getHTML() {
         <th data-col="platform">Платформа</th>
         <th data-col="ua">User-Agent</th>
         <th data-col="lastSeen">Последний визит</th>
+        <th>Действия</th>
       </tr>
     </thead>
     <tbody id="tbody"></tbody>
@@ -399,17 +400,19 @@ function renderTable() {
 
   const tbody = document.getElementById("tbody");
   if (!filtered.length) {
-    tbody.innerHTML = '<tr><td colspan="5" class="empty">Нет устройств</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">Нет устройств</td></tr>';
   } else {
     tbody.innerHTML = filtered.map(d => {
       const st = getStatus(d.lastSeen);
       const uaShort = d.ua.length > 60 ? d.ua.substring(0,60) + "…" : d.ua;
-      return \`<tr>
+      const idEnc = btoa(d.id);
+      return \`<tr id="row-\${idEnc}">
         <td><span class="status-dot \${st}"></span>\${st === "online" ? "Online" : st === "recent" ? "Недавно" : "Offline"}</td>
         <td>\${esc(d.ip)}</td>
         <td><span class="badge \${d.platform}">\${d.platform}</span></td>
         <td title="\${esc(d.ua)}">\${esc(uaShort)}</td>
         <td>\${timeAgo(d.lastSeen)}</td>
+        <td><button class="btn danger" style="padding:4px 10px;font-size:12px" onclick="deleteDevice('\${idEnc}')">✕</button></td>
       </tr>\`;
     }).join("");
   }
@@ -437,6 +440,481 @@ async function purgeOld() {
   const d = await r.json();
   alert("Удалено: " + d.removed);
   loadData();
+}
+
+async function deleteDevice(idEnc) {
+  const deviceId = atob(idEnc);
+  if (!confirm("Удалить это устройство?")) return;
+  try {
+    const r = await fetch("/stats?action=delete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ deviceId }),
+    });
+    const d = await r.json();
+    if (d.ok) {
+      const row = document.getElementById("row-" + idEnc);
+      if (row) row.style.transition = "opacity 0.3s", row.style.opacity = "0", setTimeout(() => loadData(), 300);
+    } else { alert("Ошибка: " + (d.error || "unknown")); }
+  } catch(e) { alert("Ошибка: " + e.message); }
+}
+
+loadData();
+setInterval(loadData, 30000);
+</script>
+</body>
+</html>`;
+}
+function getHTML() {
+  return `<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiskoVPN — Admin Panel</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f1a;
+    color: #e0e0e0;
+    min-height: 100vh;
+  }
+  .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    vertical-align: middle;
+    margin-right: 4px;
+    flex-shrink: 0;
+  }
+  .icon svg { width: 18px; height: 18px; }
+  .icon.purple { background: linear-gradient(135deg, #7c5cfc33, #a78bfa22); box-shadow: 0 0 8px #7c5cfc44; }
+  .icon.green { background: linear-gradient(135deg, #34d39933, #10b98122); box-shadow: 0 0 8px #34d39944; }
+  .icon.yellow { background: linear-gradient(135deg, #fbbf2433, #f59e0b22); box-shadow: 0 0 8px #fbbf2444; }
+  .icon.red { background: linear-gradient(135deg, #f8717133, #ef444422); box-shadow: 0 0 8px #f8717144; }
+  .icon.blue { background: linear-gradient(135deg, #60a5fa33, #3b82f622); box-shadow: 0 0 8px #60a5fa44; }
+  .icon.gray { background: linear-gradient(135deg, #9ca3af33, #6b728022); box-shadow: 0 0 8px #9ca3af44; }
+  .icon-lg { width: 36px; height: 36px; border-radius: 10px; }
+  .icon-lg svg { width: 22px; height: 22px; }
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 20px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #2a2a4a;
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .header h1 { font-size: 22px; color: #fff; }
+  .header h1 span { color: #7c5cfc; }
+  .header .version {
+    background: #7c5cfc33;
+    color: #a78bfa;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 24px 30px;
+  }
+  .card {
+    background: #1a1a2e;
+    border: 1px solid #2a2a4a;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .card:hover { transform: translateY(-2px); border-color: #7c5cfc; }
+  .card .card-icon { margin-bottom: 8px; display: flex; justify-content: center; }
+  .card .num { font-size: 36px; font-weight: 700; color: #fff; }
+  .card .label { font-size: 13px; color: #888; margin-top: 4px; }
+  .card.purple .num { color: #a78bfa; }
+  .card.green .num { color: #34d399; }
+  .card.yellow .num { color: #fbbf24; }
+  .toolbar {
+    padding: 0 30px 16px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .toolbar .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+  }
+  .toolbar .search-wrap .icon {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    margin: 0;
+    background: none;
+    box-shadow: none;
+  }
+  .toolbar input {
+    background: #1a1a2e;
+    border: 1px solid #2a2a4a;
+    color: #e0e0e0;
+    padding: 8px 14px 8px 40px;
+    border-radius: 8px;
+    font-size: 14px;
+    width: 100%;
+  }
+  .toolbar input:focus { outline: none; border-color: #7c5cfc; }
+  .toolbar select, .btn {
+    background: #1a1a2e;
+    border: 1px solid #2a2a4a;
+    color: #e0e0e0;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn { display: inline-flex; align-items: center; gap: 6px; }
+  .btn svg { width: 16px; height: 16px; }
+  .btn:hover { border-color: #7c5cfc; }
+  .btn.danger { border-color: #f87171; color: #f87171; }
+  .btn.danger:hover { background: #f8717122; }
+  .btn.refresh { border-color: #34d399; color: #34d399; }
+  .btn.refresh:hover { background: #34d39922; }
+  .btn.del-row { border: 1px solid #f8717155; color: #f87171; padding: 4px 10px; font-size: 12px; border-radius: 6px; }
+  .btn.del-row:hover { background: #f8717122; border-color: #f87171; }
+  .btn.del-row svg { width: 14px; height: 14px; }
+  .table-wrap { padding: 0 30px 30px; overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #1a1a2e;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #2a2a4a;
+  }
+  th {
+    background: #16213e;
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #888;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+  th:hover { color: #a78bfa; }
+  th.sorted-asc::after { content: " ▲"; color: #7c5cfc; }
+  th.sorted-desc::after { content: " ▼"; color: #7c5cfc; }
+  td { padding: 10px 16px; border-top: 1px solid #2a2a4a; font-size: 14px; white-space: nowrap; }
+  tr:hover td { background: #ffffff08; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .badge svg { width: 14px; height: 14px; }
+  .badge.mobile { background: #7c5cfc22; color: #a78bfa; border: 1px solid #7c5cfc33; }
+  .badge.desktop { background: #34d39922; color: #34d399; border: 1px solid #34d39933; }
+  .badge.unknown { background: #fbbf2422; color: #fbbf24; border: 1px solid #fbbf2433; }
+  .status { display: inline-flex; align-items: center; gap: 6px; }
+  .status-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+  .status-dot.online { background: #34d399; box-shadow: 0 0 8px #34d399, 0 0 16px #34d39944; animation: pulse 2s infinite; }
+  .status-dot.recent { background: #fbbf24; box-shadow: 0 0 6px #fbbf2444; }
+  .status-dot.offline { background: #555; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .empty { text-align: center; padding: 40px; color: #666; }
+  .footer {
+    text-align: center;
+    padding: 16px;
+    color: #444;
+    font-size: 12px;
+    border-top: 1px solid #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .cards { grid-template-columns: repeat(2, 1fr); padding: 16px; }
+    .toolbar { padding: 0 16px 12px; }
+    .table-wrap { padding: 0 16px 16px; }
+    .header { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<svg style="display:none">
+  <defs>
+    <linearGradient id="gPurple" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#7c5cfc"/></linearGradient>
+    <linearGradient id="gGreen" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6ee7b7"/><stop offset="100%" stop-color="#34d399"/></linearGradient>
+    <linearGradient id="gYellow" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fde68a"/><stop offset="100%" stop-color="#fbbf24"/></linearGradient>
+    <linearGradient id="gRed" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fca5a5"/><stop offset="100%" stop-color="#f87171"/></linearGradient>
+    <linearGradient id="gBlue" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#93c5fd"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient>
+    <linearGradient id="gGray" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#d1d5db"/><stop offset="100%" stop-color="#9ca3af"/></linearGradient>
+  </defs>
+  <!-- shield -->
+  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+  </symbol>
+  <!-- users -->
+  <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+  </symbol>
+  <!-- activity -->
+  <symbol id="i-activity" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+  </symbol>
+  <!-- calendar -->
+  <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+  </symbol>
+  <!-- smartphone -->
+  <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+  </symbol>
+  <!-- monitor -->
+  <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+  </symbol>
+  <!-- help-circle -->
+  <symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+  </symbol>
+  <!-- search -->
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  </symbol>
+  <!-- refresh -->
+  <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+  </symbol>
+  <!-- trash -->
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+  </symbol>
+  <!-- x -->
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </symbol>
+</svg>
+
+<div class="header">
+  <div class="header-left">
+    <span class="icon icon-lg purple"><svg><use href="#i-shield" stroke="url(#gPurple)"/></svg></span>
+    <h1><span>PiskoVPN</span> Admin</h1>
+  </div>
+  <div>
+    <span class="version" id="ver">...</span>
+    <span style="margin-left:8px;color:#666;font-size:12px" id="updated"></span>
+  </div>
+</div>
+
+<div class="cards" id="cards"></div>
+
+<div class="toolbar">
+  <div class="search-wrap">
+    <span class="icon"><svg><use href="#i-search" stroke="#888"/></svg></span>
+    <input type="text" id="search" placeholder="Поиск по IP, платформе, User-Agent…">
+  </div>
+  <select id="filterPlatform">
+    <option value="">Все платформы</option>
+    <option value="mobile">Mobile</option>
+    <option value="desktop">Desktop</option>
+    <option value="unknown">Unknown</option>
+  </select>
+  <select id="filterStatus">
+    <option value="">Все статусы</option>
+    <option value="online">Online (5 мин)</option>
+    <option value="recent">Недавно (24ч)</option>
+    <option value="offline">Offline</option>
+  </select>
+  <button class="btn refresh" onclick="loadData()"><svg><use href="#i-refresh" stroke="currentColor"/></svg> Обновить</button>
+  <button class="btn danger" onclick="purgeOld()"><svg><use href="#i-trash" stroke="currentColor"/></svg> Очистить 30д+</button>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th data-col="status">Статус</th>
+        <th data-col="ip">IP</th>
+        <th data-col="platform">Платформа</th>
+        <th data-col="ua">User-Agent</th>
+        <th data-col="lastSeen">Последний визит</th>
+        <th>Действия</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<div class="footer">PiskoVPN Admin Panel · <span id="totalFooter">0</span> устройств</div>
+
+<script>
+const IC = {
+  users: '<span class="icon icon-lg purple"><svg><use href="#i-users" stroke="url(#gPurple)"/></svg></span>',
+  activity: '<span class="icon icon-lg green"><svg><use href="#i-activity" stroke="url(#gGreen)"/></svg></span>',
+  calendar: '<span class="icon icon-lg yellow"><svg><use href="#i-calendar" stroke="url(#gYellow)"/></svg></span>',
+  phone: '<svg style="width:14px;height:14px"><use href="#i-phone" stroke="currentColor"/></svg>',
+  monitor: '<svg style="width:14px;height:14px"><use href="#i-monitor" stroke="currentColor"/></svg>',
+  help: '<svg style="width:14px;height:14px"><use href="#i-help" stroke="currentColor"/></svg>',
+  phoneLg: '<span class="icon icon-lg purple"><svg><use href="#i-phone" stroke="url(#gPurple)"/></svg></span>',
+  monitorLg: '<span class="icon icon-lg green"><svg><use href="#i-monitor" stroke="url(#gGreen)"/></svg></span>',
+  helpLg: '<span class="icon icon-lg yellow"><svg><use href="#i-help" stroke="url(#gYellow)"/></svg></span>',
+};
+
+let allDevices = [];
+let sortCol = "lastSeen", sortDir = "desc";
+
+async function loadData() {
+  try {
+    const r = await fetch("/stats?action=data");
+    const d = await r.json();
+    allDevices = d.devices || [];
+    document.getElementById("ver").textContent = d.version;
+    document.getElementById("updated").textContent = "Обновлено: " + new Date(d.updated).toLocaleString("ru");
+    renderCards(d);
+    renderTable();
+  } catch(e) { console.error(e); }
+}
+
+function renderCards(d) {
+  document.getElementById("cards").innerHTML = [
+    cardH(IC.users, d.total, "Всего устройств", "purple"),
+    cardH(IC.activity, d.active24h, "Активных за 24ч", "green"),
+    cardH(IC.calendar, d.active7d, "Активных за 7д", "yellow"),
+    cardH(IC.phoneLg, d.platforms?.mobile || 0, "Mobile", ""),
+    cardH(IC.monitorLg, d.platforms?.desktop || 0, "Desktop", ""),
+    cardH(IC.helpLg, d.platforms?.unknown || 0, "Unknown", ""),
+  ].join("");
+}
+
+function cardH(icon, num, label, cls) {
+  return \`<div class="card \${cls}"><div class="card-icon">\${icon}</div><div class="num">\${num}</div><div class="label">\${label}</div></div>\`;
+}
+
+function getStatus(ts) {
+  if (!ts) return "offline";
+  const age = Date.now() - ts;
+  if (age < 300000) return "online";
+  if (age < 86400000) return "recent";
+  return "offline";
+}
+
+function timeAgo(ts) {
+  if (!ts) return "никогда";
+  const s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 60) return s + " сек назад";
+  if (s < 3600) return Math.floor(s/60) + " мин назад";
+  if (s < 86400) return Math.floor(s/3600) + " ч назад";
+  return Math.floor(s/86400) + " д назад";
+}
+
+function platformBadge(p) {
+  if (p === "mobile") return \`<span class="badge mobile">\${IC.phone} mobile</span>\`;
+  if (p === "desktop") return \`<span class="badge desktop">\${IC.monitor} desktop</span>\`;
+  return \`<span class="badge unknown">\${IC.help} unknown</span>\`;
+}
+
+function renderTable() {
+  const search = document.getElementById("search").value.toLowerCase();
+  const fp = document.getElementById("filterPlatform").value;
+  const fs = document.getElementById("filterStatus").value;
+
+  let filtered = allDevices.filter(d => {
+    if (search && !((d.ip+d.ua+d.platform).toLowerCase().includes(search))) return false;
+    if (fp && d.platform !== fp) return false;
+    if (fs && getStatus(d.lastSeen) !== fs) return false;
+    return true;
+  });
+
+  filtered.sort((a, b) => {
+    let va = a[sortCol], vb = b[sortCol];
+    if (typeof va === "string") { va = va.toLowerCase(); vb = (vb||"").toLowerCase(); }
+    if (va < vb) return sortDir === "asc" ? -1 : 1;
+    if (va > vb) return sortDir === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  document.querySelectorAll("th").forEach(th => {
+    th.classList.remove("sorted-asc","sorted-desc");
+    if (th.dataset.col === sortCol) th.classList.add("sorted-" + sortDir);
+  });
+
+  const tbody = document.getElementById("tbody");
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">Нет устройств</td></tr>';
+  } else {
+    tbody.innerHTML = filtered.map(d => {
+      const st = getStatus(d.lastSeen);
+      const stLabel = st === "online" ? "Online" : st === "recent" ? "Недавно" : "Offline";
+      const uaShort = d.ua.length > 60 ? d.ua.substring(0,60) + "…" : d.ua;
+      const idEnc = btoa(d.id);
+      return \`<tr id="row-\${idEnc}">
+        <td><span class="status"><span class="status-dot \${st}"></span>\${stLabel}</span></td>
+        <td>\${esc(d.ip)}</td>
+        <td>\${platformBadge(d.platform)}</td>
+        <td title="\${esc(d.ua)}">\${esc(uaShort)}</td>
+        <td>\${timeAgo(d.lastSeen)}</td>
+        <td><button class="btn del-row" onclick="deleteDevice('\${idEnc}')"><svg><use href="#i-x" stroke="currentColor"/></svg></button></td>
+      </tr>\`;
+    }).join("");
+  }
+  document.getElementById("totalFooter").textContent = filtered.length;
+}
+
+function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+document.querySelectorAll("th[data-col]").forEach(th => {
+  th.addEventListener("click", () => {
+    const col = th.dataset.col;
+    if (sortCol === col) sortDir = sortDir === "asc" ? "desc" : "asc";
+    else { sortCol = col; sortDir = "asc"; }
+    renderTable();
+  });
+});
+
+document.getElementById("search").addEventListener("input", renderTable);
+document.getElementById("filterPlatform").addEventListener("change", renderTable);
+document.getElementById("filterStatus").addEventListener("change", renderTable);
+
+async function purgeOld() {
+  if (!confirm("Удалить устройства неактивные 30+ дней?")) return;
+  const r = await fetch("/stats?action=purge&days=30");
+  const d = await r.json();
+  alert("Удалено: " + d.removed);
+  loadData();
+}
+
+async function deleteDevice(idEnc) {
+  const deviceId = atob(idEnc);
+  if (!confirm("Удалить это устройство?")) return;
+  try {
+    const r = await fetch("/stats?action=delete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ deviceId }),
+    });
+    const d = await r.json();
+    if (d.ok) {
+      const row = document.getElementById("row-" + idEnc);
+      if (row) { row.style.transition = "opacity 0.3s"; row.style.opacity = "0"; setTimeout(() => loadData(), 300); }
+    } else { alert("Ошибка: " + (d.error || "unknown")); }
+  } catch(e) { alert("Ошибка: " + e.message); }
 }
 
 loadData();

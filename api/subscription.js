@@ -51,8 +51,17 @@ export default async function handler(req, res) {
     await r.hset("devices", deviceId, deviceInfo);
     const deviceCount = await r.hlen("devices");
 
-    // Читаем файл подписки относительно модуля, а не cwd
-    const filePath = join(__dirname, "..", "..", "PiskoVPN.txt");
+    // Читаем файл подписки — пробуем несколько путей для совместимости
+    const candidates = [
+      join(__dirname, "..", "PiskoVPN.txt"),       // piskovpn-api/PiskoVPN.txt
+      join(__dirname, "..", "..", "PiskoVPN.txt"),  // корень репо
+      join(process.cwd(), "PiskoVPN.txt"),          // cwd fallback
+    ];
+    let filePath;
+    for (const p of candidates) {
+      try { readFileSync(p); filePath = p; break; } catch {}
+    }
+    if (!filePath) throw new Error("PiskoVPN.txt not found in any expected location");
     const body = readFileSync(filePath, "utf-8");
 
     console.log(`[SUB] ${new Date().toISOString()} | ${platform} | IP: ${ip} | Total: ${deviceCount}`);
@@ -63,7 +72,7 @@ export default async function handler(req, res) {
     res.setHeader("profile-update-interval", "5");
     res.status(200).send(body);
   } catch (err) {
-    console.error("[SUB] Error:", err.message);
+    console.error("[SUB] Error:", err.message, "| cwd:", process.cwd(), "| __dirname:", __dirname);
     res.status(500).send("Internal server error");
   }
 }
