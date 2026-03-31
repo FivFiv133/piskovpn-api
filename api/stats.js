@@ -198,6 +198,9 @@ async function apiServers(req, res) {
   const servers = [];
   const seen = new Set();
 
+  const url = new URL(req.url, `http://${req.headers.host}`);
+  const method = url.searchParams.get("method") || "get";
+
   for (const line of lines) {
     try {
       const match = line.match(/@([^:]+):(\d+)/);
@@ -207,21 +210,41 @@ async function apiServers(req, res) {
       if (seen.has(key)) continue;
       seen.add(key);
       const name = decodeURIComponent(line.split("#").pop() || key);
-      servers.push({ host, port: parseInt(port), name, status: "checking" });
+      servers.push({ host, port: parseInt(port), name });
     } catch {}
   }
 
-  // Проверяем доступность через TCP connect (fetch с таймаутом)
   const results = await Promise.all(servers.map(async (s) => {
     try {
       const start = Date.now();
-      const resp = await fetch(`https://${s.host}:${s.port}/`, {
-        method: "HEAD",
-        signal: AbortSignal.timeout(3000),
-      }).catch(() => null);
+      let ok = false;
+
+      if (method === "head") {
+        const resp = await fetch(`https://${s.host}:${s.port}/`, {
+          method: "HEAD",
+          signal: AbortSignal.timeout(5000),
+        }).catch(() => null);
+        ok = !!resp;
+      } else if (method === "tcp") {
+        // TCP connect через fetch — пробуем установить соединение
+        const resp = await fetch(`https://${s.host}:${s.port}/`, {
+          method: "GET",
+          signal: AbortSignal.timeout(5000),
+          redirect: "manual",
+        }).catch(() => null);
+        ok = !!resp;
+      } else {
+        // GET (default)
+        const resp = await fetch(`https://${s.host}:${s.port}/`, {
+          method: "GET",
+          signal: AbortSignal.timeout(5000),
+          redirect: "manual",
+        }).catch(() => null);
+        ok = !!resp;
+      }
+
       const ping = Date.now() - start;
-      // Если получили любой ответ (даже ошибку) — сервер жив
-      return { ...s, status: resp ? "online" : "offline", ping };
+      return { ...s, status: ok ? "online" : "offline", ping };
     } catch {
       return { ...s, status: "offline", ping: 0 };
     }
@@ -719,8 +742,19 @@ function getPanelHTML() {
 <div style="padding:0 30px 20px">
   <details>
     <summary style="cursor:pointer;color:#34d399;font-size:14px;margin-bottom:12px;user-select:none;display:flex;align-items:center;gap:8px"><span class="icon green"><svg><use href="#i-server"></use></svg></span> Серверы</summary>
-    <div id="serversBox" style="background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:16px;display:flex;flex-wrap:wrap;gap:10px">
-      <span style="color:#666">Загрузка...</span>
+    <div style="background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:16px">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+        <select id="pingMethod" style="background:#0f0f1a;border:1px solid #2a2a4a;color:#e0e0e0;padding:6px 12px;border-radius:8px;font-size:13px">
+          <option value="get">via Proxy GET</option>
+          <option value="head">via Proxy HEAD</option>
+          <option value="tcp">TCP</option>
+        </select>
+        <button class="btn refresh" onclick="loadServers()" id="pingBtn"><svg><use href="#i-refresh"></use></svg> Ping All</button>
+        <span id="pingStatus" style="font-size:12px;color:#666"></span>
+      </div>
+      <div id="serversBox" style="display:flex;flex-wrap:wrap;gap:10px">
+        <span style="color:#666;font-size:13px">Нажмите Ping All</span>
+      </div>
     </div>
   </details>
 </div>
@@ -944,23 +978,40 @@ async function saveSub() {
 }
 
 async function loadServers() {
+  const box = document.getElementById("serversBox");
+  const btn = document.getElementById("pingBtn");
+  const st = document.getElementById("pingStatus");
+  const method = document.getElementById("pingMethod").value;
+  btn.disabled = true;
+  st.textContent = "Пингуем...";
+  st.style.color = "#fbbf24";
+  box.innerHTML = '<span style="color:#666;font-size:13px">Проверяем серверы...</span>';
   try {
-    const r = await fetch("/stats?action=servers");
+    const r = await fetch("/stats?action=servers&method=" + method);
     const d = await r.json();
-    const box = document.getElementById("serversBox");
-    if (!d.servers?.length) { box.innerHTML = '<span style="color:#666">Нет серверов</span>'; return; }
+    if (!d.servers?.length) { box.innerHTML = '<span style="color:#666">Нет серверов</span>'; st.textContent = ""; btn.disabled = false; return; }
+    const online = d.servers.filter(s => s.status === "online").length;
+    st.textContent = online + "/" + d.servers.length + " онлайн";
+    st.style.color = online === d.servers.length ? "#34d399" : online > 0 ? "#fbbf24" : "#f87171";
+    // Сортируем: онлайн первые, по пингу
+    d.servers.sort((a, b) => {
+      if (a.status !== b.status) return a.status === "online" ? -1 : 1;
+      return a.ping - b.ping;
+    });
     box.innerHTML = d.servers.map(s => {
       const color = s.status === "online" ? "#34d399" : "#f87171";
-      const bg = s.status === "online" ? "#34d39915" : "#f8717115";
+      const bg = s.status === "online" ? "#34d39910" : "#f8717110";
       const border = s.status === "online" ? "#34d39933" : "#f8717133";
-      const pingText = s.status === "online" ? s.ping + "ms" : "offline";
-      return \`<div style="background:\${bg};border:1px solid \${border};border-radius:8px;padding:8px 12px;font-size:12px;display:flex;align-items:center;gap:8px">
+      const pingText = s.status === "online" ? s.ping + "ms" : "timeout";
+      const pingColor = s.status !== "online" ? "#f87171" : s.ping < 200 ? "#34d399" : s.ping < 500 ? "#fbbf24" : "#f87171";
+      return \`<div style="background:\${bg};border:1px solid \${border};border-radius:8px;padding:8px 12px;font-size:12px;display:flex;align-items:center;gap:8px;min-width:200px">
         <span style="width:8px;height:8px;border-radius:50%;background:\${color};flex-shrink:0\${s.status === 'online' ? ';box-shadow:0 0 6px ' + color : ''}"></span>
-        <span style="color:#ccc">\${esc(s.name)}</span>
-        <span style="color:\${color};font-weight:600;margin-left:auto">\${pingText}</span>
+        <span style="color:#ccc;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="\${esc(s.host)}">\${esc(s.name)}</span>
+        <span style="color:\${pingColor};font-weight:600;font-size:11px;white-space:nowrap">\${pingText}</span>
       </div>\`;
     }).join("");
-  } catch(e) { console.error(e); }
+  } catch(e) { box.innerHTML = '<span style="color:#f87171">Ошибка: ' + esc(e.message) + '</span>'; st.textContent = ""; }
+  btn.disabled = false;
 }
 
 async function loadChart() {
@@ -1036,7 +1087,6 @@ async function loadChart() {
 
 loadData();
 loadSub();
-loadServers();
 loadChart();
 setInterval(loadData, 30000);
 </script>
