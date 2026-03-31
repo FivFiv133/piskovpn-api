@@ -85,6 +85,7 @@ async function apiData(req, res) {
       ua: info.ua || "unknown",
       platform: info.platform || "unknown",
       build,
+      geo: info.geo || { country: "??", city: "" },
       lastSeen,
       lastSeenISO: lastSeen ? new Date(lastSeen).toISOString() : "never",
     });
@@ -188,6 +189,60 @@ async function apiUpdateSub(req, res) {
   return res.status(200).json({ ok: github?.ok || false, github });
 }
 
+// API: проверка серверов из подписки
+async function apiServers(req, res) {
+  const r = getRedis();
+  const { getSubscriptionText } = await import("./subscription.js");
+  const text = await getSubscriptionText(r);
+  const lines = text.split("\n").filter(l => l.startsWith("vless://"));
+  const servers = [];
+  const seen = new Set();
+
+  for (const line of lines) {
+    try {
+      const match = line.match(/@([^:]+):(\d+)/);
+      if (!match) continue;
+      const [, host, port] = match;
+      const key = `${host}:${port}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const name = decodeURIComponent(line.split("#").pop() || key);
+      servers.push({ host, port: parseInt(port), name, status: "checking" });
+    } catch {}
+  }
+
+  // Проверяем доступность через TCP connect (fetch с таймаутом)
+  const results = await Promise.all(servers.map(async (s) => {
+    try {
+      const start = Date.now();
+      const resp = await fetch(`https://${s.host}:${s.port}/`, {
+        method: "HEAD",
+        signal: AbortSignal.timeout(3000),
+      }).catch(() => null);
+      const ping = Date.now() - start;
+      // Если получили любой ответ (даже ошибку) — сервер жив
+      return { ...s, status: resp ? "online" : "offline", ping };
+    } catch {
+      return { ...s, status: "offline", ping: 0 };
+    }
+  }));
+
+  return res.status(200).json({ servers: results });
+}
+
+// API: график активности за 14 дней
+async function apiChart(req, res) {
+  const r = getRedis();
+  const days = [];
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 86400000);
+    const key = d.toISOString().slice(0, 10);
+    const count = await r.pfcount(`daily:${key}`);
+    days.push({ date: key, count });
+  }
+  return res.status(200).json({ days });
+}
+
 // Главный handler
 export default async function handler(req, res) {
   const url = new URL(req.url, `http://${req.headers.host}`);
@@ -224,6 +279,8 @@ export default async function handler(req, res) {
     if (action === "purge") return await apiPurge(req, res);
     if (action === "getSub") return await apiGetSub(req, res);
     if (action === "updateSub" && req.method === "POST") return await apiUpdateSub(req, res);
+    if (action === "servers") return await apiServers(req, res);
+    if (action === "chart") return await apiChart(req, res);
 
     // Отдаём HTML-панель
     res.setHeader("Content-Type", "text/html; charset=utf-8");
@@ -593,6 +650,15 @@ function getPanelHTML() {
   <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
   </symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+  </symbol>
+  <symbol id="i-server" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/>
+  </symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+  </symbol>
 </svg>
 
 <div class="header">
@@ -638,6 +704,7 @@ function getPanelHTML() {
       <tr>
         <th data-col="status">Статус</th>
         <th data-col="ip">IP</th>
+        <th data-col="geo">Гео</th>
         <th data-col="platform">Платформа</th>
         <th data-col="ua">User-Agent</th>
         <th data-col="lastSeen">Последний визит</th>
@@ -647,6 +714,24 @@ function getPanelHTML() {
     </thead>
     <tbody id="tbody"></tbody>
   </table>
+</div>
+
+<div style="padding:0 30px 20px">
+  <details>
+    <summary style="cursor:pointer;color:#34d399;font-size:14px;margin-bottom:12px;user-select:none;display:flex;align-items:center;gap:8px"><span class="icon green"><svg><use href="#i-server"></use></svg></span> Серверы</summary>
+    <div id="serversBox" style="background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:16px;display:flex;flex-wrap:wrap;gap:10px">
+      <span style="color:#666">Загрузка...</span>
+    </div>
+  </details>
+</div>
+
+<div style="padding:0 30px 20px">
+  <details>
+    <summary style="cursor:pointer;color:#fbbf24;font-size:14px;margin-bottom:12px;user-select:none;display:flex;align-items:center;gap:8px"><span class="icon yellow"><svg><use href="#i-chart"></use></svg></span> Активность (14 дней)</summary>
+    <div style="background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:16px">
+      <canvas id="chartCanvas" width="800" height="200" style="width:100%;height:200px"></canvas>
+    </div>
+  </details>
 </div>
 
 <div style="padding:0 30px 20px">
@@ -764,7 +849,7 @@ function renderTable() {
 
   const tbody = document.getElementById("tbody");
   if (!filtered.length) {
-    tbody.innerHTML = '<tr><td colspan="7" class="empty">Нет устройств</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" class="empty">Нет устройств</td></tr>';
   } else {
     tbody.innerHTML = filtered.map(d => {
       const st = getStatus(d.lastSeen);
@@ -774,6 +859,7 @@ function renderTable() {
       return \`<tr id="row-\${idEnc}">
         <td><span class="status"><span class="status-dot \${st}"></span>\${stLabel}</span></td>
         <td>\${esc(d.ip)}</td>
+        <td style="font-size:12px" title="\${esc(d.geo?.city || '')}">\${esc(d.geo?.country || '??')}\${d.geo?.city ? ' ' + esc(d.geo.city) : ''}</td>
         <td>\${platformBadge(d.platform)}</td>
         <td title="\${esc(d.ua)}">\${esc(uaShort)}</td>
         <td>\${timeAgo(d.lastSeen)}</td>
@@ -857,8 +943,101 @@ async function saveSub() {
   setTimeout(() => { st.textContent = ""; }, 5000);
 }
 
+async function loadServers() {
+  try {
+    const r = await fetch("/stats?action=servers");
+    const d = await r.json();
+    const box = document.getElementById("serversBox");
+    if (!d.servers?.length) { box.innerHTML = '<span style="color:#666">Нет серверов</span>'; return; }
+    box.innerHTML = d.servers.map(s => {
+      const color = s.status === "online" ? "#34d399" : "#f87171";
+      const bg = s.status === "online" ? "#34d39915" : "#f8717115";
+      const border = s.status === "online" ? "#34d39933" : "#f8717133";
+      const pingText = s.status === "online" ? s.ping + "ms" : "offline";
+      return \`<div style="background:\${bg};border:1px solid \${border};border-radius:8px;padding:8px 12px;font-size:12px;display:flex;align-items:center;gap:8px">
+        <span style="width:8px;height:8px;border-radius:50%;background:\${color};flex-shrink:0\${s.status === 'online' ? ';box-shadow:0 0 6px ' + color : ''}"></span>
+        <span style="color:#ccc">\${esc(s.name)}</span>
+        <span style="color:\${color};font-weight:600;margin-left:auto">\${pingText}</span>
+      </div>\`;
+    }).join("");
+  } catch(e) { console.error(e); }
+}
+
+async function loadChart() {
+  try {
+    const r = await fetch("/stats?action=chart");
+    const d = await r.json();
+    const canvas = document.getElementById("chartCanvas");
+    if (!canvas || !d.days?.length) return;
+    const ctx = canvas.getContext("2d");
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = canvas.offsetWidth * dpr;
+    canvas.height = 200 * dpr;
+    ctx.scale(dpr, dpr);
+    const W = canvas.offsetWidth, H = 200;
+    const pad = { t: 20, r: 10, b: 40, l: 40 };
+    const gW = W - pad.l - pad.r, gH = H - pad.t - pad.b;
+    const max = Math.max(...d.days.map(x => x.count), 1);
+    const step = gW / (d.days.length - 1);
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Grid lines
+    ctx.strokeStyle = "#2a2a4a";
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+      const y = pad.t + gH - (gH * i / 4);
+      ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W - pad.r, y); ctx.stroke();
+      ctx.fillStyle = "#555"; ctx.font = "11px sans-serif"; ctx.textAlign = "right";
+      ctx.fillText(Math.round(max * i / 4), pad.l - 6, y + 4);
+    }
+
+    // Area fill
+    ctx.beginPath();
+    ctx.moveTo(pad.l, pad.t + gH);
+    d.days.forEach((p, i) => {
+      const x = pad.l + i * step;
+      const y = pad.t + gH - (p.count / max) * gH;
+      i === 0 ? ctx.lineTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.lineTo(pad.l + (d.days.length - 1) * step, pad.t + gH);
+    ctx.closePath();
+    const grad = ctx.createLinearGradient(0, pad.t, 0, pad.t + gH);
+    grad.addColorStop(0, "#7c5cfc33");
+    grad.addColorStop(1, "#7c5cfc00");
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Line
+    ctx.beginPath();
+    d.days.forEach((p, i) => {
+      const x = pad.l + i * step;
+      const y = pad.t + gH - (p.count / max) * gH;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = "#a78bfa";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Dots + labels
+    d.days.forEach((p, i) => {
+      const x = pad.l + i * step;
+      const y = pad.t + gH - (p.count / max) * gH;
+      ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2);
+      ctx.fillStyle = "#a78bfa"; ctx.fill();
+      // Date labels
+      if (i % 2 === 0 || i === d.days.length - 1) {
+        ctx.fillStyle = "#666"; ctx.font = "10px sans-serif"; ctx.textAlign = "center";
+        ctx.fillText(p.date.slice(5), x, H - pad.b + 16);
+      }
+    });
+  } catch(e) { console.error(e); }
+}
+
 loadData();
 loadSub();
+loadServers();
+loadChart();
 setInterval(loadData, 30000);
 </script>
 </body>

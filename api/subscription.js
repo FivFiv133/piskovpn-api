@@ -70,7 +70,32 @@ export default async function handler(req, res) {
     const buildMatch = body.match(/^#\s*build[:\-]\s*(.+)/im);
     const build = buildMatch ? buildMatch[1].trim() : "unknown";
 
-    await r.hset("devices", deviceId, JSON.stringify({ ip, ua, platform, build, lastSeen: Date.now() }));
+    // Geo IP lookup (кешируем в Redis)
+    let geo = { country: "??", city: "" };
+    if (ip !== "unknown") {
+      const geoCache = await r.get(`geo:${ip}`);
+      if (geoCache) {
+        try { geo = JSON.parse(geoCache); } catch {}
+      } else {
+        try {
+          const geoResp = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,countryCode,city`, { signal: AbortSignal.timeout(2000) });
+          const geoData = await geoResp.json();
+          if (geoData.status === "success") {
+            geo = { country: geoData.countryCode || "??", city: geoData.city || "" };
+          }
+          await r.set(`geo:${ip}`, JSON.stringify(geo), "EX", 86400);
+        } catch {}
+      }
+    }
+
+    await r.hset("devices", deviceId, JSON.stringify({ ip, ua, platform, build, geo, lastSeen: Date.now() }));
+
+    // Daily stats — инкрементим счётчик уникальных устройств за сегодня
+    const today = new Date().toISOString().slice(0, 10);
+    await r.pfadd(`daily:${today}`, deviceId);
+    // TTL 30 дней
+    await r.expire(`daily:${today}`, 2592000);
+
     const deviceCount = await r.hlen("devices");
 
     console.log(`[SUB] ${new Date().toISOString()} | ${platform} | IP: ${ip} | Total: ${deviceCount}`);
