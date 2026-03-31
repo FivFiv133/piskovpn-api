@@ -591,7 +591,7 @@ function getPanelHTML() {
     <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
   </symbol>
   <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
+    <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
   </symbol>
 </svg>
 
@@ -707,7 +707,7 @@ function renderCards(d) {
     cardH(IC.phoneLg, d.platforms?.mobile || 0, "Mobile", ""),
     cardH(IC.monitorLg, d.platforms?.desktop || 0, "Desktop", ""),
     cardH(IC.helpLg, d.platforms?.unknown || 0, "Unknown", ""),
-  ].join("") + (buildsHtml ? \`<div class="card"><div class="card-icon"><span class="icon icon-lg yellow"><svg><use href="#i-tag"></use></svg></span></div><div class="label" style="margin-bottom:8px">Версии</div><div style="display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center">\${buildsHtml}</div></div>\` : "");
+  ].join("") + (buildsHtml ? \`<div class="card"><div class="card-icon"><span class="icon icon-lg yellow"><svg><use href="#i-tag"></use></svg></span></div><div style="display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center">\${buildsHtml}</div><div class="label">Версии</div></div>\` : "");
 }
 
 function cardH(icon, num, label, cls) {
