@@ -707,7 +707,7 @@ function renderCards(d) {
     cardH(IC.phoneLg, d.platforms?.mobile || 0, "Mobile", ""),
     cardH(IC.monitorLg, d.platforms?.desktop || 0, "Desktop", ""),
     cardH(IC.helpLg, d.platforms?.unknown || 0, "Unknown", ""),
-  ].join("") + (buildsHtml ? \`<div class="card" style="grid-column:1/-1"><div class="card-icon"><span class="icon icon-lg yellow"><svg><use href="#i-tag"></use></svg></span></div><div class="label" style="margin-bottom:8px">Версии подписки</div><div style="display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:center">\${buildsHtml}</div></div>\` : "");
+  ].join("") + (buildsHtml ? \`<div class="card"><div class="card-icon"><span class="icon icon-lg yellow"><svg><use href="#i-tag"></use></svg></span></div><div class="label" style="margin-bottom:8px">Версии</div><div style="display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center">\${buildsHtml}</div></div>\` : "");
 }
 
 function cardH(icon, num, label, cls) {
