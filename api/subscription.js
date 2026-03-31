@@ -64,10 +64,14 @@ export default async function handler(req, res) {
     const platform = detectPlatform(ua);
 
     const r = getRedis();
-    await r.hset("devices", deviceId, JSON.stringify({ ip, ua, platform, lastSeen: Date.now() }));
-    const deviceCount = await r.hlen("devices");
-
     const body = await getSubscriptionText(r);
+
+    // Парсим build из текста подписки (ищем # build: XX или # build-XX)
+    const buildMatch = body.match(/^#\s*build[:\-]\s*(.+)/im);
+    const build = buildMatch ? buildMatch[1].trim() : "unknown";
+
+    await r.hset("devices", deviceId, JSON.stringify({ ip, ua, platform, build, lastSeen: Date.now() }));
+    const deviceCount = await r.hlen("devices");
 
     console.log(`[SUB] ${new Date().toISOString()} | ${platform} | IP: ${ip} | Total: ${deviceCount}`);
 

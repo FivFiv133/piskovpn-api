@@ -62,6 +62,7 @@ async function apiData(req, res) {
 
   const devices = [];
   let mobile = 0, desktop = 0, unknown = 0, active24h = 0, active7d = 0;
+  const builds = {};
 
   for (const [id, raw] of Object.entries(allDevices)) {
     let info;
@@ -75,11 +76,15 @@ async function apiData(req, res) {
     else if (info.platform === "desktop") desktop++;
     else unknown++;
 
+    const build = info.build || "unknown";
+    builds[build] = (builds[build] || 0) + 1;
+
     devices.push({
       id,
       ip: info.ip || "unknown",
       ua: info.ua || "unknown",
       platform: info.platform || "unknown",
+      build,
       lastSeen,
       lastSeenISO: lastSeen ? new Date(lastSeen).toISOString() : "never",
     });
@@ -90,6 +95,7 @@ async function apiData(req, res) {
   return res.status(200).json({
     total: devices.length, active24h, active7d,
     platforms: { mobile, desktop, unknown },
+    builds,
     devices,
     version: process.env.VPN_VERSION || "v0.1.4-X",
     updated: new Date().toISOString(),
@@ -584,6 +590,9 @@ function getPanelHTML() {
   <symbol id="i-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
   </symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
+  </symbol>
 </svg>
 
 <div class="header">
@@ -632,6 +641,7 @@ function getPanelHTML() {
         <th data-col="platform">Платформа</th>
         <th data-col="ua">User-Agent</th>
         <th data-col="lastSeen">Последний визит</th>
+        <th data-col="build">Build</th>
         <th>Действия</th>
       </tr>
     </thead>
@@ -684,6 +694,12 @@ async function loadData() {
 }
 
 function renderCards(d) {
+  let buildsHtml = "";
+  if (d.builds) {
+    const entries = Object.entries(d.builds).sort((a,b) => b[1] - a[1]);
+    buildsHtml = entries.map(([b,c]) => '<span class="icon icon-lg yellow"><svg><use href="#i-tag"></use></svg></span>').join("") ? 
+      entries.map(([b,c]) => \`<div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#ccc"><span style="color:#a78bfa;font-weight:600">\${esc(b)}</span><span style="color:#666">×\${c}</span></div>\`).join("") : "";
+  }
   document.getElementById("cards").innerHTML = [
     cardH(IC.users, d.total, "Всего устройств", "purple"),
     cardH(IC.activity, d.active24h, "Активных за 24ч", "green"),
@@ -691,7 +707,7 @@ function renderCards(d) {
     cardH(IC.phoneLg, d.platforms?.mobile || 0, "Mobile", ""),
     cardH(IC.monitorLg, d.platforms?.desktop || 0, "Desktop", ""),
     cardH(IC.helpLg, d.platforms?.unknown || 0, "Unknown", ""),
-  ].join("");
+  ].join("") + (buildsHtml ? \`<div class="card" style="grid-column:1/-1"><div class="card-icon"><span class="icon icon-lg yellow"><svg><use href="#i-tag"></use></svg></span></div><div class="label" style="margin-bottom:8px">Версии подписки</div><div style="display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:center">\${buildsHtml}</div></div>\` : "");
 }
 
 function cardH(icon, num, label, cls) {
@@ -748,7 +764,7 @@ function renderTable() {
 
   const tbody = document.getElementById("tbody");
   if (!filtered.length) {
-    tbody.innerHTML = '<tr><td colspan="6" class="empty">Нет устройств</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">Нет устройств</td></tr>';
   } else {
     tbody.innerHTML = filtered.map(d => {
       const st = getStatus(d.lastSeen);
@@ -761,6 +777,7 @@ function renderTable() {
         <td>\${platformBadge(d.platform)}</td>
         <td title="\${esc(d.ua)}">\${esc(uaShort)}</td>
         <td>\${timeAgo(d.lastSeen)}</td>
+        <td><span style="color:\${d.build === 'unknown' ? '#666' : '#a78bfa'};font-size:12px;font-weight:600">\${esc(d.build)}</span></td>
         <td><button class="btn del-row" onclick="deleteDevice('\${idEnc}')"><svg><use href="#i-x"></use></svg></button></td>
       </tr>\`;
     }).join("");
