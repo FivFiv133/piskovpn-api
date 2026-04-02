@@ -325,100 +325,67 @@ function getLoginHTML() {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PiskoVPN — Вход</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #0f0f1a;
-    color: #e0e0e0;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .login-box {
-    background: #1a1a2e;
-    border: 1px solid #2a2a4a;
-    border-radius: 16px;
-    padding: 40px;
-    width: 100%;
-    max-width: 380px;
-    text-align: center;
-  }
-  .login-box h1 { font-size: 24px; color: #fff; margin-bottom: 6px; }
-  .login-box h1 span { color: #7c5cfc; }
-  .login-box .sub { color: #666; font-size: 13px; margin-bottom: 28px; }
-  .login-box input {
-    width: 100%;
-    background: #0f0f1a;
-    border: 1px solid #2a2a4a;
-    color: #e0e0e0;
-    padding: 12px 16px;
-    border-radius: 10px;
-    font-size: 15px;
-    margin-bottom: 14px;
-    transition: border-color 0.2s;
-  }
-  .login-box input:focus { outline: none; border-color: #7c5cfc; }
-  .login-box button {
-    width: 100%;
-    background: linear-gradient(135deg, #7c5cfc, #6d4de8);
-    color: #fff;
-    border: none;
-    padding: 12px;
-    border-radius: 10px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    margin-top: 4px;
-  }
-  .login-box button:hover { opacity: 0.9; }
-  .login-box button:disabled { opacity: 0.5; cursor: not-allowed; }
-  .error-msg { color: #f87171; font-size: 13px; margin-top: 12px; min-height: 18px; }
-  .shield { margin-bottom: 12px; display:flex; justify-content:center; }
-  .shield svg { width:48px; height:48px; stroke:#a78bfa; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#07060b;overflow:hidden;padding:20px}
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 20%,#7c5cfc12 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 80% 80%,#6d4de810 0%,transparent 60%);pointer-events:none;z-index:0}
+  .particles{position:fixed;inset:0;z-index:0;overflow:hidden}
+  .particles span{position:absolute;width:2px;height:2px;background:#a78bfa;border-radius:50%;animation:float linear infinite;opacity:0}
+  @keyframes float{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:.6}90%{opacity:.6}100%{transform:translateY(-10vh) scale(1);opacity:0}}
+  .login-box{position:relative;z-index:1;background:rgba(20,18,35,0.7);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(124,92,252,0.15);border-radius:24px;padding:48px 40px;width:100%;max-width:400px;text-align:center;box-shadow:0 0 60px rgba(124,92,252,0.08),0 25px 50px rgba(0,0,0,0.4);animation:fadeUp .6s ease-out}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .shield-wrap{width:72px;height:72px;margin:0 auto 20px;background:linear-gradient(135deg,#7c5cfc22,#a78bfa15);border-radius:20px;display:flex;align-items:center;justify-content:center;border:1px solid #7c5cfc25;box-shadow:0 0 30px #7c5cfc18}
+  .shield-wrap svg{width:36px;height:36px;stroke:#a78bfa;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  h1{font-size:26px;font-weight:700;color:#fff;margin-bottom:4px;letter-spacing:-0.5px}
+  h1 span{background:linear-gradient(135deg,#a78bfa,#7c5cfc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .sub{color:#64607a;font-size:14px;margin-bottom:32px}
+  .input-wrap{position:relative;margin-bottom:16px}
+  .input-wrap input{width:100%;background:rgba(15,13,26,0.6);border:1px solid rgba(124,92,252,0.12);color:#e0e0e0;padding:14px 18px 14px 46px;border-radius:14px;font-size:15px;font-family:inherit;transition:border-color .25s,box-shadow .25s}
+  .input-wrap input:focus{outline:none;border-color:#7c5cfc55;box-shadow:0 0 0 3px #7c5cfc18}
+  .input-wrap input::placeholder{color:#4a4660}
+  .input-wrap .ico{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#4a4660;transition:color .25s}
+  .input-wrap input:focus~.ico{color:#a78bfa}
+  .ico svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  button[type=submit]{width:100%;background:linear-gradient(135deg,#7c5cfc,#6541e8);color:#fff;border:none;padding:14px;border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .25s;margin-top:6px;position:relative;overflow:hidden}
+  button[type=submit]:hover{box-shadow:0 0 24px #7c5cfc44;transform:translateY(-1px)}
+  button[type=submit]:active{transform:translateY(0)}
+  button[type=submit]:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+  .error-msg{color:#f87171;font-size:13px;margin-top:14px;min-height:18px;transition:opacity .2s}
+  @media(max-width:480px){.login-box{padding:36px 24px;border-radius:20px}h1{font-size:22px}.shield-wrap{width:60px;height:60px;border-radius:16px}.shield-wrap svg{width:30px;height:30px}}
 </style>
 </head>
 <body>
+<div class="particles" id="pts"></div>
 <div class="login-box">
-  <div class="shield"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><rect x="10" y="10" width="4" height="5" rx="1"/><circle cx="12" cy="8" r="1.5"/></svg></div>
+  <div class="shield-wrap"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><rect x="10" y="10" width="4" height="5" rx="1"/><circle cx="12" cy="8" r="1.5"/></svg></div>
   <h1><span>PiskoVPN</span> Admin</h1>
   <div class="sub">Введите данные для входа</div>
   <form id="loginForm">
-    <input type="text" id="user" placeholder="Логин" autocomplete="username" required>
-    <input type="password" id="pass" placeholder="Пароль" autocomplete="current-password" required>
+    <div class="input-wrap"><input type="text" id="user" placeholder="Логин" autocomplete="username" required><span class="ico"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span></div>
+    <div class="input-wrap"><input type="password" id="pass" placeholder="Пароль" autocomplete="current-password" required><span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span></div>
     <button type="submit" id="loginBtn">Войти</button>
   </form>
   <div class="error-msg" id="err"></div>
 </div>
 <script>
+(function(){const c=document.getElementById('pts');for(let i=0;i<30;i++){const s=document.createElement('span');s.style.left=Math.random()*100+'%';s.style.animationDuration=(6+Math.random()*8)+'s';s.style.animationDelay=Math.random()*6+'s';s.style.width=s.style.height=(1+Math.random()*2)+'px';c.appendChild(s)}})();
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const btn = document.getElementById("loginBtn");
   const err = document.getElementById("err");
-  btn.disabled = true;
+  btn.disabled = true; btn.textContent = "Вход...";
   err.textContent = "";
   try {
     const r = await fetch("/stats?action=login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        user: document.getElementById("user").value,
-        pass: document.getElementById("pass").value,
-      }),
+      body: JSON.stringify({ user: document.getElementById("user").value, pass: document.getElementById("pass").value }),
     });
     const d = await r.json();
-    if (d.ok) {
-      window.location.href = "/stats";
-    } else {
-      err.textContent = d.error || "Ошибка входа";
-      btn.disabled = false;
-    }
-  } catch(ex) {
-    err.textContent = "Ошибка соединения";
-    btn.disabled = false;
-  }
+    if (d.ok) { window.location.href = "/stats"; }
+    else { err.textContent = d.error || "Ошибка входа"; btn.disabled = false; btn.textContent = "Войти"; }
+  } catch(ex) { err.textContent = "Ошибка соединения"; btn.disabled = false; btn.textContent = "Войти"; }
 });
 </script>
 </body>
@@ -432,199 +399,91 @@ function getPanelHTML() {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PiskoVPN — Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #0f0f1a;
-    color: #e0e0e0;
-    min-height: 100vh;
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',system-ui,sans-serif;background:#07060b;color:#e0e0e0;min-height:100vh}
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 40% at 50% 0%,#7c5cfc08 0%,transparent 70%);pointer-events:none;z-index:0}
+  .icon{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;vertical-align:middle;margin-right:4px;flex-shrink:0}
+  .icon svg{width:18px;height:18px}
+  .icon.purple{background:linear-gradient(135deg,#7c5cfc33,#a78bfa22);box-shadow:0 0 8px #7c5cfc44;color:#a78bfa}
+  .icon.green{background:linear-gradient(135deg,#34d39933,#10b98122);box-shadow:0 0 8px #34d39944;color:#34d399}
+  .icon.yellow{background:linear-gradient(135deg,#fbbf2433,#f59e0b22);box-shadow:0 0 8px #fbbf2444;color:#fbbf24}
+  .icon-lg{width:36px;height:36px;border-radius:10px}
+  .icon-lg svg{width:22px;height:22px}
+  .header{position:relative;z-index:1;background:rgba(20,18,35,0.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:20px 30px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(124,92,252,0.1);flex-wrap:wrap;gap:12px}
+  .header-left{display:flex;align-items:center;gap:12px}
+  .header-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .header h1{font-size:22px;color:#fff;font-weight:700;letter-spacing:-0.5px}
+  .header h1 span{background:linear-gradient(135deg,#a78bfa,#7c5cfc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .header .version{background:#7c5cfc22;color:#a78bfa;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid #7c5cfc22}
+  .btn-logout{background:none;border:1px solid #f8717133;color:#f87171;padding:7px 16px;border-radius:10px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:6px}
+  .btn-logout:hover{background:#f8717115;border-color:#f87171}
+  .content{position:relative;z-index:1;max-width:1440px;margin:0 auto}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;padding:24px 30px}
+  .card{background:rgba(20,18,35,0.5);backdrop-filter:blur(12px);border:1px solid rgba(124,92,252,0.08);border-radius:16px;padding:20px;text-align:center;transition:all .3s ease}
+  .card:hover{transform:translateY(-3px);border-color:rgba(124,92,252,0.25);box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+  .card .card-icon{margin-bottom:8px;display:flex;justify-content:center}
+  .card .num{font-size:32px;font-weight:700;color:#fff;letter-spacing:-1px}
+  .card .label{font-size:12px;color:#64607a;margin-top:4px;font-weight:500}
+  .card.purple .num{color:#a78bfa}
+  .card.green .num{color:#34d399}
+  .card.yellow .num{color:#fbbf24}
+  .toolbar{padding:0 30px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .toolbar .search-wrap{position:relative;flex:1;min-width:180px}
+  .toolbar .search-wrap .icon{position:absolute;left:8px;top:50%;transform:translateY(-50%);pointer-events:none;margin:0;background:none;box-shadow:none;color:#64607a}
+  .toolbar input{background:rgba(20,18,35,0.5);backdrop-filter:blur(8px);border:1px solid rgba(124,92,252,0.1);color:#e0e0e0;padding:9px 14px 9px 40px;border-radius:10px;font-size:14px;font-family:inherit;width:100%;transition:border-color .25s,box-shadow .25s}
+  .toolbar input:focus{outline:none;border-color:#7c5cfc44;box-shadow:0 0 0 3px #7c5cfc12}
+  .toolbar select,.btn{background:rgba(20,18,35,0.5);backdrop-filter:blur(8px);border:1px solid rgba(124,92,252,0.1);color:#e0e0e0;padding:9px 16px;border-radius:10px;font-size:13px;font-family:inherit;cursor:pointer;transition:all .25s;font-weight:500}
+  .btn{display:inline-flex;align-items:center;gap:6px}
+  .btn svg{width:16px;height:16px}
+  .btn:hover{border-color:#7c5cfc44;background:rgba(124,92,252,0.06)}
+  .btn.danger{border-color:#f8717133;color:#f87171}
+  .btn.danger:hover{background:#f8717112;border-color:#f87171}
+  .btn.refresh{border-color:#34d39933;color:#34d399}
+  .btn.refresh:hover{background:#34d39912;border-color:#34d399}
+  .btn.del-row{border:1px solid #f8717133;color:#f87171;padding:5px 10px;font-size:12px;border-radius:8px}
+  .btn.del-row:hover{background:#f8717115;border-color:#f87171}
+  .btn.del-row svg{width:14px;height:14px}
+  .table-wrap{padding:0 30px 30px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{width:100%;border-collapse:collapse;background:rgba(20,18,35,0.5);backdrop-filter:blur(12px);border-radius:14px;overflow:hidden;border:1px solid rgba(124,92,252,0.08)}
+  th{background:rgba(22,33,62,0.6);padding:12px 16px;text-align:left;font-size:11px;text-transform:uppercase;color:#64607a;letter-spacing:0.6px;font-weight:600;cursor:pointer;user-select:none;white-space:nowrap}
+  th:hover{color:#a78bfa}
+  th.sorted-asc::after{content:" ▲";color:#7c5cfc}
+  th.sorted-desc::after{content:" ▼";color:#7c5cfc}
+  td{padding:10px 16px;border-top:1px solid rgba(124,92,252,0.06);font-size:13px;white-space:nowrap}
+  tr:hover td{background:rgba(124,92,252,0.03)}
+  .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:10px;font-size:12px;font-weight:600}
+  .badge svg{width:14px;height:14px}
+  .badge.mobile{background:#7c5cfc15;color:#a78bfa;border:1px solid #7c5cfc22}
+  .badge.desktop{background:#34d39915;color:#34d399;border:1px solid #34d39922}
+  .badge.unknown{background:#fbbf2415;color:#fbbf24;border:1px solid #fbbf2422}
+  .status{display:inline-flex;align-items:center;gap:6px}
+  .status-dot{display:inline-block;width:8px;height:8px;border-radius:50%}
+  .status-dot.online{background:#34d399;box-shadow:0 0 8px #34d399,0 0 16px #34d39944;animation:pulse 2s infinite}
+  .status-dot.recent{background:#fbbf24;box-shadow:0 0 6px #fbbf2444}
+  .status-dot.offline{background:#444}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+  .empty{text-align:center;padding:40px;color:#64607a}
+  .section{padding:0 30px 20px}
+  .section-inner{background:rgba(20,18,35,0.5);backdrop-filter:blur(12px);border:1px solid rgba(124,92,252,0.08);border-radius:14px;padding:18px}
+  details summary{cursor:pointer;font-size:14px;margin-bottom:12px;user-select:none;display:flex;align-items:center;gap:8px;font-weight:500}
+  .footer{text-align:center;padding:20px;color:#3a3650;font-size:12px;border-top:1px solid rgba(124,92,252,0.06);font-weight:500}
+  @media(max-width:768px){
+    .cards{grid-template-columns:repeat(3,1fr);padding:16px;gap:10px}
+    .card .num{font-size:26px}
+    .toolbar{padding:0 16px 12px;gap:8px}
+    .table-wrap{padding:0 16px 16px}
+    .header{padding:16px}
+    .section{padding:0 16px 16px}
   }
-  .icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px; height: 28px;
-    border-radius: 8px;
-    vertical-align: middle;
-    margin-right: 4px;
-    flex-shrink: 0;
-  }
-  .icon svg { width: 18px; height: 18px; }
-  .icon.purple { background: linear-gradient(135deg, #7c5cfc33, #a78bfa22); box-shadow: 0 0 8px #7c5cfc44; color: #a78bfa; }
-  .icon.green { background: linear-gradient(135deg, #34d39933, #10b98122); box-shadow: 0 0 8px #34d39944; color: #34d399; }
-  .icon.yellow { background: linear-gradient(135deg, #fbbf2433, #f59e0b22); box-shadow: 0 0 8px #fbbf2444; color: #fbbf24; }
-  .icon-lg { width: 36px; height: 36px; border-radius: 10px; }
-  .icon-lg svg { width: 22px; height: 22px; }
-  .header {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    padding: 20px 30px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #2a2a4a;
-  }
-  .header-left { display: flex; align-items: center; gap: 12px; }
-  .header-right { display: flex; align-items: center; gap: 12px; }
-  .header h1 { font-size: 22px; color: #fff; }
-  .header h1 span { color: #7c5cfc; }
-  .header .version {
-    background: #7c5cfc33;
-    color: #a78bfa;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 13px;
-  }
-  .btn-logout {
-    background: none;
-    border: 1px solid #f8717155;
-    color: #f87171;
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .btn-logout:hover { background: #f8717122; border-color: #f87171; }
-  .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    padding: 24px 30px;
-  }
-  .card {
-    background: #1a1a2e;
-    border: 1px solid #2a2a4a;
-    border-radius: 12px;
-    padding: 20px;
-    text-align: center;
-    transition: transform 0.2s, border-color 0.2s;
-  }
-  .card:hover { transform: translateY(-2px); border-color: #7c5cfc; }
-  .card .card-icon { margin-bottom: 8px; display: flex; justify-content: center; }
-  .card .num { font-size: 36px; font-weight: 700; color: #fff; }
-  .card .label { font-size: 13px; color: #888; margin-top: 4px; }
-  .card.purple .num { color: #a78bfa; }
-  .card.green .num { color: #34d399; }
-  .card.yellow .num { color: #fbbf24; }
-  .toolbar {
-    padding: 0 30px 16px;
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-  .toolbar .search-wrap {
-    position: relative;
-    flex: 1;
-    min-width: 200px;
-  }
-  .toolbar .search-wrap .icon {
-    position: absolute;
-    left: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    margin: 0;
-    background: none;
-    box-shadow: none;
-    color: #888;
-  }
-  .toolbar input {
-    background: #1a1a2e;
-    border: 1px solid #2a2a4a;
-    color: #e0e0e0;
-    padding: 8px 14px 8px 40px;
-    border-radius: 8px;
-    font-size: 14px;
-    width: 100%;
-  }
-  .toolbar input:focus { outline: none; border-color: #7c5cfc; }
-  .toolbar select, .btn {
-    background: #1a1a2e;
-    border: 1px solid #2a2a4a;
-    color: #e0e0e0;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn { display: inline-flex; align-items: center; gap: 6px; }
-  .btn svg { width: 16px; height: 16px; }
-  .btn:hover { border-color: #7c5cfc; }
-  .btn.danger { border-color: #f87171; color: #f87171; }
-  .btn.danger:hover { background: #f8717122; }
-  .btn.refresh { border-color: #34d399; color: #34d399; }
-  .btn.refresh:hover { background: #34d39922; }
-  .btn.del-row { border: 1px solid #f8717155; color: #f87171; padding: 4px 10px; font-size: 12px; border-radius: 6px; }
-  .btn.del-row:hover { background: #f8717122; border-color: #f87171; }
-  .btn.del-row svg { width: 14px; height: 14px; }
-  .table-wrap { padding: 0 30px 30px; overflow-x: auto; }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #1a1a2e;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid #2a2a4a;
-  }
-  th {
-    background: #16213e;
-    padding: 12px 16px;
-    text-align: left;
-    font-size: 12px;
-    text-transform: uppercase;
-    color: #888;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    user-select: none;
-    white-space: nowrap;
-  }
-  th:hover { color: #a78bfa; }
-  th.sorted-asc::after { content: " ▲"; color: #7c5cfc; }
-  th.sorted-desc::after { content: " ▼"; color: #7c5cfc; }
-  td { padding: 10px 16px; border-top: 1px solid #2a2a4a; font-size: 14px; white-space: nowrap; }
-  tr:hover td { background: #ffffff08; }
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 3px 12px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-  }
-  .badge svg { width: 14px; height: 14px; }
-  .badge.mobile { background: #7c5cfc22; color: #a78bfa; border: 1px solid #7c5cfc33; }
-  .badge.desktop { background: #34d39922; color: #34d399; border: 1px solid #34d39933; }
-  .badge.unknown { background: #fbbf2422; color: #fbbf24; border: 1px solid #fbbf2433; }
-  .status { display: inline-flex; align-items: center; gap: 6px; }
-  .status-dot {
-    display: inline-block;
-    width: 8px; height: 8px;
-    border-radius: 50%;
-  }
-  .status-dot.online { background: #34d399; box-shadow: 0 0 8px #34d399, 0 0 16px #34d39944; animation: pulse 2s infinite; }
-  .status-dot.recent { background: #fbbf24; box-shadow: 0 0 6px #fbbf2444; }
-  .status-dot.offline { background: #555; }
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
-  .empty { text-align: center; padding: 40px; color: #666; }
-  .footer {
-    text-align: center;
-    padding: 16px;
-    color: #444;
-    font-size: 12px;
-    border-top: 1px solid #2a2a4a;
-  }
-  @media (max-width: 600px) {
-    .cards { grid-template-columns: repeat(2, 1fr); padding: 16px; }
-    .toolbar { padding: 0 16px 12px; }
-    .table-wrap { padding: 0 16px 16px; }
-    .header { padding: 16px; }
+  @media(max-width:480px){
+    .cards{grid-template-columns:repeat(2,1fr)}
+    .card{padding:14px}
+    .card .num{font-size:22px}
+    .header h1{font-size:18px}
+    .header-right{width:100%;justify-content:flex-end}
+    .toolbar select{font-size:12px;padding:8px 10px}
   }
 </style>
 </head>
@@ -701,6 +560,7 @@ function getPanelHTML() {
   </div>
 </div>
 
+<div class="content">
 <div class="cards" id="cards"></div>
 
 <div class="toolbar">
@@ -742,41 +602,42 @@ function getPanelHTML() {
   </table>
 </div>
 
-<div style="padding:0 30px 20px">
+<div class="section">
   <details>
-    <summary style="cursor:pointer;color:#34d399;font-size:14px;margin-bottom:12px;user-select:none;display:flex;align-items:center;gap:8px"><span class="icon green"><svg><use href="#i-server"></use></svg></span> Серверы</summary>
-    <div style="background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:16px">
+    <summary style="color:#34d399"><span class="icon green"><svg><use href="#i-server"></use></svg></span> Серверы</summary>
+    <div class="section-inner">
       <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
         <button class="btn refresh" onclick="loadServers()" id="pingBtn"><svg><use href="#i-refresh"></use></svg> Ping All</button>
-        <span id="pingStatus" style="font-size:12px;color:#666"></span>
+        <span id="pingStatus" style="font-size:12px;color:#64607a"></span>
       </div>
-      <div id="serversBox" style="display:flex;flex-wrap:wrap;gap:10px">
-        <span style="color:#666;font-size:13px">Нажмите Ping All</span>
+      <div id="serversBox" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">
+        <span style="color:#64607a;font-size:13px">Нажмите Ping All</span>
       </div>
     </div>
   </details>
 </div>
 
-<div style="padding:0 30px 20px">
+<div class="section">
   <details>
-    <summary style="cursor:pointer;color:#fbbf24;font-size:14px;margin-bottom:12px;user-select:none;display:flex;align-items:center;gap:8px"><span class="icon yellow"><svg><use href="#i-chart"></use></svg></span> Активность (14 дней)</summary>
-    <div style="background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:16px">
+    <summary style="color:#fbbf24"><span class="icon yellow"><svg><use href="#i-chart"></use></svg></span> Активность (14 дней)</summary>
+    <div class="section-inner">
       <canvas id="chartCanvas" width="800" height="200" style="width:100%;height:200px"></canvas>
     </div>
   </details>
 </div>
 
-<div style="padding:0 30px 20px">
+<div class="section">
   <details>
-    <summary style="cursor:pointer;color:#a78bfa;font-size:14px;margin-bottom:12px;user-select:none;display:flex;align-items:center;gap:8px"><span class="icon purple"><svg><use href="#i-edit"></use></svg></span> Редактор подписки</summary>
-    <div style="background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:16px">
-      <textarea id="subText" style="width:100%;min-height:200px;background:#0f0f1a;border:1px solid #2a2a4a;color:#e0e0e0;padding:12px;border-radius:8px;font-family:monospace;font-size:13px;resize:vertical" placeholder="Загрузка..."></textarea>
-      <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
+    <summary style="color:#a78bfa"><span class="icon purple"><svg><use href="#i-edit"></use></svg></span> Редактор подписки</summary>
+    <div class="section-inner">
+      <textarea id="subText" style="width:100%;min-height:200px;background:rgba(10,8,20,0.6);border:1px solid rgba(124,92,252,0.1);color:#e0e0e0;padding:12px;border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:13px;resize:vertical;font-family:inherit" placeholder="Загрузка..."></textarea>
+      <div style="margin-top:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
         <button class="btn refresh" onclick="saveSub()"><svg><use href="#i-save"></use></svg> Сохранить</button>
-        <span id="subStatus" style="font-size:13px;color:#666"></span>
+        <span id="subStatus" style="font-size:13px;color:#64607a"></span>
       </div>
     </div>
   </details>
+</div>
 </div>
 
 <div class="footer">PiskoVPN Admin Panel · <span id="totalFooter">0</span> устройств</div>
