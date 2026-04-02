@@ -98,7 +98,7 @@ async function apiData(req, res) {
     platforms: { mobile, desktop, unknown },
     builds,
     devices,
-    version: process.env.VPN_VERSION || "v0.1.5-X",
+    version: process.env.VPN_VERSION || "v0.1.6-X",
     updated: new Date().toISOString(),
   });
 }
@@ -208,7 +208,7 @@ async function apiServers(req, res) {
       seen.add(key);
       const name = decodeURIComponent(line.split("#").pop() || key);
       servers.push({ host, port: parseInt(port), name });
-    } catch {}
+    } catch { }
   }
 
   const net = await import("net");
