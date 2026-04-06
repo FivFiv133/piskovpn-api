@@ -66,40 +66,7 @@ export default async function handler(req, res) {
     const r = getRedis();
     const body = await getSubscriptionText(r);
 
-    // Парсим build из текста подписки (ищем # build: XX или # build-XX)
-    const buildMatch = body.match(/^#\s*build[:\-]\s*(.+)/im);
-    const build = buildMatch ? buildMatch[1].trim() : "unknown";
-
-    // Geo IP lookup (кешируем в Redis)
-    let geo = { country: "??", city: "" };
-    if (ip !== "unknown") {
-      const geoCache = await r.get(`geo:${ip}`);
-      if (geoCache) {
-        try { geo = JSON.parse(geoCache); } catch {}
-      } else {
-        try {
-          const geoResp = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,countryCode,city`, { signal: AbortSignal.timeout(2000) });
-          const geoData = await geoResp.json();
-          if (geoData.status === "success") {
-            geo = { country: geoData.countryCode || "??", city: geoData.city || "" };
-          }
-          await r.set(`geo:${ip}`, JSON.stringify(geo), "EX", 86400);
-        } catch {}
-      }
-    }
-
-    await r.hset("devices", deviceId, JSON.stringify({ ip, ua, platform, build, geo, lastSeen: Date.now() }));
-
-    // Daily stats — инкрементим счётчик уникальных устройств за сегодня
-    const today = new Date().toISOString().slice(0, 10);
-    await r.pfadd(`daily:${today}`, deviceId);
-    // TTL 30 дней
-    await r.expire(`daily:${today}`, 2592000);
-
-    const deviceCount = await r.hlen("devices");
-
-    console.log(`[SUB] ${new Date().toISOString()} | ${platform} | IP: ${ip} | Total: ${deviceCount}`);
-
+    // Отдаём подписку сразу, не дожидаясь остального
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
     res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN"');
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -107,8 +74,36 @@ export default async function handler(req, res) {
     res.setHeader("Expires", "0");
     res.setHeader("profile-update-interval", "5");
     res.status(200).send(body);
+
+    // Всё остальное — после отправки ответа (не блокирует клиента)
+    const buildMatch = body.match(/^#\s*build[:\-]\s*(.+)/im);
+    const build = buildMatch ? buildMatch[1].trim() : "unknown";
+
+    // Geo — берём только из кеша, если нет — ставим unknown, обновим в фоне
+    let geo = { country: "??", city: "" };
+    if (ip !== "unknown") {
+      const geoCache = await r.get(`geo:${ip}`);
+      if (geoCache) {
+        try { geo = JSON.parse(geoCache); } catch {}
+      } else {
+        // Fire-and-forget geo lookup
+        fetch(`http://ip-api.com/json/${ip}?fields=status,countryCode,city`, { signal: AbortSignal.timeout(2000) })
+          .then(resp => resp.json())
+          .then(data => {
+            if (data.status === "success") {
+              r.set(`geo:${ip}`, JSON.stringify({ country: data.countryCode || "??", city: data.city || "" }), "EX", 86400).catch(() => {});
+            }
+          }).catch(() => {});
+      }
+    }
+
+    await r.hset("devices", deviceId, JSON.stringify({ ip, ua, platform, build, geo, lastSeen: Date.now() }));
+
+    const today = new Date().toISOString().slice(0, 10);
+    await r.pfadd(`daily:${today}`, deviceId);
+    await r.expire(`daily:${today}`, 2592000);
   } catch (err) {
     console.error("[SUB] Error:", err.message);
-    res.status(500).send("Internal server error");
+    if (!res.headersSent) res.status(500).send("Internal server error");
   }
 }
