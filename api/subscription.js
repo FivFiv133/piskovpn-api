@@ -6,11 +6,11 @@ let redis;
 function getRedis() {
   if (!redis) {
     redis = new Redis(process.env.REDIS_URL, {
-      lazyConnect: true,
-      maxRetriesPerRequest: 3,
+      connectTimeout: 3000,
+      maxRetriesPerRequest: 1,
       retryStrategy(times) {
-        if (times > 3) return null;
-        return Math.min(times * 200, 2000);
+        if (times > 2) return null;
+        return Math.min(times * 200, 1000);
       },
     });
     redis.on("error", (err) => console.error("[REDIS] Connection error:", err.message));
@@ -57,35 +57,42 @@ export async function getSubscriptionText(r) {
 
 export default async function handler(req, res) {
   try {
-    const r = getRedis();
-
-    // Быстрый путь — отдаём из кеша мгновенно
-    const cached = await r.get("sub_cache");
     let body;
-    if (cached) {
-      body = cached;
-    } else {
+
+    // Пробуем быстрый путь через Redis-кеш
+    try {
+      const r = getRedis();
+      const cached = await Promise.race([
+        r.get("sub_cache"),
+        new Promise((_, rej) => setTimeout(() => rej(new Error("redis timeout")), 3000)),
+      ]);
+      if (cached) body = cached;
+    } catch (e) {
+      console.error("[SUB] Redis cache miss/timeout:", e.message);
+    }
+
+    // Если нет кеша — фетчим из GitHub
+    if (!body) {
       try {
-        const resp = await fetch(RAW_URL, { signal: AbortSignal.timeout(4000) });
-        if (resp.ok) {
-          body = await resp.text();
-          r.set("sub_cache", body, "EX", 60).catch(() => {});
+        const resp = await fetch(RAW_URL, { signal: AbortSignal.timeout(5000) });
+        if (resp.ok) body = await resp.text();
+      } catch {}
+    }
+
+    // Fallback — файл из бандла
+    if (!body) {
+      try {
+        const { readFileSync } = await import("fs");
+        const { dirname, join } = await import("path");
+        const { fileURLToPath } = await import("url");
+        const dir = dirname(fileURLToPath(import.meta.url));
+        for (const p of [join(dir, "..", "PiskoVPN.txt"), join(process.cwd(), "PiskoVPN.txt")]) {
+          try { body = readFileSync(p, "utf-8"); break; } catch {}
         }
       } catch {}
-      if (!body) {
-        // Fallback — файл из бандла
-        try {
-          const { readFileSync } = await import("fs");
-          const { dirname, join } = await import("path");
-          const { fileURLToPath } = await import("url");
-          const dir = dirname(fileURLToPath(import.meta.url));
-          for (const p of [join(dir, "..", "PiskoVPN.txt"), join(process.cwd(), "PiskoVPN.txt")]) {
-            try { body = readFileSync(p, "utf-8"); break; } catch {}
-          }
-        } catch {}
-      }
-      if (!body) return res.status(500).send("Subscription not found");
     }
+
+    if (!body) return res.status(500).send("Subscription not found");
 
     // Отдаём сразу
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
@@ -96,8 +103,12 @@ export default async function handler(req, res) {
     res.setHeader("profile-update-interval", "5");
     res.status(200).send(body);
 
-    // Аналитика — после ответа, fire-and-forget
+    // Аналитика — fire-and-forget
     try {
+      const r = getRedis();
+      // Обновляем кеш если его не было
+      r.set("sub_cache", body, "EX", 60).catch(() => {});
+
       const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
       const ua = req.headers["user-agent"] || "unknown";
       const hwid = req.headers["x-hwid"] || req.headers["hwid"] || null;
@@ -107,7 +118,7 @@ export default async function handler(req, res) {
       const build = buildMatch ? buildMatch[1].trim() : "unknown";
 
       let geo = { country: "??", city: "" };
-      const geoCache = ip !== "unknown" ? await r.get(`geo:${ip}`) : null;
+      const geoCache = ip !== "unknown" ? await r.get(`geo:${ip}`).catch(() => null) : null;
       if (geoCache) try { geo = JSON.parse(geoCache); } catch {}
 
       r.hset("devices", deviceId, JSON.stringify({ ip, ua, platform, build, geo, lastSeen: Date.now() })).catch(() => {});
