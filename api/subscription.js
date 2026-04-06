@@ -57,16 +57,37 @@ export async function getSubscriptionText(r) {
 
 export default async function handler(req, res) {
   try {
-    const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
-    const ua = req.headers["user-agent"] || "unknown";
-    const hwid = req.headers["x-hwid"] || req.headers["hwid"] || null;
-    const deviceId = hwid || `${ip}_${ua}`;
-    const platform = detectPlatform(ua);
-
     const r = getRedis();
-    const body = await getSubscriptionText(r);
 
-    // Отдаём подписку сразу, не дожидаясь остального
+    // Быстрый путь — отдаём из кеша мгновенно
+    const cached = await r.get("sub_cache");
+    let body;
+    if (cached) {
+      body = cached;
+    } else {
+      try {
+        const resp = await fetch(RAW_URL, { signal: AbortSignal.timeout(4000) });
+        if (resp.ok) {
+          body = await resp.text();
+          r.set("sub_cache", body, "EX", 60).catch(() => {});
+        }
+      } catch {}
+      if (!body) {
+        // Fallback — файл из бандла
+        try {
+          const { readFileSync } = await import("fs");
+          const { dirname, join } = await import("path");
+          const { fileURLToPath } = await import("url");
+          const dir = dirname(fileURLToPath(import.meta.url));
+          for (const p of [join(dir, "..", "PiskoVPN.txt"), join(process.cwd(), "PiskoVPN.txt")]) {
+            try { body = readFileSync(p, "utf-8"); break; } catch {}
+          }
+        } catch {}
+      }
+      if (!body) return res.status(500).send("Subscription not found");
+    }
+
+    // Отдаём сразу
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
     res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN"');
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -75,18 +96,26 @@ export default async function handler(req, res) {
     res.setHeader("profile-update-interval", "5");
     res.status(200).send(body);
 
-    // Всё остальное — после отправки ответа (не блокирует клиента)
-    const buildMatch = body.match(/^#\s*build[:\-]\s*(.+)/im);
-    const build = buildMatch ? buildMatch[1].trim() : "unknown";
+    // Аналитика — после ответа, fire-and-forget
+    try {
+      const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
+      const ua = req.headers["user-agent"] || "unknown";
+      const hwid = req.headers["x-hwid"] || req.headers["hwid"] || null;
+      const deviceId = hwid || `${ip}_${ua}`;
+      const platform = detectPlatform(ua);
+      const buildMatch = body.match(/^#\s*build[:\-]\s*(.+)/im);
+      const build = buildMatch ? buildMatch[1].trim() : "unknown";
 
-    // Geo — берём только из кеша, если нет — ставим unknown, обновим в фоне
-    let geo = { country: "??", city: "" };
-    if (ip !== "unknown") {
-      const geoCache = await r.get(`geo:${ip}`);
-      if (geoCache) {
-        try { geo = JSON.parse(geoCache); } catch {}
-      } else {
-        // Fire-and-forget geo lookup
+      let geo = { country: "??", city: "" };
+      const geoCache = ip !== "unknown" ? await r.get(`geo:${ip}`) : null;
+      if (geoCache) try { geo = JSON.parse(geoCache); } catch {}
+
+      r.hset("devices", deviceId, JSON.stringify({ ip, ua, platform, build, geo, lastSeen: Date.now() })).catch(() => {});
+      const today = new Date().toISOString().slice(0, 10);
+      r.pfadd(`daily:${today}`, deviceId).catch(() => {});
+      r.expire(`daily:${today}`, 2592000).catch(() => {});
+
+      if (ip !== "unknown" && !geoCache) {
         fetch(`http://ip-api.com/json/${ip}?fields=status,countryCode,city`, { signal: AbortSignal.timeout(2000) })
           .then(resp => resp.json())
           .then(data => {
@@ -95,13 +124,7 @@ export default async function handler(req, res) {
             }
           }).catch(() => {});
       }
-    }
-
-    await r.hset("devices", deviceId, JSON.stringify({ ip, ua, platform, build, geo, lastSeen: Date.now() }));
-
-    const today = new Date().toISOString().slice(0, 10);
-    await r.pfadd(`daily:${today}`, deviceId);
-    await r.expire(`daily:${today}`, 2592000);
+    } catch {}
   } catch (err) {
     console.error("[SUB] Error:", err.message);
     if (!res.headersSent) res.status(500).send("Internal server error");
