@@ -98,7 +98,7 @@ async function apiData(req, res) {
     platforms: { mobile, desktop, unknown },
     builds,
     devices,
-    version: process.env.VPN_VERSION || "v0.1.6-X",
+    version: process.env.VPN_VERSION || "v0.1.7-X",
     updated: new Date().toISOString(),
   });
 }
