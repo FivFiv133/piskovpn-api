@@ -64,10 +64,43 @@ async function apiData(req, res) {
   let mobile = 0, desktop = 0, unknown = 0, active24h = 0, active7d = 0;
   const builds = {};
 
+  // Собираем уникальные IP для batch geo lookup
+  const ips = new Set();
+  const parsed = [];
   for (const [id, raw] of Object.entries(allDevices)) {
     let info;
     try { info = JSON.parse(raw); } catch { info = { ip: "unknown", platform: "unknown", lastSeen: 0 }; }
+    parsed.push({ id, info });
+    if (info.ip && info.ip !== "unknown") ips.add(info.ip);
+  }
 
+  // Batch: подтягиваем geo из Redis-кеша для всех IP
+  const geoMap = {};
+  const geoKeys = [...ips].map(ip => `geo:${ip}`);
+  if (geoKeys.length) {
+    const geoValues = await r.mget(...geoKeys);
+    [...ips].forEach((ip, i) => {
+      if (geoValues[i]) {
+        try { geoMap[ip] = JSON.parse(geoValues[i]); } catch {}
+      }
+    });
+  }
+
+  // Запрашиваем geo для IP без кеша (до 10 за раз, чтобы не тормозить)
+  const uncachedIps = [...ips].filter(ip => !geoMap[ip]).slice(0, 10);
+  await Promise.all(uncachedIps.map(async (ip) => {
+    try {
+      const resp = await fetch(`http://ip-api.com/json/${ip}?fields=status,countryCode,city`, { signal: AbortSignal.timeout(2000) });
+      const data = await resp.json();
+      if (data.status === "success") {
+        const geo = { country: data.countryCode || "??", city: data.city || "" };
+        geoMap[ip] = geo;
+        r.set(`geo:${ip}`, JSON.stringify(geo), "EX", 86400).catch(() => {});
+      }
+    } catch {}
+  }));
+
+  for (const { id, info } of parsed) {
     const lastSeen = info.lastSeen || 0;
     const age = now - lastSeen;
     if (age < 86400000) active24h++;
@@ -85,7 +118,7 @@ async function apiData(req, res) {
       ua: info.ua || "unknown",
       platform: info.platform || "unknown",
       build,
-      geo: info.geo || { country: "??", city: "" },
+      geo: geoMap[info.ip] || info.geo || { country: "??", city: "" },
       lastSeen,
       lastSeenISO: lastSeen ? new Date(lastSeen).toISOString() : "never",
     });
