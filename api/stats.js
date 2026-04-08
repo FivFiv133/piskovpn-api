@@ -5,11 +5,11 @@ let redis;
 function getRedis() {
   if (!redis) {
     redis = new Redis(process.env.REDIS_URL, {
-      lazyConnect: true,
-      maxRetriesPerRequest: 3,
+      connectTimeout: 3000,
+      maxRetriesPerRequest: 1,
       retryStrategy(times) {
-        if (times > 3) return null;
-        return Math.min(times * 200, 2000);
+        if (times > 2) return null;
+        return Math.min(times * 200, 1000);
       },
     });
     redis.on("error", (err) => console.error("[REDIS] Connection error:", err.message));
@@ -86,19 +86,28 @@ async function apiData(req, res) {
     });
   }
 
-  // Запрашиваем geo для IP без кеша (до 10 за раз, чтобы не тормозить)
-  const uncachedIps = [...ips].filter(ip => !geoMap[ip]).slice(0, 10);
-  await Promise.all(uncachedIps.map(async (ip) => {
+  // Запрашиваем geo для IP без кеша (batch endpoint, до 30 за раз)
+  const uncachedIps = [...ips].filter(ip => !geoMap[ip]).slice(0, 30);
+  if (uncachedIps.length) {
     try {
-      const resp = await fetch(`http://ip-api.com/json/${ip}?fields=status,countryCode,city`, { signal: AbortSignal.timeout(2000) });
+      const resp = await fetch("http://ip-api.com/batch?fields=status,query,countryCode,city", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(uncachedIps),
+        signal: AbortSignal.timeout(3000),
+      });
       const data = await resp.json();
-      if (data.status === "success") {
-        const geo = { country: data.countryCode || "??", city: data.city || "" };
-        geoMap[ip] = geo;
-        r.set(`geo:${ip}`, JSON.stringify(geo), "EX", 86400).catch(() => {});
+      const pipeline = r.pipeline();
+      for (const item of data) {
+        if (item.status === "success" && item.query) {
+          const geo = { country: item.countryCode || "??", city: item.city || "" };
+          geoMap[item.query] = geo;
+          pipeline.set(`geo:${item.query}`, JSON.stringify(geo), "EX", 86400);
+        }
       }
+      await pipeline.exec();
     } catch {}
-  }));
+  }
 
   for (const { id, info } of parsed) {
     const lastSeen = info.lastSeen || 0;
@@ -151,16 +160,18 @@ async function apiPurge(req, res) {
   const r = getRedis();
   const all = await r.hgetall("devices");
   const cutoff = Date.now() - days * 86400000;
-  let removed = 0;
+  const toRemove = [];
   for (const [id, raw] of Object.entries(all)) {
     let info;
     try { info = JSON.parse(raw); } catch { continue; }
-    if ((info.lastSeen || 0) < cutoff) {
-      await r.hdel("devices", id);
-      removed++;
-    }
+    if ((info.lastSeen || 0) < cutoff) toRemove.push(id);
   }
-  return res.status(200).json({ removed });
+  if (toRemove.length) {
+    const pipeline = r.pipeline();
+    toRemove.forEach(id => pipeline.hdel("devices", id));
+    await pipeline.exec();
+  }
+  return res.status(200).json({ removed: toRemove.length });
 }
 
 // API: получить текст подписки из GitHub raw
@@ -175,6 +186,7 @@ async function apiGetSub(req, res) {
 async function apiUpdateSub(req, res) {
   const { text } = req.body || {};
   if (typeof text !== "string") return res.status(400).json({ error: "text required" });
+  if (text.length > 500000) return res.status(400).json({ error: "text too large (max 500KB)" });
   const r = getRedis();
 
   // Сбрасываем кеш и сразу записываем свежий текст
@@ -244,6 +256,9 @@ async function apiServers(req, res) {
     } catch { }
   }
 
+  // Лимит чтобы не таймаутить на Vercel
+  const limited = servers.slice(0, 15);
+
   const net = await import("net");
   const tls = await import("tls");
 
@@ -273,7 +288,7 @@ async function apiServers(req, res) {
     });
   }
 
-  const results = await Promise.all(servers.map(async (s) => {
+  const results = await Promise.all(limited.map(async (s) => {
     try {
       // TLS connect — самый надёжный способ проверить vless/reality сервер
       const r = await tlsPing(s.host, s.port);
@@ -292,13 +307,16 @@ async function apiServers(req, res) {
 // API: график активности за 14 дней
 async function apiChart(req, res) {
   const r = getRedis();
-  const days = [];
+  const pipeline = r.pipeline();
+  const keys = [];
   for (let i = 13; i >= 0; i--) {
     const d = new Date(Date.now() - i * 86400000);
     const key = d.toISOString().slice(0, 10);
-    const count = await r.pfcount(`daily:${key}`);
-    days.push({ date: key, count });
+    keys.push(key);
+    pipeline.pfcount(`daily:${key}`);
   }
+  const results = await pipeline.exec();
+  const days = keys.map((date, i) => ({ date, count: results[i]?.[1] || 0 }));
   return res.status(200).json({ days });
 }
 
@@ -313,7 +331,7 @@ export default async function handler(req, res) {
       const { user, pass } = req.body || {};
       if (user === ADMIN_USER && pass === ADMIN_PASS) {
         const token = makeToken(user);
-        res.setHeader("Set-Cookie", `auth_token=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Strict; Max-Age=86400`);
+        res.setHeader("Set-Cookie", `auth_token=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=86400`);
         return res.status(200).json({ ok: true });
       }
       return res.status(401).json({ error: "Неверный логин или пароль" });
@@ -321,7 +339,7 @@ export default async function handler(req, res) {
 
     // Логаут — не требует авторизации
     if (action === "logout") {
-      res.setHeader("Set-Cookie", "auth_token=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0");
+      res.setHeader("Set-Cookie", "auth_token=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0");
       res.setHeader("Content-Type", "text/html; charset=utf-8");
       return res.status(200).send('<meta http-equiv="refresh" content="0;url=/stats">');
     }
@@ -587,6 +605,9 @@ function getPanelHTML() {
   <div class="header-right">
     <span class="version" id="ver">...</span>
     <span style="color:#666;font-size:12px" id="updated"></span>
+    <a href="/health" style="background:none;border:1px solid #34d39933;color:#34d399;padding:7px 16px;border-radius:10px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:6px;text-decoration:none" onmouseover="this.style.background='#34d39912';this.style.borderColor='#34d399'" onmouseout="this.style.background='none';this.style.borderColor='#34d39933'">
+      <svg style="width:16px;height:16px"><use href="#i-activity"></use></svg> Health
+    </a>
     <button class="btn-logout" onclick="location.href='/stats?action=logout'">
       <svg style="width:16px;height:16px"><use href="#i-logout"></use></svg> Выйти
     </button>
