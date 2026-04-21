@@ -97,8 +97,8 @@ export default async function handler(req, res) {
     // Отдаём сразу — с CDN кешем на 30 сек
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
     res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN"');
-    res.setHeader("Cache-Control", "public, s-maxage=30, stale-while-revalidate=60");
-    res.setHeader("CDN-Cache-Control", "public, s-maxage=30, stale-while-revalidate=60");
+    res.setHeader("Cache-Control", "public, s-maxage=10, stale-while-revalidate=30");
+    res.setHeader("CDN-Cache-Control", "public, s-maxage=10, stale-while-revalidate=30");
     res.setHeader("Pragma", "no-cache");
     res.setHeader("profile-update-interval", "5");
     res.status(200).send(body);

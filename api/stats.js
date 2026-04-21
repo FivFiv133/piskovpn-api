@@ -140,7 +140,7 @@ async function apiData(req, res) {
     platforms: { mobile, desktop, unknown },
     builds,
     devices,
-    version: process.env.VPN_VERSION || "v0.1.7-X",
+    version: process.env.VPN_VERSION || "v0.1.8-X",
     updated: new Date().toISOString(),
   });
 }
@@ -190,7 +190,7 @@ async function apiUpdateSub(req, res) {
   const r = getRedis();
 
   // Сбрасываем кеш и сразу записываем свежий текст
-  await r.set("sub_cache", text, "EX", 300);
+  await r.set("sub_cache", text, "EX", 600);
 
   // Пушим в GitHub если есть токен
   let github = null;
