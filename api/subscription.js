@@ -20,7 +20,14 @@ function getRedis() {
 
 function detectPlatform(ua) {
   const lower = ua.toLowerCase();
-  if (lower.includes("android") || lower.includes("iphone") || lower.includes("ipad") || lower.includes("mobile")) return "mobile";
+  // Happ: Happ/4.10.2/ios/..., Happ/.../android/...
+  const happ = lower.match(/^happ\/[^/]+\/(ios|android|ipados|windows|macos|mac|linux)\//);
+  if (happ) {
+    if (happ[1] === "ios" || happ[1] === "android" || happ[1] === "ipados") return "mobile";
+    return "desktop";
+  }
+  if (lower.includes("android") || lower.includes("iphone") || lower.includes("ipad") || lower.includes("ipod") || lower.includes("mobile")) return "mobile";
+  if (lower.includes("/ios/") || lower.includes("/ipados/")) return "mobile";
   if (lower.includes("windows") || lower.includes("macintosh") || lower.includes("linux") || lower.includes("desktop")) return "desktop";
   return "unknown";
 }
