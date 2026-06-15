@@ -1,5 +1,6 @@
 import Redis from "ioredis";
 import crypto from "crypto";
+import { detectPlatform, parseClient, parseBuildFromSub } from "./device-utils.js";
 
 let redis;
 function getRedis() {
@@ -60,9 +61,17 @@ async function apiData(req, res) {
   const allDevices = await r.hgetall("devices");
   const now = Date.now();
 
+  let currentBuild = "unknown";
+  try {
+    const { getSubscriptionText } = await import("./subscription.js");
+    currentBuild = parseBuildFromSub(await getSubscriptionText(r));
+  } catch {}
+
   const devices = [];
-  let mobile = 0, desktop = 0, unknown = 0, active24h = 0, active7d = 0;
+  let mobile = 0, desktop = 0, unknown = 0, active24h = 0, active7d = 0, outdatedCount = 0;
   const builds = {};
+  const countries = {};
+  const ipCounts = {};
 
   // Собираем уникальные IP для batch geo lookup
   const ips = new Set();
@@ -71,7 +80,10 @@ async function apiData(req, res) {
     let info;
     try { info = JSON.parse(raw); } catch { info = { ip: "unknown", platform: "unknown", lastSeen: 0 }; }
     parsed.push({ id, info });
-    if (info.ip && info.ip !== "unknown") ips.add(info.ip);
+    if (info.ip && info.ip !== "unknown") {
+      ips.add(info.ip);
+      ipCounts[info.ip] = (ipCounts[info.ip] || 0) + 1;
+    }
   }
 
   // Batch: подтягиваем geo из Redis-кеша для всех IP
@@ -120,14 +132,27 @@ async function apiData(req, res) {
 
     const build = info.build || "unknown";
     builds[build] = (builds[build] || 0) + 1;
+    const outdated = currentBuild !== "unknown" && build !== "unknown" && build !== currentBuild;
+    if (outdated) outdatedCount++;
+
+    const ua = info.ua || "unknown";
+    const client = info.client?.label ? info.client : parseClient(ua);
+    const geo = geoMap[info.ip] || info.geo || { country: "??", city: "" };
+    const country = geo.country || "??";
+    countries[country] = (countries[country] || 0) + 1;
+    const ip = info.ip || "unknown";
+    const ipCount = ip !== "unknown" ? (ipCounts[ip] || 1) : 1;
 
     devices.push({
       id,
-      ip: info.ip || "unknown",
-      ua: info.ua || "unknown",
+      ip,
+      ua,
+      client,
       platform: info.platform || "unknown",
       build,
-      geo: geoMap[info.ip] || info.geo || { country: "??", city: "" },
+      outdated,
+      ipCount,
+      geo,
       lastSeen,
       lastSeenISO: lastSeen ? new Date(lastSeen).toISOString() : "never",
     });
@@ -135,14 +160,51 @@ async function apiData(req, res) {
 
   devices.sort((a, b) => b.lastSeen - a.lastSeen);
 
+  const topCountries = Object.entries(countries)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 12)
+    .map(([code, count]) => ({ code, count }));
+
   return res.status(200).json({
     total: devices.length, active24h, active7d,
     platforms: { mobile, desktop, unknown },
     builds,
+    currentBuild,
+    outdatedCount,
+    topCountries,
     devices,
     version: process.env.VPN_VERSION || "v0.1.9-X",
     updated: new Date().toISOString(),
   });
+}
+
+// API: пересчитать platform/client по UA для всех устройств
+async function apiRecalculate(req, res) {
+  const r = getRedis();
+  const all = await r.hgetall("devices");
+  let updated = 0;
+  const pipeline = r.pipeline();
+
+  for (const [id, raw] of Object.entries(all)) {
+    let info;
+    try { info = JSON.parse(raw); } catch { continue; }
+    const ua = info.ua || "unknown";
+    const platform = detectPlatform(ua);
+    const client = parseClient(ua);
+    const needsUpdate = info.platform !== platform
+      || !info.client?.label
+      || info.client.label !== client.label
+      || info.client.name !== client.name;
+    if (needsUpdate) {
+      info.platform = platform;
+      info.client = client;
+      pipeline.hset("devices", id, JSON.stringify(info));
+      updated++;
+    }
+  }
+
+  if (updated) await pipeline.exec();
+  return res.status(200).json({ ok: true, updated });
 }
 
 // API: удалить устройство
@@ -352,6 +414,7 @@ export default async function handler(req, res) {
     }
 
     if (action === "data") return await apiData(req, res);
+    if (action === "recalculate" && req.method === "POST") return await apiRecalculate(req, res);
     if (action === "delete" && req.method === "POST") return await apiDeleteDevice(req, res);
     if (action === "purge") return await apiPurge(req, res);
     if (action === "getSub") return await apiGetSub(req, res);
@@ -509,6 +572,15 @@ function getPanelHTML() {
   .badge.mobile{background:#7c5cfc15;color:#a78bfa;border:1px solid #7c5cfc22}
   .badge.desktop{background:#34d39915;color:#34d399;border:1px solid #34d39922}
   .badge.unknown{background:#fbbf2415;color:#fbbf24;border:1px solid #fbbf2422}
+  .badge.client{background:#60a5fa15;color:#93c5fd;border:1px solid #60a5fa22}
+  .badge.outdated{background:#f8717115;color:#f87171;border:1px solid #f8717133}
+  .badge.ip-shared{background:#7c5cfc15;color:#c4b5fd;border:1px solid #7c5cfc33;font-size:11px;padding:2px 8px;margin-left:6px}
+  .card.red .num{color:#f87171}
+  .countries-bar{padding:0 30px 8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .countries-bar .title{font-size:12px;color:#64607a;font-weight:600;margin-right:4px}
+  .country-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(20,18,35,0.5);border:1px solid rgba(124,92,252,0.1);border-radius:10px;padding:6px 12px;font-size:12px}
+  .country-chip .code{color:#a78bfa;font-weight:700}
+  .country-chip .cnt{color:#888}
   .status{display:inline-flex;align-items:center;gap:6px}
   .status-dot{display:inline-block;width:8px;height:8px;border-radius:50%}
   .status-dot.online{background:#34d399;box-shadow:0 0 8px #34d399,0 0 16px #34d39944;animation:pulse 2s infinite}
@@ -527,6 +599,7 @@ function getPanelHTML() {
     .table-wrap{padding:0 16px 16px}
     .header{padding:16px}
     .section{padding:0 16px 16px}
+    .countries-bar{padding:0 16px 8px}
   }
   @media(max-width:480px){
     .cards{grid-template-columns:repeat(2,1fr)}
@@ -616,11 +689,12 @@ function getPanelHTML() {
 
 <div class="content">
 <div class="cards" id="cards"></div>
+<div class="countries-bar" id="countriesBar" style="display:none"></div>
 
 <div class="toolbar">
   <div class="search-wrap">
     <span class="icon"><svg><use href="#i-search"></use></svg></span>
-    <input type="text" id="search" placeholder="Поиск по IP, платформе, User-Agent…">
+    <input type="text" id="search" placeholder="Поиск по IP, клиенту, User-Agent…">
   </div>
   <select id="filterPlatform">
     <option value="">Все платформы</option>
@@ -633,8 +707,11 @@ function getPanelHTML() {
     <option value="online">Online (5 мин)</option>
     <option value="recent">Недавно (24ч)</option>
     <option value="offline">Offline</option>
+    <option value="outdated">Устаревший build</option>
+    <option value="sharedip">Общий IP (2+)</option>
   </select>
   <button class="btn refresh" onclick="loadData()"><svg><use href="#i-refresh"></use></svg> Обновить</button>
+  <button class="btn refresh" onclick="recalculatePlatforms()"><svg><use href="#i-refresh"></use></svg> Пересчитать</button>
   <button class="btn danger" onclick="purgeOld()"><svg><use href="#i-trash"></use></svg> Очистить 30д+</button>
 </div>
 
@@ -646,6 +723,7 @@ function getPanelHTML() {
         <th data-col="ip">IP</th>
         <th data-col="geo">Гео</th>
         <th data-col="platform">Платформа</th>
+        <th data-col="client">Клиент</th>
         <th data-col="ua">User-Agent</th>
         <th data-col="lastSeen">Последний визит</th>
         <th data-col="build">Build</th>
@@ -710,6 +788,7 @@ const IC = {
 };
 
 let allDevices = [];
+let dashboardMeta = { currentBuild: "unknown", outdatedCount: 0, topCountries: [] };
 let sortCol = "lastSeen", sortDir = "desc";
 
 async function loadData() {
@@ -718,28 +797,50 @@ async function loadData() {
     if (r.status === 401 || r.redirected) { location.href = "/stats"; return; }
     const d = await r.json();
     allDevices = d.devices || [];
+    dashboardMeta = {
+      currentBuild: d.currentBuild || "unknown",
+      outdatedCount: d.outdatedCount || 0,
+      topCountries: d.topCountries || [],
+    };
     document.getElementById("ver").textContent = d.version;
     document.getElementById("updated").textContent = "Обновлено: " + new Date(d.updated).toLocaleString("ru");
     renderCards(d);
+    renderCountries(d);
     renderTable();
   } catch(e) { console.error(e); }
+}
+
+function renderCountries(d) {
+  const bar = document.getElementById("countriesBar");
+  const list = d.topCountries || [];
+  if (!list.length) { bar.style.display = "none"; return; }
+  bar.style.display = "flex";
+  bar.innerHTML = '<span class="title"><span class="icon green" style="margin:0"><svg><use href="#i-globe"></use></svg></span> Топ стран:</span>' +
+    list.map(c => \`<span class="country-chip"><span class="code">\${esc(c.code)}</span><span class="cnt">×\${c.count}</span></span>\`).join("");
 }
 
 function renderCards(d) {
   let buildsHtml = "";
   if (d.builds) {
     const entries = Object.entries(d.builds).sort((a,b) => b[1] - a[1]);
-    buildsHtml = entries.map(([b,c]) => '<span class="icon icon-lg yellow"><svg><use href="#i-tag"></use></svg></span>').join("") ? 
-      entries.map(([b,c]) => \`<div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#ccc"><span style="color:#a78bfa;font-weight:600">\${esc(b)}</span><span style="color:#666">×\${c}</span></div>\`).join("") : "";
+    const current = d.currentBuild || "unknown";
+    buildsHtml = entries.map(([b,c]) => {
+      const stale = current !== "unknown" && b !== "unknown" && b !== current;
+      return \`<div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#ccc"><span style="color:\${stale ? '#f87171' : '#a78bfa'};font-weight:600">\${esc(b)}</span><span style="color:#666">×\${c}</span>\${stale ? '<span class="badge outdated">устарел</span>' : ''}</div>\`;
+    }).join("");
   }
+  const outdatedCard = (d.outdatedCount || 0) > 0
+    ? cardH('<span class="icon icon-lg" style="background:#f8717115;color:#f87171"><svg><use href="#i-tag"></use></svg></span>', d.outdatedCount, "Устаревший build", "red")
+    : "";
   document.getElementById("cards").innerHTML = [
     cardH(IC.users, d.total, "Всего устройств", "purple"),
     cardH(IC.activity, d.active24h, "Активных за 24ч", "green"),
     cardH(IC.calendar, d.active7d, "Активных за 7д", "yellow"),
+    outdatedCard,
     cardH(IC.phoneLg, d.platforms?.mobile || 0, "Mobile", ""),
     cardH(IC.monitorLg, d.platforms?.desktop || 0, "Desktop", ""),
     cardH(IC.helpLg, d.platforms?.unknown || 0, "Unknown", ""),
-  ].join("") + (buildsHtml ? \`<div class="card" style="display:flex;flex-direction:column;align-items:center"><div class="card-icon"><span class="icon icon-lg yellow"><svg><use href="#i-tag"></use></svg></span></div><div style="flex:1;display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;align-items:center;width:100%">\${buildsHtml}</div><div class="label">Версии</div></div>\` : "");
+  ].filter(Boolean).join("") + (buildsHtml ? \`<div class="card" style="display:flex;flex-direction:column;align-items:center"><div class="card-icon"><span class="icon icon-lg yellow"><svg><use href="#i-tag"></use></svg></span></div><div style="flex:1;display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;align-items:center;width:100%">\${buildsHtml}</div><div class="label">Версии · актуальный: \${esc(d.currentBuild || '?')}</div></div>\` : "");
 }
 
 function cardH(icon, num, label, cls) {
@@ -769,21 +870,42 @@ function platformBadge(p) {
   return \`<span class="badge unknown">\${IC.help} unknown</span>\`;
 }
 
+function clientBadge(d) {
+  const label = d.client?.label || "Unknown";
+  return \`<span class="badge client" title="\${esc(d.ua)}">\${esc(label)}</span>\`;
+}
+
 function renderTable() {
   const search = document.getElementById("search").value.toLowerCase();
   const fp = document.getElementById("filterPlatform").value;
   const fs = document.getElementById("filterStatus").value;
 
   let filtered = allDevices.filter(d => {
-    if (search && !((d.ip+d.ua+d.platform).toLowerCase().includes(search))) return false;
+    const clientLabel = d.client?.label || "";
+    if (search && !((d.ip + clientLabel + d.ua + d.platform).toLowerCase().includes(search))) return false;
     if (fp && d.platform !== fp) return false;
-    if (fs && getStatus(d.lastSeen) !== fs) return false;
+    if (fs === "outdated" && !d.outdated) return false;
+    if (fs === "sharedip" && (d.ipCount || 1) < 2) return false;
+    if (fs && fs !== "outdated" && fs !== "sharedip" && getStatus(d.lastSeen) !== fs) return false;
     return true;
   });
 
   filtered.sort((a, b) => {
-    let va = a[sortCol], vb = b[sortCol];
-    if (typeof va === "string") { va = va.toLowerCase(); vb = (vb||"").toLowerCase(); }
+    let va, vb;
+    if (sortCol === "client") {
+      va = (a.client?.label || "").toLowerCase();
+      vb = (b.client?.label || "").toLowerCase();
+    } else if (sortCol === "status") {
+      va = getStatus(a.lastSeen);
+      vb = getStatus(b.lastSeen);
+    } else if (sortCol === "geo") {
+      va = (a.geo?.country || "").toLowerCase();
+      vb = (b.geo?.country || "").toLowerCase();
+    } else {
+      va = a[sortCol];
+      vb = b[sortCol];
+      if (typeof va === "string") { va = va.toLowerCase(); vb = (vb || "").toLowerCase(); }
+    }
     if (va < vb) return sortDir === "asc" ? -1 : 1;
     if (va > vb) return sortDir === "asc" ? 1 : -1;
     return 0;
@@ -796,21 +918,24 @@ function renderTable() {
 
   const tbody = document.getElementById("tbody");
   if (!filtered.length) {
-    tbody.innerHTML = '<tr><td colspan="8" class="empty">Нет устройств</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" class="empty">Нет устройств</td></tr>';
   } else {
     tbody.innerHTML = filtered.map(d => {
       const st = getStatus(d.lastSeen);
       const stLabel = st === "online" ? "Online" : st === "recent" ? "Недавно" : "Offline";
-      const uaShort = d.ua.length > 60 ? d.ua.substring(0,60) + "…" : d.ua;
+      const uaShort = d.ua.length > 40 ? d.ua.substring(0,40) + "…" : d.ua;
       const idEnc = btoa(d.id);
+      const ipBadge = (d.ipCount || 1) > 1 ? \`<span class="badge ip-shared" title="Устройств с этим IP">\${d.ipCount}</span>\` : "";
+      const buildStyle = d.outdated ? "color:#f87171" : (d.build === 'unknown' ? '#666' : '#a78bfa');
       return \`<tr id="row-\${idEnc}">
         <td><span class="status"><span class="status-dot \${st}"></span>\${stLabel}</span></td>
-        <td>\${esc(d.ip)}</td>
+        <td>\${esc(d.ip)}\${ipBadge}</td>
         <td style="font-size:12px" title="\${esc(d.geo?.city || '')}">\${esc(d.geo?.country || '??')}\${d.geo?.city ? ' ' + esc(d.geo.city) : ''}</td>
         <td>\${platformBadge(d.platform)}</td>
-        <td title="\${esc(d.ua)}">\${esc(uaShort)}</td>
+        <td>\${clientBadge(d)}</td>
+        <td style="font-size:11px;color:#888" title="\${esc(d.ua)}">\${esc(uaShort)}</td>
         <td>\${timeAgo(d.lastSeen)}</td>
-        <td><span style="color:\${d.build === 'unknown' ? '#666' : '#a78bfa'};font-size:12px;font-weight:600">\${esc(d.build)}</span></td>
+        <td><span style="color:\${buildStyle};font-size:12px;font-weight:600">\${esc(d.build)}\${d.outdated ? ' <span class="badge outdated">!</span>' : ''}</span></td>
         <td><button class="btn del-row" onclick="deleteDevice('\${idEnc}')"><svg><use href="#i-x"></use></svg></button></td>
       </tr>\`;
     }).join("");
@@ -839,6 +964,18 @@ async function purgeOld() {
   const d = await r.json();
   alert("Удалено: " + d.removed);
   loadData();
+}
+
+async function recalculatePlatforms() {
+  if (!confirm("Пересчитать platform и client для всех устройств в Redis?")) return;
+  try {
+    const r = await fetch("/stats?action=recalculate", { method: "POST" });
+    const d = await r.json();
+    if (d.ok) {
+      alert("Обновлено записей: " + (d.updated || 0));
+      loadData();
+    } else alert("Ошибка");
+  } catch(e) { alert("Ошибка: " + e.message); }
 }
 
 async function deleteDevice(idEnc) {

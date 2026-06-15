@@ -1,4 +1,5 @@
 import Redis from "ioredis";
+import { detectPlatform, parseClient } from "./device-utils.js";
 
 const RAW_URL = process.env.RAW_SUB_URL || "https://raw.githubusercontent.com/FivFiv133/piskovpn-api/refs/heads/main/PiskoVPN.txt";
 
@@ -16,20 +17,6 @@ function getRedis() {
     redis.on("error", (err) => console.error("[REDIS] Connection error:", err.message));
   }
   return redis;
-}
-
-function detectPlatform(ua) {
-  const lower = ua.toLowerCase();
-  // Happ: Happ/4.10.2/ios/..., Happ/.../android/...
-  const happ = lower.match(/^happ\/[^/]+\/(ios|android|ipados|windows|macos|mac|linux)\//);
-  if (happ) {
-    if (happ[1] === "ios" || happ[1] === "android" || happ[1] === "ipados") return "mobile";
-    return "desktop";
-  }
-  if (lower.includes("android") || lower.includes("iphone") || lower.includes("ipad") || lower.includes("ipod") || lower.includes("mobile")) return "mobile";
-  if (lower.includes("/ios/") || lower.includes("/ipados/")) return "mobile";
-  if (lower.includes("windows") || lower.includes("macintosh") || lower.includes("linux") || lower.includes("desktop")) return "desktop";
-  return "unknown";
 }
 
 // Фетчим подписку из GitHub raw, кешируем в Redis на 60 сек
@@ -121,14 +108,15 @@ export default async function handler(req, res) {
       const hwid = req.headers["x-hwid"] || req.headers["hwid"] || null;
       const deviceId = hwid || `${ip}_${ua}`;
       const platform = detectPlatform(ua);
-      const buildMatch = body.match(/^#\s*build[:\-]\s*(.+)/im);
+      const client = parseClient(ua);
+      const buildMatch = body.match(/^#\s*(build-\S+)/im) || body.match(/^#\s*build[:\-]\s*(.+)/im);
       const build = buildMatch ? buildMatch[1].trim() : "unknown";
 
       let geo = { country: "??", city: "" };
       const geoCache = ip !== "unknown" ? await r.get(`geo:${ip}`).catch(() => null) : null;
       if (geoCache) try { geo = JSON.parse(geoCache); } catch {}
 
-      r.hset("devices", deviceId, JSON.stringify({ ip, ua, platform, build, geo, lastSeen: Date.now() })).catch(() => {});
+      r.hset("devices", deviceId, JSON.stringify({ ip, ua, platform, client, build, geo, lastSeen: Date.now() })).catch(() => {});
       const today = new Date().toISOString().slice(0, 10);
       r.pfadd(`daily:${today}`, deviceId).catch(() => {});
       r.expire(`daily:${today}`, 2592000).catch(() => {});
