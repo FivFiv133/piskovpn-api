@@ -1,6 +1,6 @@
 import Redis from "ioredis";
 import crypto from "crypto";
-import { detectPlatform, parseClient, parseBuildFromSub } from "./device-utils.js";
+import { detectPlatform, parseClient, parseBuildFromSub, normalizeBuild } from "./device-utils.js";
 
 let redis;
 function getRedis() {
@@ -130,7 +130,7 @@ async function apiData(req, res) {
     else if (info.platform === "desktop") desktop++;
     else unknown++;
 
-    const build = info.build || "unknown";
+    const build = normalizeBuild(info.build || "unknown");
     builds[build] = (builds[build] || 0) + 1;
     const outdated = currentBuild !== "unknown" && build !== "unknown" && build !== currentBuild;
     if (outdated) outdatedCount++;

@@ -1,5 +1,5 @@
 import Redis from "ioredis";
-import { detectPlatform, parseClient } from "./device-utils.js";
+import { detectPlatform, parseClient, normalizeBuild } from "./device-utils.js";
 
 const RAW_URL = process.env.RAW_SUB_URL || "https://raw.githubusercontent.com/FivFiv133/piskovpn-api/refs/heads/main/PiskoVPN.txt";
 
@@ -110,7 +110,7 @@ export default async function handler(req, res) {
       const platform = detectPlatform(ua);
       const client = parseClient(ua);
       const buildMatch = body.match(/^#\s*(build-\S+)/im) || body.match(/^#\s*build[:\-]\s*(.+)/im);
-      const build = buildMatch ? buildMatch[1].trim() : "unknown";
+      const build = buildMatch ? normalizeBuild(buildMatch[1].trim()) : "unknown";
 
       let geo = { country: "??", city: "" };
       const geoCache = ip !== "unknown" ? await r.get(`geo:${ip}`).catch(() => null) : null;

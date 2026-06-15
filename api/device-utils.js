@@ -52,12 +52,19 @@ export function parseClient(ua) {
   return { name: "Other", os: "", version: "", label: short };
 }
 
+export function normalizeBuild(raw) {
+  if (!raw || raw === "unknown") return "unknown";
+  const s = String(raw).trim();
+  const m = s.match(/^build-(.+)$/i);
+  return m ? m[1] : s;
+}
+
 export function parseBuildFromSub(text) {
   const direct = text.match(/^#\s*(build-\S+)/im);
-  if (direct) return direct[1].trim();
+  if (direct) return normalizeBuild(direct[1]);
   const legacy = text.match(/^#\s*build[:\-]\s*(\S+)/im);
-  if (legacy) return legacy[1].trim();
+  if (legacy) return normalizeBuild(legacy[1]);
   const announce = text.match(/announce:.*?\|\s*(build-\S+)/i);
-  if (announce) return announce[1].trim();
+  if (announce) return normalizeBuild(announce[1]);
   return "unknown";
 }
