@@ -79,7 +79,6 @@ async function resolveSubscriptionBody() {
   return bundled;
 }
 
-// Фетчим подписку — для админки (может подождать дольше)
 export async function getSubscriptionText(r) {
   const cached = await r.get("sub_cache").catch(() => null);
   if (cached) return cached;
@@ -105,14 +104,22 @@ async function recordVisit(req, body) {
   const r = getRedis();
   if (!(await ensureRedisReady(r))) return;
 
+  // Безопасно извлекаем параметры из URL запроса для идентификации
+  const url = new URL(req.url, `http://${req.headers.host}`);
+  const token = url.searchParams.get("token") || url.searchParams.get("id") || url.searchParams.get("user");
+
   const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
   const ua = req.headers["user-agent"] || "unknown";
   const hwid = req.headers["x-hwid"] || req.headers["hwid"] || null;
-  const deviceId = hwid || `${ip}_${ua}`;
+  const lang = req.headers["accept-language"]?.split(",")[0]?.trim() || ""; // Доп. соль против NAT коллизий
+  
   const platform = detectPlatform(ua);
   const client = parseClient(ua);
   const buildMatch = body.match(/^#\s*(build-\S+)/im) || body.match(/^#\s*build[:\-]\s*(.+)/im);
   const build = buildMatch ? normalizeBuild(buildMatch[1].trim()) : "unknown";
+
+  // ЖЕЛЕЗНАЯ ИЗОЛЯЦИЯ: приоритет HWID -> уникальный Токен пользователя -> Fallback с солью языка, чтобы снизить коллизии на общем IP
+  const deviceId = hwid || (token ? `usr_${token}_${platform}` : `${ip}_${lang}_${ua.replace(/\s+/g, '')}`);
 
   let geo = { country: "??", city: "" };
   if (ip !== "unknown") {
@@ -120,7 +127,18 @@ async function recordVisit(req, body) {
     if (geoCache) try { geo = JSON.parse(geoCache); } catch {}
   }
 
-  const payload = JSON.stringify({ ip, ua, platform, client, build, geo, lastSeen: Date.now() });
+  // Сохраняем токен внутрь объекта устройства, чтобы вывести его в админке
+  const payload = JSON.stringify({ 
+    ip, 
+    ua, 
+    platform, 
+    client, 
+    build, 
+    geo, 
+    token: token || "global", 
+    lastSeen: Date.now() 
+  });
+  
   const today = new Date().toISOString().slice(0, 10);
 
   await Promise.all([
@@ -146,7 +164,6 @@ export default async function handler(req, res) {
     const body = await resolveSubscriptionBody();
     if (!body) return res.status(500).send("Subscription not found");
 
-    // Статистика до ответа — на Vercel фон после res.send() не успевает выполниться
     try {
       await Promise.race([
         recordVisit(req, body),
