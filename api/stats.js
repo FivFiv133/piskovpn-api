@@ -153,6 +153,7 @@ async function apiData(req, res) {
       outdated,
       ipCount,
       geo,
+      token: info.token || "",
       lastSeen,
       lastSeenISO: lastSeen ? new Date(lastSeen).toISOString() : "never",
     });
@@ -926,13 +927,14 @@ function renderTable() {
       const uaShort = d.ua.length > 40 ? d.ua.substring(0,40) + "…" : d.ua;
       const idEnc = btoa(d.id);
       const ipBadge = (d.ipCount || 1) > 1 ? \`<span class="badge ip-shared" title="Устройств с этим IP">\${d.ipCount}</span>\` : "";
-      const buildStyle = d.outdated ? "color:#f87171" : (d.build === 'unknown' ? '#666' : '#a78bfa');
-      return \`<tr id="row-\${idEnc}">
-        <td><span class="status"><span class="status-dot \${st}"></span>\${stLabel}</span></td>
-        <td>\${esc(d.ip)}\${ipBadge}</td>
-        <td style="font-size:12px" title="\${esc(d.geo?.city || '')}">\${esc(d.geo?.country || '??')}\${d.geo?.city ? ' ' + esc(d.geo.city) : ''}</td>
-        <td>\${platformBadge(d.platform)}</td>
-        <td>\${clientBadge(d)}</td>
+          const buildStyle = d.outdated ? "color:#f87171" : (d.build === 'unknown' ? '#666' : '#a78bfa');
+    const tokenBadge = d.token && d.token !== "Общий пул" ? \` <span class="badge" style="background:#7c5cfc15;color:#a78bfa;border:1px solid #7c5cfc33;font-size:11px;padding:2px 6px;margin-left:4px">\${esc(d.token)}</span>\` : "";
+    return \`<tr id="row-\${idEnc}">
+      <td><span class="status"><span class="status-dot \${st}"></span>\${stLabel}</span></td>
+      <td>\${esc(d.ip)}\${ipBadge}</td>
+      <td style="font-size:12px" title="\${esc(d.geo?.city || '')}">\${esc(d.geo?.country || '??')}\${d.geo?.city ? ' ' + esc(d.geo.city) : ''}</td>
+      <td>\${platformBadge(d.platform)}</td>
+      <td>\${clientBadge(d)}\${tokenBadge}</td>
         <td style="font-size:11px;color:#888" title="\${esc(d.ua)}">\${esc(uaShort)}</td>
         <td>\${timeAgo(d.lastSeen)}</td>
         <td><span style="color:\${buildStyle};font-size:12px;font-weight:600">\${esc(d.build)}\${d.outdated ? ' <span class="badge outdated">!</span>' : ''}</span></td>
