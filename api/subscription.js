@@ -100,26 +100,21 @@ export async function getSubscriptionText(r) {
   throw new Error("Subscription text not found");
 }
 
-async function recordVisit(req, body) {
+async function recordVisit(req, body, receivedCookieId) {
   const r = getRedis();
   if (!(await ensureRedisReady(r))) return;
-
-  // Безопасно извлекаем параметры из URL запроса для идентификации
-  const url = new URL(req.url, `http://${req.headers.host}`);
-  const token = url.searchParams.get("token") || url.searchParams.get("id") || url.searchParams.get("user");
 
   const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
   const ua = req.headers["user-agent"] || "unknown";
   const hwid = req.headers["x-hwid"] || req.headers["hwid"] || null;
-  const lang = req.headers["accept-language"]?.split(",")[0]?.trim() || ""; // Доп. соль против NAT коллизий
   
   const platform = detectPlatform(ua);
   const client = parseClient(ua);
   const buildMatch = body.match(/^#\s*(build-\S+)/im) || body.match(/^#\s*build[:\-]\s*(.+)/im);
   const build = buildMatch ? normalizeBuild(buildMatch[1].trim()) : "unknown";
 
-  // ЖЕЛЕЗНАЯ ИЗОЛЯЦИЯ: приоритет HWID -> уникальный Токен пользователя -> Fallback с солью языка, чтобы снизить коллизии на общем IP
-  const deviceId = hwid || (token ? `usr_${token}_${platform}` : `${ip}_${lang}_${ua.replace(/\s+/g, '')}`);
+  // ИЗОЛЯЦИЯ: Если кука сохранена клиентом — идентифицируем по ней, иначе кастомный хэш IP+UA
+  const deviceId = hwid || (receivedCookieId ? `ck_${receivedCookieId}` : `${ip}_${ua.replace(/\s+/g, '')}`);
 
   let geo = { country: "??", city: "" };
   if (ip !== "unknown") {
@@ -127,7 +122,9 @@ async function recordVisit(req, body) {
     if (geoCache) try { geo = JSON.parse(geoCache); } catch {}
   }
 
-  // Сохраняем токен внутрь объекта устройства, чтобы вывести его в админке
+  // Метка для админки, чтобы видеть изолированные сессии
+  const userLabel = receivedCookieId ? `Сессия Happ (${receivedCookieId.slice(-4)})` : "Общий пул";
+
   const payload = JSON.stringify({ 
     ip, 
     ua, 
@@ -135,10 +132,9 @@ async function recordVisit(req, body) {
     client, 
     build, 
     geo, 
-    token: token || "global", 
+    token: userLabel, 
     lastSeen: Date.now() 
   });
-  
   const today = new Date().toISOString().slice(0, 10);
 
   await Promise.all([
@@ -164,9 +160,25 @@ export default async function handler(req, res) {
     const body = await resolveSubscriptionBody();
     if (!body) return res.status(500).send("Subscription not found");
 
+    // Парсим куки в основном потоке выполнения Vercel
+    const cookies = {};
+    const cookieHeader = req.headers.cookie || "";
+    cookieHeader.split(";").forEach(c => {
+      const [k, ...v] = c.trim().split("=");
+      if (k) cookies[k.trim()] = decodeURIComponent(v.join("="));
+    });
+
+    const receivedCookieId = cookies["p_did"] || null;
+
+    // Если куки от клиента нет и это не запрос с жестким HWID — генерируем новую сессию
+    if (!receivedCookieId && !req.headers["x-hwid"] && !req.headers["hwid"]) {
+      const newCookieId = Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
+      res.setHeader("Set-Cookie", `p_did=${newCookieId}; Path=/; Max-Age=31536000; Secure; SameSite=Strict; HttpOnly`);
+    }
+
     try {
       await Promise.race([
-        recordVisit(req, body),
+        recordVisit(req, body, receivedCookieId),
         new Promise((resolve) => setTimeout(resolve, REDIS_WRITE_MS)),
       ]);
     } catch (e) {
