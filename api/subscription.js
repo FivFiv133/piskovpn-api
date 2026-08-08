@@ -79,6 +79,7 @@ async function resolveSubscriptionBody() {
   return bundled;
 }
 
+// Фетчим подписку — для админки (может подождать дольше)
 export async function getSubscriptionText(r) {
   const cached = await r.get("sub_cache").catch(() => null);
   if (cached) return cached;
@@ -100,21 +101,41 @@ export async function getSubscriptionText(r) {
   throw new Error("Subscription text not found");
 }
 
-async function recordVisit(req, body, receivedCookieId) {
+async function recordVisit(req, body) {
   const r = getRedis();
   if (!(await ensureRedisReady(r))) return;
 
+  const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+  const queryHwid = url.searchParams.get("hwid") || url.searchParams.get("id");
   const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
   const ua = req.headers["user-agent"] || "unknown";
-  const hwid = req.headers["x-hwid"] || req.headers["hwid"] || null;
-  
+  const hwid = req.headers["x-hwid"] || req.headers["hwid"] || queryHwid || null;
+
+  let deviceId = hwid;
+  if (!deviceId) {
+    // Если hwid не передан, проверяем существующие записи: был ли недавний визит с тем же UA и IP/сабнетом
+    const ipPrefix = ip !== "unknown" ? ip.split(".").slice(0, 2).join(".") : null;
+    const now = Date.now();
+    try {
+      const all = await r.hgetall("devices");
+      let matchedKey = null;
+      for (const [id, raw] of Object.entries(all)) {
+        let info;
+        try { info = JSON.parse(raw); } catch { continue; }
+        if (info.ua === ua && (now - (info.lastSeen || 0)) < 86400000) {
+          if (info.ip === ip) { matchedKey = id; break; }
+          if (ipPrefix && info.ip && info.ip.startsWith(ipPrefix + ".")) { matchedKey = id; }
+        }
+      }
+      if (matchedKey) deviceId = matchedKey;
+    } catch {}
+  }
+  if (!deviceId) deviceId = `${ip}_${ua}`;
+
   const platform = detectPlatform(ua);
   const client = parseClient(ua);
   const buildMatch = body.match(/^#\s*(build-\S+)/im) || body.match(/^#\s*build[:\-]\s*(.+)/im);
   const build = buildMatch ? normalizeBuild(buildMatch[1].trim()) : "unknown";
-
-  // ИЗОЛЯЦИЯ: Если кука сохранена клиентом — идентифицируем по ней, иначе кастомный хэш IP+UA
-  const deviceId = hwid || (receivedCookieId ? `ck_${receivedCookieId}` : `${ip}_${ua.replace(/\s+/g, '')}`);
 
   let geo = { country: "??", city: "" };
   if (ip !== "unknown") {
@@ -122,19 +143,7 @@ async function recordVisit(req, body, receivedCookieId) {
     if (geoCache) try { geo = JSON.parse(geoCache); } catch {}
   }
 
-  // Метка для админки, чтобы видеть изолированные сессии
-  const userLabel = receivedCookieId ? `Сессия Happ (${receivedCookieId.slice(-4)})` : "Общий пул";
-
-  const payload = JSON.stringify({ 
-    ip, 
-    ua, 
-    platform, 
-    client, 
-    build, 
-    geo, 
-    token: userLabel, 
-    lastSeen: Date.now() 
-  });
+  const payload = JSON.stringify({ ip, ua, platform, client, build, geo, lastSeen: Date.now() });
   const today = new Date().toISOString().slice(0, 10);
 
   await Promise.all([
@@ -160,25 +169,10 @@ export default async function handler(req, res) {
     const body = await resolveSubscriptionBody();
     if (!body) return res.status(500).send("Subscription not found");
 
-    // Парсим куки в основном потоке выполнения Vercel
-    const cookies = {};
-    const cookieHeader = req.headers.cookie || "";
-    cookieHeader.split(";").forEach(c => {
-      const [k, ...v] = c.trim().split("=");
-      if (k) cookies[k.trim()] = decodeURIComponent(v.join("="));
-    });
-
-    const receivedCookieId = cookies["p_did"] || null;
-
-    // Если куки от клиента нет и это не запрос с жестким HWID — генерируем новую сессию
-    if (!receivedCookieId && !req.headers["x-hwid"] && !req.headers["hwid"]) {
-      const newCookieId = Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
-      res.setHeader("Set-Cookie", `p_did=${newCookieId}; Path=/; Max-Age=31536000; Secure; SameSite=Strict; HttpOnly`);
-    }
-
+    // Статистика до ответа — на Vercel фон после res.send() не успевает выполниться
     try {
       await Promise.race([
-        recordVisit(req, body, receivedCookieId),
+        recordVisit(req, body),
         new Promise((resolve) => setTimeout(resolve, REDIS_WRITE_MS)),
       ]);
     } catch (e) {

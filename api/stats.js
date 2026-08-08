@@ -153,7 +153,6 @@ async function apiData(req, res) {
       outdated,
       ipCount,
       geo,
-      token: info.token || "",
       lastSeen,
       lastSeenISO: lastSeen ? new Date(lastSeen).toISOString() : "never",
     });
@@ -217,18 +216,38 @@ async function apiDeleteDevice(req, res) {
   return res.status(200).json({ ok: true });
 }
 
-// API: очистить неактивные (старше N дней)
+// API: очистить неактивные или устаревшие устройства
 async function apiPurge(req, res) {
+  const type = req.query?.type;
   const days = parseInt(req.query?.days || "30", 10);
   const r = getRedis();
   const all = await r.hgetall("devices");
-  const cutoff = Date.now() - days * 86400000;
   const toRemove = [];
-  for (const [id, raw] of Object.entries(all)) {
-    let info;
-    try { info = JSON.parse(raw); } catch { continue; }
-    if ((info.lastSeen || 0) < cutoff) toRemove.push(id);
+
+  if (type === "outdated") {
+    let currentBuild = "unknown";
+    try {
+      const { getSubscriptionText } = await import("./subscription.js");
+      currentBuild = parseBuildFromSub(await getSubscriptionText(r));
+    } catch {}
+
+    for (const [id, raw] of Object.entries(all)) {
+      let info;
+      try { info = JSON.parse(raw); } catch { continue; }
+      const build = normalizeBuild(info.build || "unknown");
+      if (currentBuild !== "unknown" && build !== "unknown" && build !== currentBuild) {
+        toRemove.push(id);
+      }
+    }
+  } else {
+    const cutoff = Date.now() - days * 86400000;
+    for (const [id, raw] of Object.entries(all)) {
+      let info;
+      try { info = JSON.parse(raw); } catch { continue; }
+      if ((info.lastSeen || 0) < cutoff) toRemove.push(id);
+    }
   }
+
   if (toRemove.length) {
     const pipeline = r.pipeline();
     toRemove.forEach(id => pipeline.hdel("devices", id));
@@ -713,7 +732,7 @@ function getPanelHTML() {
   </select>
   <button class="btn refresh" onclick="loadData()"><svg><use href="#i-refresh"></use></svg> Обновить</button>
   <button class="btn refresh" onclick="recalculatePlatforms()"><svg><use href="#i-refresh"></use></svg> Пересчитать</button>
-  <button class="btn danger" onclick="purgeOld()"><svg><use href="#i-trash"></use></svg> Очистить 30д+</button>
+  <button class="btn danger" onclick="purgeOutdated()"><svg><use href="#i-trash"></use></svg> Очистить старые</button>
 </div>
 
 <div class="table-wrap">
@@ -927,14 +946,13 @@ function renderTable() {
       const uaShort = d.ua.length > 40 ? d.ua.substring(0,40) + "…" : d.ua;
       const idEnc = btoa(d.id);
       const ipBadge = (d.ipCount || 1) > 1 ? \`<span class="badge ip-shared" title="Устройств с этим IP">\${d.ipCount}</span>\` : "";
-          const buildStyle = d.outdated ? "color:#f87171" : (d.build === 'unknown' ? '#666' : '#a78bfa');
-    const tokenBadge = d.token && d.token !== "Общий пул" ? \` <span class="badge" style="background:#7c5cfc15;color:#a78bfa;border:1px solid #7c5cfc33;font-size:11px;padding:2px 6px;margin-left:4px">\${esc(d.token)}</span>\` : "";
-    return \`<tr id="row-\${idEnc}">
-      <td><span class="status"><span class="status-dot \${st}"></span>\${stLabel}</span></td>
-      <td>\${esc(d.ip)}\${ipBadge}</td>
-      <td style="font-size:12px" title="\${esc(d.geo?.city || '')}">\${esc(d.geo?.country || '??')}\${d.geo?.city ? ' ' + esc(d.geo.city) : ''}</td>
-      <td>\${platformBadge(d.platform)}</td>
-      <td>\${clientBadge(d)}\${tokenBadge}</td>
+      const buildStyle = d.outdated ? "color:#f87171" : (d.build === 'unknown' ? '#666' : '#a78bfa');
+      return \`<tr id="row-\${idEnc}">
+        <td><span class="status"><span class="status-dot \${st}"></span>\${stLabel}</span></td>
+        <td>\${esc(d.ip)}\${ipBadge}</td>
+        <td style="font-size:12px" title="\${esc(d.geo?.city || '')}">\${esc(d.geo?.country || '??')}\${d.geo?.city ? ' ' + esc(d.geo.city) : ''}</td>
+        <td>\${platformBadge(d.platform)}</td>
+        <td>\${clientBadge(d)}</td>
         <td style="font-size:11px;color:#888" title="\${esc(d.ua)}">\${esc(uaShort)}</td>
         <td>\${timeAgo(d.lastSeen)}</td>
         <td><span style="color:\${buildStyle};font-size:12px;font-weight:600">\${esc(d.build)}\${d.outdated ? ' <span class="badge outdated">!</span>' : ''}</span></td>
@@ -960,11 +978,11 @@ document.getElementById("search").addEventListener("input", renderTable);
 document.getElementById("filterPlatform").addEventListener("change", renderTable);
 document.getElementById("filterStatus").addEventListener("change", renderTable);
 
-async function purgeOld() {
-  if (!confirm("Удалить устройства неактивные 30+ дней?")) return;
-  const r = await fetch("/stats?action=purge&days=30");
+async function purgeOutdated() {
+  if (!confirm("Очистить устройства со старой версией сборки (build)?")) return;
+  const r = await fetch("/stats?action=purge&type=outdated");
   const d = await r.json();
-  alert("Удалено: " + d.removed);
+  alert("Удалено устройств со старой версией: " + (d.removed || 0));
   loadData();
 }
 
