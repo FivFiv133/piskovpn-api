@@ -25,6 +25,12 @@ export function parseClient(ua) {
     return { name: "Unknown", os: "", version: "", label: "Unknown" };
   }
 
+  const pisko = ua.match(/^PiskoVPN(?:\/Client)?\/([^/]+)\/(android|ios|ipados|windows|macos|mac|linux)/i);
+  if (pisko) {
+    const os = OS_LABELS[pisko[2].toLowerCase()] || pisko[2];
+    return { name: "PiskoVPN", os, version: pisko[1], label: `PiskoVPN · ${os} · ${pisko[1]}` };
+  }
+
   const happ = ua.match(/^Happ\/([^/]+)\/(ios|android|ipados|windows|macos|mac|linux)\//i);
   if (happ) {
     const os = OS_LABELS[happ[2].toLowerCase()] || happ[2];
@@ -32,6 +38,12 @@ export function parseClient(ua) {
   }
 
   const lower = ua.toLowerCase();
+  if (lower.includes("piskovpn")) {
+    const isIos = lower.includes("ios") || lower.includes("iphone") || lower.includes("ipad");
+    const isAndroid = lower.includes("android");
+    const os = isIos ? "iOS" : (isAndroid ? "Android" : "");
+    return { name: "PiskoVPN", os, version: "", label: `PiskoVPN${os ? ' · ' + os : ''}` };
+  }
   if (lower.includes("v2raytun")) {
     const isIos = lower.includes("ios") || lower.includes("iphone") || lower.includes("ipad");
     const isAndroid = lower.includes("android");
