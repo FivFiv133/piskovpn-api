@@ -154,7 +154,7 @@ async function recordVisit(req, body) {
   ]);
 
   if (ip !== "unknown" && geo.country === "??") {
-    fetch(`http://ip-api.com/json/${ip}?fields=status,countryCode,city`, { signal: AbortSignal.timeout(2000) })
+    fetch(`http://ip-api.com/json/${ip}?fields=status,countryCode,city`, { headers: { "User-Agent": "PiskoVPN-Geo/1.0" }, signal: AbortSignal.timeout(2000) })
       .then((resp) => resp.json())
       .then((data) => {
         if (data.status === "success") {
