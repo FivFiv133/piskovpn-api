@@ -5,9 +5,8 @@ export function detectPlatform(ua) {
     if (happ[1] === "ios" || happ[1] === "android" || happ[1] === "ipados") return "mobile";
     return "desktop";
   }
-  if (lower.includes("android") || lower.includes("iphone") || lower.includes("ipad") || lower.includes("ipod") || lower.includes("mobile")) return "mobile";
-  if (lower.includes("/ios/") || lower.includes("/ipados/")) return "mobile";
-  if (lower.includes("windows") || lower.includes("macintosh") || lower.includes("linux") || lower.includes("desktop")) return "desktop";
+  if (lower.includes("android") || lower.includes("iphone") || lower.includes("ipad") || lower.includes("ipod") || lower.includes("mobile") || lower.includes("ios")) return "mobile";
+  if (lower.includes("windows") || lower.includes("macintosh") || lower.includes("linux") || lower.includes("desktop") || lower.includes("mac")) return "desktop";
   return "unknown";
 }
 
@@ -33,10 +32,19 @@ export function parseClient(ua) {
   }
 
   const lower = ua.toLowerCase();
+  if (lower.includes("v2raytun")) {
+    const isIos = lower.includes("ios") || lower.includes("iphone") || lower.includes("ipad");
+    const isAndroid = lower.includes("android");
+    const os = isIos ? "iOS" : (isAndroid ? "Android" : "");
+    return { name: "v2rayTun", os, version: "", label: `v2rayTun${os ? ' · ' + os : ''}` };
+  }
   if (lower.includes("v2rayng")) return { name: "v2rayNG", os: "Android", version: "", label: "v2rayNG · Android" };
   if (lower.includes("shadowrocket")) return { name: "Shadowrocket", os: "iOS", version: "", label: "Shadowrocket · iOS" };
   if (lower.includes("streisand")) return { name: "Streisand", os: "iOS", version: "", label: "Streisand · iOS" };
+  if (lower.includes("foxray")) return { name: "foXray", os: "iOS", version: "", label: "foXray · iOS" };
+  if (lower.includes("karing")) return { name: "Karing", os: "", version: "", label: "Karing" };
   if (lower.includes("hiddify")) return { name: "Hiddify", os: "", version: "", label: "Hiddify" };
+  if (lower.includes("sing-box") || lower.includes("singbox")) return { name: "sing-box", os: "", version: "", label: "sing-box" };
   if (lower.includes("clash")) return { name: "Clash", os: "", version: "", label: "Clash" };
   if (lower.includes("v2rayn")) return { name: "v2rayN", os: "Windows", version: "", label: "v2rayN · Windows" };
   if (lower.includes("nekoray") || lower.includes("neko")) return { name: "NekoRay", os: "", version: "", label: "NekoRay" };
