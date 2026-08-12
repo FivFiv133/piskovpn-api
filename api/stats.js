@@ -173,7 +173,7 @@ async function apiData(req, res) {
     outdatedCount,
     topCountries,
     devices,
-    version: process.env.VPN_VERSION || "v0.1.9-X",
+    version: process.env.VPN_VERSION || "v0.2-X",
     updated: new Date().toISOString(),
   });
 }
