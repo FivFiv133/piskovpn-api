@@ -231,11 +231,14 @@ async function apiPurge(req, res) {
       currentBuild = parseBuildFromSub(await getSubscriptionText(r));
     } catch {}
 
+    const cutoff7d = Date.now() - 7 * 86400000;
     for (const [id, raw] of Object.entries(all)) {
       let info;
       try { info = JSON.parse(raw); } catch { continue; }
       const build = normalizeBuild(info.build || "unknown");
-      if (currentBuild !== "unknown" && build !== "unknown" && build !== currentBuild) {
+      const isOutdated = currentBuild !== "unknown" && build !== "unknown" && build !== currentBuild;
+      const isStaleUnknown = build === "unknown" && (info.lastSeen || 0) < cutoff7d;
+      if (isOutdated || isStaleUnknown) {
         toRemove.push(id);
       }
     }
