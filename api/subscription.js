@@ -11,7 +11,7 @@ const GITHUB_FETCH_MS = 2500;
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const BUNDLE_TXT_PATHS = [join(__dir, "..", "PiskoVPN.txt"), join(process.cwd(), "PiskoVPN.txt")];
-const BUNDLE_JSON_PATHS = [join(__dir, "..", "PiskoVPN_nd.json"), join(process.cwd(), "PiskoVPN_nd.json"), join(__dir, "..", "PiskoVPN.json"), join(process.cwd(), "PiskoVPN.json")];
+const BUNDLE_JSON_PATHS = [join(__dir, "..", "PiskoVPN.json"), join(process.cwd(), "PiskoVPN.json")];
 
 let redis;
 function getRedis() {
