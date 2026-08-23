@@ -75,24 +75,15 @@ async function apiData(req, res) {
   const countries = {};
   const ipCounts = {};
 
-  // Собираем и дедуплицируем устройства по каноническому ID
-  const canonicalMap = new Map();
+  const ips = new Set();
+  const parsed = [];
   for (const [id, raw] of Object.entries(allDevices)) {
     let info;
-    try { info = JSON.parse(raw); } catch { continue; }
-    const canonId = extractDeviceId(null, info.ip, info.ua);
-    const existing = canonicalMap.get(canonId);
-    if (!existing || (info.lastSeen || 0) > (existing.info.lastSeen || 0)) {
-      canonicalMap.set(canonId, { id: canonId, originalId: id, info });
-    }
-  }
-
-  const ips = new Set();
-  const parsed = Array.from(canonicalMap.values());
-  for (const item of parsed) {
-    if (item.info.ip && item.info.ip !== "unknown") {
-      ips.add(item.info.ip);
-      ipCounts[item.info.ip] = (ipCounts[item.info.ip] || 0) + 1;
+    try { info = JSON.parse(raw); } catch { info = { ip: "unknown", platform: "unknown", lastSeen: 0 }; }
+    parsed.push({ id, info });
+    if (info.ip && info.ip !== "unknown") {
+      ips.add(info.ip);
+      ipCounts[info.ip] = (ipCounts[info.ip] || 0) + 1;
     }
   }
 
@@ -189,12 +180,11 @@ async function apiData(req, res) {
   });
 }
 
-// API: пересчитать platform/client/build по UA и объединить дубликаты устройств
+// API: пересчитать platform/client/build по UA для всех устройств
 async function apiRecalculate(req, res) {
   const r = getRedis();
   const all = await r.hgetall("devices");
   let updated = 0;
-  let deleted = 0;
   const pipeline = r.pipeline();
 
   let currentBuild = process.env.VPN_BUILD || "65";
@@ -205,41 +195,30 @@ async function apiRecalculate(req, res) {
     if (parsedB && parsedB !== "unknown") currentBuild = parsedB;
   } catch {}
 
-  const grouped = new Map();
   for (const [id, raw] of Object.entries(all)) {
     let info;
     try { info = JSON.parse(raw); } catch { continue; }
-    const canonId = extractDeviceId(null, info.ip, info.ua);
-    if (!grouped.has(canonId)) grouped.set(canonId, []);
-    grouped.get(canonId).push({ id, info });
-  }
-
-  for (const [canonId, entries] of grouped.entries()) {
-    entries.sort((a, b) => (b.info.lastSeen || 0) - (a.info.lastSeen || 0));
-    const master = entries[0];
-    const ua = master.info.ua || "unknown";
-    master.info.platform = detectPlatform(ua);
-    master.info.client = parseClient(ua);
-    const devBuild = normalizeBuild(master.info.build || "unknown");
-    if (devBuild === "unknown") master.info.build = currentBuild;
-
-    pipeline.hset("devices", canonId, JSON.stringify(master.info));
-    updated++;
-
-    for (let i = 1; i < entries.length; i++) {
-      if (entries[i].id !== canonId) {
-        pipeline.hdel("devices", entries[i].id);
-        deleted++;
-      }
-    }
-    if (master.id !== canonId) {
-      pipeline.hdel("devices", master.id);
-      deleted++;
+    const ua = info.ua || "unknown";
+    const platform = detectPlatform(ua);
+    const client = parseClient(ua);
+    const devBuild = normalizeBuild(info.build || "unknown");
+    const needsBuildUpdate = devBuild === "unknown";
+    const needsUpdate = info.platform !== platform
+      || !info.client?.label
+      || info.client.label !== client.label
+      || info.client.name !== client.name
+      || needsBuildUpdate;
+    if (needsUpdate) {
+      info.platform = platform;
+      info.client = client;
+      if (needsBuildUpdate) info.build = currentBuild;
+      pipeline.hset("devices", id, JSON.stringify(info));
+      updated++;
     }
   }
 
-  if (updated || deleted) await pipeline.exec();
-  return res.status(200).json({ ok: true, updated, deleted });
+  if (updated) await pipeline.exec();
+  return res.status(200).json({ ok: true, updated });
 }
 
 // API: удалить устройство

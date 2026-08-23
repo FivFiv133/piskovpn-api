@@ -90,22 +90,7 @@ export function extractDeviceId(req, ip, ua) {
   const headerHwid = req?.headers?.["x-hwid"] || req?.headers?.["hwid"] || queryHwid;
   if (headerHwid) return `hwid_${headerHwid}`;
 
-  // Happ: User-Agent содержит постоянный уникальный Install ID: Happ/<ver>/<os>/<install_id>
-  const happMatch = (ua || "").match(/Happ\/[^/]+\/([^/]+)\/([a-zA-Z0-9_-]+)/i);
-  if (happMatch) {
-    const os = happMatch[1].toLowerCase();
-    const installId = happMatch[2];
-    return `happ_${os}_${installId}`;
-  }
-
-  // PiskoVPN Client
-  const piskoMatch = (ua || "").match(/PiskoVPN(?:\/Client)?\/[^/]+\/([^/]+)\/([a-zA-Z0-9_-]+)/i);
-  if (piskoMatch) {
-    return `pisko_${piskoMatch[1].toLowerCase()}_${piskoMatch[2]}`;
-  }
-
-  // Fallback к IP + User-Agent
-  return `${ip}_${ua}`;
+  return `${ip || "unknown"}_${ua || "unknown"}`;
 }
 
 export function parseBuildFromSub(text) {
