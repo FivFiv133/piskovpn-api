@@ -193,23 +193,22 @@ export default async function handler(req, res) {
     const subText = await resolveSubscriptionBody();
     if (!subText) return res.status(500).send("Subscription not found");
 
-    let body;
+    // Извлекаем только ссылки (vless://, hysteria2://, hy2://)
+    const linkLines = subText
+      .split("\n")
+      .map((l) => l.trim())
+      .filter((l) => l && !l.startsWith("#"));
 
-    if (format === "links" || format === "txt" || format === "text") {
-      // Прямые текстовые ссылки без Base64
+    let body;
+    if (format === "raw" || format === "txt" || format === "text") {
+      // Исходный текст со всеми комментариями и ссылками
       body = subText;
-    } else if (format === "array") {
-      // Исходный JSON-массив
-      body = readBundleText(BUNDLE_JSON_PATHS) || subText;
-      res.setHeader("Content-Type", "application/json; charset=utf-8");
+    } else if (format === "links") {
+      // Только чистые ссылки без комментариев
+      body = linkLines.join("\n");
     } else {
-      // Стандартный формат подписки: Base64-строка из отдельных JSON-конфигов серверов
-      const jsonNd = resolveJsonBody();
-      if (jsonNd) {
-        body = Buffer.from(jsonNd, "utf8").toString("base64");
-      } else {
-        body = Buffer.from(subText, "utf8").toString("base64");
-      }
+      // Общепринятый мировой стандарт подписок (Base64-поток ссылок)
+      body = Buffer.from(linkLines.join("\n"), "utf8").toString("base64");
     }
 
     // Статистика до ответа — на Vercel фон после res.send() не успевает выполниться
@@ -250,9 +249,7 @@ export default async function handler(req, res) {
       if (safe) res.setHeader("announce", safe);
     }
 
-    if (!res.getHeader("Content-Type")) {
-      res.setHeader("Content-Type", "text/plain; charset=utf-8");
-    }
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
     res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN"');
     res.setHeader("Cache-Control", "public, s-maxage=10, stale-while-revalidate=30");
     res.setHeader("CDN-Cache-Control", "public, s-maxage=10, stale-while-revalidate=30");
