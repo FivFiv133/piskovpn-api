@@ -61,10 +61,12 @@ async function apiData(req, res) {
   const allDevices = await r.hgetall("devices");
   const now = Date.now();
 
-  let currentBuild = "unknown";
+  let currentBuild = process.env.VPN_BUILD || "65";
   try {
     const { getSubscriptionText } = await import("./subscription.js");
-    currentBuild = parseBuildFromSub(await getSubscriptionText(r));
+    const sub = await getSubscriptionText(r);
+    const parsedB = parseBuildFromSub(sub);
+    if (parsedB && parsedB !== "unknown") currentBuild = parsedB;
   } catch {}
 
   const devices = [];
@@ -130,7 +132,8 @@ async function apiData(req, res) {
     else if (info.platform === "desktop") desktop++;
     else unknown++;
 
-    const build = normalizeBuild(info.build || "unknown");
+    let build = normalizeBuild(info.build || "unknown");
+    if (build === "unknown") build = currentBuild;
     builds[build] = (builds[build] || 0) + 1;
     const outdated = currentBuild !== "unknown" && build !== "unknown" && build !== currentBuild;
     if (outdated) outdatedCount++;
@@ -178,12 +181,20 @@ async function apiData(req, res) {
   });
 }
 
-// API: пересчитать platform/client по UA для всех устройств
+// API: пересчитать platform/client/build по UA для всех устройств
 async function apiRecalculate(req, res) {
   const r = getRedis();
   const all = await r.hgetall("devices");
   let updated = 0;
   const pipeline = r.pipeline();
+
+  let currentBuild = process.env.VPN_BUILD || "65";
+  try {
+    const { getSubscriptionText } = await import("./subscription.js");
+    const sub = await getSubscriptionText(r);
+    const parsedB = parseBuildFromSub(sub);
+    if (parsedB && parsedB !== "unknown") currentBuild = parsedB;
+  } catch {}
 
   for (const [id, raw] of Object.entries(all)) {
     let info;
@@ -191,13 +202,17 @@ async function apiRecalculate(req, res) {
     const ua = info.ua || "unknown";
     const platform = detectPlatform(ua);
     const client = parseClient(ua);
+    const devBuild = normalizeBuild(info.build || "unknown");
+    const needsBuildUpdate = devBuild === "unknown";
     const needsUpdate = info.platform !== platform
       || !info.client?.label
       || info.client.label !== client.label
-      || info.client.name !== client.name;
+      || info.client.name !== client.name
+      || needsBuildUpdate;
     if (needsUpdate) {
       info.platform = platform;
       info.client = client;
+      if (needsBuildUpdate) info.build = currentBuild;
       pipeline.hset("devices", id, JSON.stringify(info));
       updated++;
     }

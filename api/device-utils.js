@@ -80,11 +80,14 @@ export function normalizeBuild(raw) {
 }
 
 export function parseBuildFromSub(text) {
-  const direct = text.match(/^#\s*(build-\S+)/im);
+  if (!text || typeof text !== "string") return process.env.VPN_BUILD || "65";
+  const direct = text.match(/#\s*(build-\S+)/im);
   if (direct) return normalizeBuild(direct[1]);
-  const legacy = text.match(/^#\s*build[:\-]\s*(\S+)/im);
+  const legacy = text.match(/#\s*build[:\-]\s*(\S+)/im);
   if (legacy) return normalizeBuild(legacy[1]);
-  const announce = text.match(/announce:.*?\|\s*(build-\S+)/i);
+  const announce = text.match(/announce:.*?\|\s*(build-\S+)/i) || text.match(/\|\s*(build-\S+)/i);
   if (announce) return normalizeBuild(announce[1]);
-  return "unknown";
+  const bnum = text.match(/build-(\d+)/i) || text.match(/build:?\s*(\d+)/i);
+  if (bnum) return normalizeBuild(bnum[1]);
+  return process.env.VPN_BUILD || "65";
 }

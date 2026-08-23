@@ -149,8 +149,7 @@ async function recordVisit(req, subText) {
   const platform = detectPlatform(ua);
   const client = parseClient(ua);
   const bodyText = typeof subText === "string" ? subText : "";
-  const buildMatch = bodyText.match(/^#\s*(build-\S+)/im) || bodyText.match(/^#\s*build[:\-]\s*(.+)/im);
-  const build = buildMatch ? normalizeBuild(buildMatch[1].trim()) : "unknown";
+  const build = parseBuildFromSub(bodyText);
 
   let geo = { country: "??", city: "" };
   if (ip !== "unknown") {
