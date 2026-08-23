@@ -117,64 +117,57 @@ function safeHeader(val) {
 }
 
 async function recordVisit(req, subText) {
-  const r = getRedis();
-  if (!(await ensureRedisReady(r))) return;
+  try {
+    const r = getRedis();
+    const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+    const queryHwid = url.searchParams.get("hwid") || url.searchParams.get("id");
+    const ip = (req.headers["x-forwarded-for"] || req.headers["x-real-ip"] || "").split(",")[0]?.trim() || "unknown";
+    const ua = req.headers["user-agent"] || "unknown";
+    const hwid = req.headers["x-hwid"] || req.headers["hwid"] || queryHwid || null;
+    const deviceId = hwid || `${ip}_${ua}`;
 
-  const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
-  const queryHwid = url.searchParams.get("hwid") || url.searchParams.get("id");
-  const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
-  const ua = req.headers["user-agent"] || "unknown";
-  const hwid = req.headers["x-hwid"] || req.headers["hwid"] || queryHwid || null;
+    const platform = detectPlatform(ua);
+    const client = parseClient(ua);
+    const bodyText = typeof subText === "string" ? subText : "";
+    const build = parseBuildFromSub(bodyText);
 
-  let deviceId = hwid;
-  if (!deviceId) {
-    const ipPrefix = ip !== "unknown" ? ip.split(".").slice(0, 2).join(".") : null;
-    const now = Date.now();
-    try {
-      const all = await r.hgetall("devices");
-      let matchedKey = null;
-      for (const [id, raw] of Object.entries(all)) {
-        let info;
-        try { info = JSON.parse(raw); } catch { continue; }
-        if (info.ua === ua && (now - (info.lastSeen || 0)) < 86400000) {
-          if (info.ip === ip) { matchedKey = id; break; }
-          if (ipPrefix && info.ip && info.ip.startsWith(ipPrefix + ".")) { matchedKey = id; }
-        }
+    let geo = { country: "??", city: "" };
+    if (ip !== "unknown") {
+      const geoCache = await r.get(`geo:${ip}`).catch(() => null);
+      if (geoCache) {
+        try { geo = JSON.parse(geoCache); } catch {}
       }
-      if (matchedKey) deviceId = matchedKey;
-    } catch {}
-  }
-  if (!deviceId) deviceId = `${ip}_${ua}`;
+    }
 
-  const platform = detectPlatform(ua);
-  const client = parseClient(ua);
-  const bodyText = typeof subText === "string" ? subText : "";
-  const build = parseBuildFromSub(bodyText);
+    const payload = JSON.stringify({
+      ip,
+      ua,
+      platform,
+      client,
+      build,
+      geo,
+      lastSeen: Date.now()
+    });
+    const today = new Date().toISOString().slice(0, 10);
 
-  let geo = { country: "??", city: "" };
-  if (ip !== "unknown") {
-    const geoCache = await r.get(`geo:${ip}`).catch(() => null);
-    if (geoCache) try { geo = JSON.parse(geoCache); } catch {}
-  }
+    const pipe = r.pipeline();
+    pipe.hset("devices", deviceId, payload);
+    pipe.pfadd(`daily:${today}`, deviceId);
+    pipe.expire(`daily:${today}`, 2592000);
+    await pipe.exec();
 
-  const payload = JSON.stringify({ ip, ua, platform, client, build, geo, lastSeen: Date.now() });
-  const today = new Date().toISOString().slice(0, 10);
-
-  await Promise.all([
-    r.hset("devices", deviceId, payload),
-    r.pfadd(`daily:${today}`, deviceId),
-    r.expire(`daily:${today}`, 2592000),
-    bodyText ? r.set("sub_cache", bodyText, "EX", 60) : Promise.resolve(),
-  ]);
-
-  if (ip !== "unknown" && geo.country === "??") {
-    fetch(`http://ip-api.com/json/${ip}?fields=status,countryCode,city`, { headers: { "User-Agent": "PiskoVPN-Geo/1.0" }, signal: AbortSignal.timeout(2000) })
-      .then((resp) => resp.json())
-      .then((data) => {
-        if (data.status === "success") {
-          r.set(`geo:${ip}`, JSON.stringify({ country: data.countryCode || "??", city: data.city || "" }), "EX", 86400).catch(() => {});
-        }
-      }).catch(() => {});
+    // Async background geo fetch if unknown
+    if (ip !== "unknown" && geo.country === "??") {
+      fetch(`http://ip-api.com/json/${ip}?fields=status,countryCode,city`, { signal: AbortSignal.timeout(2000) })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "success") {
+            r.set(`geo:${ip}`, JSON.stringify({ country: data.countryCode || "??", city: data.city || "" }), "EX", 86400).catch(() => {});
+          }
+        }).catch(() => {});
+    }
+  } catch (err) {
+    console.error("[SUB] Record visit error:", err.message);
   }
 }
 
@@ -185,6 +178,9 @@ export default async function handler(req, res) {
 
     const subText = await resolveSubscriptionBody();
     if (!subText) return res.status(500).send("Subscription not found");
+
+    // Записываем визит устройства в реальном времени
+    await recordVisit(req, subText);
 
     let body;
     let isJson = false;
@@ -205,23 +201,12 @@ export default async function handler(req, res) {
       res.setHeader("Content-Type", "application/json; charset=utf-8");
     }
 
-    // Статистика до ответа — на Vercel фон после res.send() не успевает выполниться
-    try {
-      await Promise.race([
-        recordVisit(req, subText),
-        new Promise((resolve) => setTimeout(resolve, REDIS_WRITE_MS)),
-      ]);
-    } catch (e) {
-      console.error("[SUB] Analytics error:", e.message);
-    }
-
     // Извлекаем аннотации и заголовки из subText с безопасным кодированием для HTTP
     const profileTitleMatch = subText.match(/^#\s*profile-title:\s*(.+)$/m);
     const profileUpdateMatch = subText.match(/^#\s*profile-update-interval:\s*(.+)$/m);
     const profileWebMatch = subText.match(/^#\s*profile-web-page:\s*(.+)$/m);
     const supportUrlMatch = subText.match(/^#\s*support-url:\s*(.+)$/m);
     const announceMatch = subText.match(/^#\s*announce:\s*(.+)$/m);
-    const userInfoMatch = subText.match(/^#\s*subscription-userinfo:\s*(.+)$/m);
 
     // Profile Title
     const titleVal = profileTitleMatch ? profileTitleMatch[1].trim() : "💎 PiskoVPN 💎";
@@ -247,9 +232,10 @@ export default async function handler(req, res) {
     }
 
     res.setHeader("Content-Disposition", isJson ? 'attachment; filename="PiskoVPN.json"' : 'attachment; filename="PiskoVPN"');
-    res.setHeader("Cache-Control", "public, s-maxage=10, stale-while-revalidate=30");
-    res.setHeader("CDN-Cache-Control", "public, s-maxage=10, stale-while-revalidate=30");
+    // Отключаем кеширование на прокси/edge, чтобы каждый визит сразу обновлялся в базе
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
     res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
     res.status(200).send(body);
   } catch (err) {
     console.error("[SUB] Error:", err.message);
