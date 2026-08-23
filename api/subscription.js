@@ -80,7 +80,9 @@ async function resolveSubscriptionBody() {
   return bundled;
 }
 
-function resolveJsonArrayBody() {
+async function resolveJsonArrayBody() {
+  const cached = await redisGet("sub_json_cache");
+  if (cached) return cached;
   return readBundleText(BUNDLE_JSON_PATHS);
 }
 
@@ -199,7 +201,7 @@ export default async function handler(req, res) {
       res.setHeader("Content-Type", "text/plain; charset=utf-8");
     } else {
       // По умолчанию: валидный JSON-массив из 35 отдельных серверов
-      body = resolveJsonArrayBody() || subText;
+      body = (await resolveJsonArrayBody()) || subText;
       isJson = true;
       res.setHeader("Content-Type", "application/json; charset=utf-8");
     }
