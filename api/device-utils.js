@@ -79,6 +79,35 @@ export function normalizeBuild(raw) {
   return m ? m[1] : s;
 }
 
+export function extractDeviceId(req, ip, ua) {
+  let queryHwid = null;
+  if (req && req.url) {
+    try {
+      const url = new URL(req.url, `http://${req.headers?.host || "localhost"}`);
+      queryHwid = url.searchParams.get("hwid") || url.searchParams.get("id");
+    } catch {}
+  }
+  const headerHwid = req?.headers?.["x-hwid"] || req?.headers?.["hwid"] || queryHwid;
+  if (headerHwid) return `hwid_${headerHwid}`;
+
+  // Happ: User-Agent содержит постоянный уникальный Install ID: Happ/<ver>/<os>/<install_id>
+  const happMatch = (ua || "").match(/Happ\/[^/]+\/([^/]+)\/([a-zA-Z0-9_-]+)/i);
+  if (happMatch) {
+    const os = happMatch[1].toLowerCase();
+    const installId = happMatch[2];
+    return `happ_${os}_${installId}`;
+  }
+
+  // PiskoVPN Client
+  const piskoMatch = (ua || "").match(/PiskoVPN(?:\/Client)?\/[^/]+\/([^/]+)\/([a-zA-Z0-9_-]+)/i);
+  if (piskoMatch) {
+    return `pisko_${piskoMatch[1].toLowerCase()}_${piskoMatch[2]}`;
+  }
+
+  // Fallback к IP + User-Agent
+  return `${ip}_${ua}`;
+}
+
 export function parseBuildFromSub(text) {
   if (!text || typeof text !== "string") return process.env.VPN_BUILD || "65";
   const direct = text.match(/#\s*(build-\S+)/im);

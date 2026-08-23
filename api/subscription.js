@@ -2,7 +2,7 @@ import Redis from "ioredis";
 import { readFileSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
-import { detectPlatform, parseClient, normalizeBuild } from "./device-utils.js";
+import { detectPlatform, parseClient, normalizeBuild, extractDeviceId, parseBuildFromSub } from "./device-utils.js";
 
 const RAW_URL = process.env.RAW_SUB_URL || "https://raw.githubusercontent.com/FivFiv133/piskovpn-api/refs/heads/main/PiskoVPN.txt";
 const REDIS_GET_MS = 400;
@@ -118,31 +118,9 @@ function safeHeader(val) {
 async function recordVisit(req, subText) {
   try {
     const r = getRedis();
-    const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
-    const queryHwid = url.searchParams.get("hwid") || url.searchParams.get("id");
-    const ip = (req.headers["x-forwarded-for"] || req.headers["x-real-ip"] || "").split(",")[0]?.trim() || "unknown";
+    const ip = (req.headers["x-forwarded-for"] || req.headers["x-real-ip"] || req.socket?.remoteAddress || "").split(",")[0]?.trim() || "unknown";
     const ua = req.headers["user-agent"] || "unknown";
-    const hwid = req.headers["x-hwid"] || req.headers["hwid"] || queryHwid || null;
-
-    let deviceId = hwid;
-    if (!deviceId) {
-      // Ищем существующее устройство с таким же клиентом и IP/подсетью, чтобы не плодить дубликаты
-      const ipPrefix = ip !== "unknown" ? ip.split(".").slice(0, 2).join(".") : null;
-      try {
-        const all = await r.hgetall("devices");
-        for (const [id, raw] of Object.entries(all)) {
-          let info;
-          try { info = JSON.parse(raw); } catch { continue; }
-          if (info.ua === ua) {
-            if (info.ip === ip || (ipPrefix && info.ip && info.ip.startsWith(ipPrefix + "."))) {
-              deviceId = id;
-              break;
-            }
-          }
-        }
-      } catch {}
-    }
-    if (!deviceId) deviceId = `${ip}_${ua}`;
+    const deviceId = extractDeviceId(req, ip, ua);
 
     const platform = detectPlatform(ua);
     const client = parseClient(ua);
