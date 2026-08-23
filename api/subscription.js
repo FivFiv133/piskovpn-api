@@ -200,7 +200,7 @@ export default async function handler(req, res) {
       body = Buffer.from(linkLines.join("\n"), "utf8").toString("base64");
       res.setHeader("Content-Type", "text/plain; charset=utf-8");
     } else {
-      // По умолчанию: валидный JSON-массив из 35 отдельных серверов
+      // По умолчанию: JSON-массив конфигураций Happ (Content-Type: application/json)
       body = (await resolveJsonArrayBody()) || subText;
       isJson = true;
       res.setHeader("Content-Type", "application/json; charset=utf-8");
