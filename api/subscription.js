@@ -11,7 +11,7 @@ const GITHUB_FETCH_MS = 2500;
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const BUNDLE_TXT_PATHS = [join(__dir, "..", "PiskoVPN.txt"), join(process.cwd(), "PiskoVPN.txt")];
-const BUNDLE_JSON_PATHS = [join(__dir, "..", "PiskoVPN.json"), join(process.cwd(), "PiskoVPN.json")];
+const BUNDLE_JSON_PATHS = [join(__dir, "..", "PiskoVPN_nd.json"), join(process.cwd(), "PiskoVPN_nd.json"), join(__dir, "..", "PiskoVPN.json"), join(process.cwd(), "PiskoVPN.json")];
 
 let redis;
 function getRedis() {
@@ -193,22 +193,22 @@ export default async function handler(req, res) {
     const subText = await resolveSubscriptionBody();
     if (!subText) return res.status(500).send("Subscription not found");
 
-    // Извлекаем только ссылки (vless://, hysteria2://, hy2://)
-    const linkLines = subText
-      .split("\n")
-      .map((l) => l.trim())
-      .filter((l) => l && !l.startsWith("#"));
+    const jsonNd = resolveJsonBody();
 
     let body;
-    if (format === "raw" || format === "txt" || format === "text") {
-      // Исходный текст со всеми комментариями и ссылками
+    if (format === "vless" || format === "links" || format === "txt" || format === "text" || format === "raw") {
+      // Прямые текстовые VLESS-ссылки
       body = subText;
-    } else if (format === "links") {
-      // Только чистые ссылки без комментариев
-      body = linkLines.join("\n");
-    } else {
-      // Общепринятый мировой стандарт подписок (Base64-поток ссылок)
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    } else if (format === "b64" || format === "base64") {
+      // Base64 ссылки
+      const linkLines = subText.split("\n").map(l => l.trim()).filter(l => l && !l.startsWith("#"));
       body = Buffer.from(linkLines.join("\n"), "utf8").toString("base64");
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    } else {
+      // По умолчанию: полноценный поток отдельных JSON-конфигураций на каждый сервер (как в Adrenaline VPN)
+      body = jsonNd || subText;
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
     }
 
     // Статистика до ответа — на Vercel фон после res.send() не успевает выполниться
@@ -249,7 +249,6 @@ export default async function handler(req, res) {
       if (safe) res.setHeader("announce", safe);
     }
 
-    res.setHeader("Content-Type", "text/plain; charset=utf-8");
     res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN"');
     res.setHeader("Cache-Control", "public, s-maxage=10, stale-while-revalidate=30");
     res.setHeader("CDN-Cache-Control", "public, s-maxage=10, stale-while-revalidate=30");
@@ -260,6 +259,7 @@ export default async function handler(req, res) {
     if (!res.headersSent) res.status(500).send("Internal server error");
   }
 }
+
 
 
 
