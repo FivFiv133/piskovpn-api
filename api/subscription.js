@@ -3,6 +3,7 @@ import { readFileSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { detectPlatform, parseClient, normalizeBuild } from "./device-utils.js";
+import { generatePiskoJsonConfig } from "./json-config.js";
 
 const RAW_URL = process.env.RAW_SUB_URL || "https://raw.githubusercontent.com/FivFiv133/piskovpn-api/refs/heads/main/PiskoVPN.txt";
 const REDIS_GET_MS = 400;
@@ -134,7 +135,8 @@ async function recordVisit(req, body) {
 
   const platform = detectPlatform(ua);
   const client = parseClient(ua);
-  const buildMatch = body.match(/^#\s*(build-\S+)/im) || body.match(/^#\s*build[:\-]\s*(.+)/im);
+  const bodyText = typeof body === "string" ? body : "";
+  const buildMatch = bodyText.match(/^#\s*(build-\S+)/im) || bodyText.match(/^#\s*build[:\-]\s*(.+)/im);
   const build = buildMatch ? normalizeBuild(buildMatch[1].trim()) : "unknown";
 
   let geo = { country: "??", city: "" };
@@ -150,7 +152,7 @@ async function recordVisit(req, body) {
     r.hset("devices", deviceId, payload),
     r.pfadd(`daily:${today}`, deviceId),
     r.expire(`daily:${today}`, 2592000),
-    r.set("sub_cache", body, "EX", 60),
+    bodyText ? r.set("sub_cache", bodyText, "EX", 60) : Promise.resolve(),
   ]);
 
   if (ip !== "unknown" && geo.country === "??") {
@@ -166,8 +168,21 @@ async function recordVisit(req, body) {
 
 export default async function handler(req, res) {
   try {
-    const body = await resolveSubscriptionBody();
-    if (!body) return res.status(500).send("Subscription not found");
+    const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+    const format = (url.searchParams.get("format") || "").toLowerCase();
+    const ua = (req.headers["user-agent"] || "").toLowerCase();
+
+    // Определение формата: JSON (для Happ, Sing-box или явного format=json) или обычный текст VLESS
+    const isJson = format === "json" || (format === "" && (ua.includes("happ") || ua.includes("sing-box") || ua.includes("singbox")));
+
+    let body;
+    if (isJson) {
+      const jsonConfig = generatePiskoJsonConfig();
+      body = JSON.stringify(jsonConfig, null, 2);
+    } else {
+      body = await resolveSubscriptionBody();
+      if (!body) return res.status(500).send("Subscription not found");
+    }
 
     // Статистика до ответа — на Vercel фон после res.send() не успевает выполниться
     try {
@@ -179,8 +194,14 @@ export default async function handler(req, res) {
       console.error("[SUB] Analytics error:", e.message);
     }
 
-    res.setHeader("Content-Type", "text/plain; charset=utf-8");
-    res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN"');
+    if (isJson) {
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN.json"');
+    } else {
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN"');
+    }
+    
     res.setHeader("Cache-Control", "public, s-maxage=10, stale-while-revalidate=30");
     res.setHeader("CDN-Cache-Control", "public, s-maxage=10, stale-while-revalidate=30");
     res.setHeader("Pragma", "no-cache");
@@ -191,3 +212,4 @@ export default async function handler(req, res) {
     if (!res.headersSent) res.status(500).send("Internal server error");
   }
 }
+

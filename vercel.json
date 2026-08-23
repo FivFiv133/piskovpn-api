@@ -6,7 +6,10 @@
   },
   "rewrites": [
     { "source": "/sub", "destination": "/api/subscription" },
+    { "source": "/sub.json", "destination": "/api/subscription?format=json" },
+    { "source": "/config.json", "destination": "/api/subscription?format=json" },
     { "source": "/stats", "destination": "/api/stats" },
     { "source": "/health", "destination": "/api/health" }
   ]
 }
+
