@@ -222,26 +222,29 @@ export default async function handler(req, res) {
     const profileWebMatch = subText.match(/^#\s*profile-web-page:\s*(.+)$/m);
     const supportUrlMatch = subText.match(/^#\s*support-url:\s*(.+)$/m);
     const announceMatch = subText.match(/^#\s*announce:\s*(.+)$/m);
+    const userInfoMatch = subText.match(/^#\s*subscription-userinfo:\s*(.+)$/m);
 
-    if (profileTitleMatch) {
-      const safe = safeHeader(profileTitleMatch[1].trim());
-      if (safe) res.setHeader("profile-title", safe);
-    }
-    if (profileUpdateMatch) {
-      const safe = safeHeader(profileUpdateMatch[1].trim());
-      if (safe) res.setHeader("profile-update-interval", safe);
-    }
+    // Profile Title
+    const titleVal = profileTitleMatch ? profileTitleMatch[1].trim() : "💎 PiskoVPN 💎";
+    const safeTitle = safeHeader(titleVal);
+    if (safeTitle) res.setHeader("profile-title", safeTitle);
+
+    // Profile Update Interval
+    const updateVal = profileUpdateMatch ? profileUpdateMatch[1].trim() : "1";
+    res.setHeader("profile-update-interval", updateVal);
+
+    // Announce (Version / Banner line in Happ)
+    const announceVal = announceMatch ? announceMatch[1].trim() : "Версия: v0.2.1-X | build-65";
+    const safeAnnounce = safeHeader(announceVal);
+    if (safeAnnounce) res.setHeader("announce", safeAnnounce);
+
+    // Support URL (Telegram bot / Support link in Happ)
+    const supportVal = supportUrlMatch ? supportUrlMatch[1].trim() : "https://t.me/piskovpn_bot";
+    res.setHeader("support-url", supportVal);
+
     if (profileWebMatch) {
       const safe = safeHeader(profileWebMatch[1].trim());
       if (safe) res.setHeader("profile-web-page", safe);
-    }
-    if (supportUrlMatch) {
-      const safe = safeHeader(supportUrlMatch[1].trim());
-      if (safe) res.setHeader("support-url", safe);
-    }
-    if (announceMatch) {
-      const safe = safeHeader(announceMatch[1].trim());
-      if (safe) res.setHeader("announce", safe);
     }
 
     res.setHeader("Content-Disposition", isJson ? 'attachment; filename="PiskoVPN.json"' : 'attachment; filename="PiskoVPN"');
