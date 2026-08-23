@@ -3,7 +3,7 @@ import { readFileSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { detectPlatform, parseClient, normalizeBuild } from "./device-utils.js";
-import { generatePiskoJsonConfig } from "./json-config.js";
+import { generateSingBoxJsonConfig } from "./json-config.js";
 
 const RAW_URL = process.env.RAW_SUB_URL || "https://raw.githubusercontent.com/FivFiv133/piskovpn-api/refs/heads/main/PiskoVPN.txt";
 const REDIS_GET_MS = 400;
@@ -170,18 +170,19 @@ export default async function handler(req, res) {
   try {
     const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
     const format = (url.searchParams.get("format") || "").toLowerCase();
-    const ua = (req.headers["user-agent"] || "").toLowerCase();
-
-    // Определение формата: JSON (для Happ, Sing-box или явного format=json) или обычный текст VLESS
-    const isJson = format === "json" || (format === "" && (ua.includes("happ") || ua.includes("sing-box") || ua.includes("singbox")));
 
     let body;
-    if (isJson) {
-      const jsonConfig = generatePiskoJsonConfig();
+    let isJson = false;
+
+    const subText = await resolveSubscriptionBody();
+    if (!subText) return res.status(500).send("Subscription not found");
+
+    if (format === "json" || (format === "" && (ua.includes("happ") || ua.includes("sing-box") || ua.includes("singbox")))) {
+      const jsonConfig = generateSingBoxJsonConfig(subText);
       body = JSON.stringify(jsonConfig, null, 2);
+      isJson = true;
     } else {
-      body = await resolveSubscriptionBody();
-      if (!body) return res.status(500).send("Subscription not found");
+      body = subText;
     }
 
     // Статистика до ответа — на Vercel фон после res.send() не успевает выполниться
