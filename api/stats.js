@@ -1631,7 +1631,7 @@ async function loadChart() {
 loadData();
 loadSub();
 loadChart();
-setInterval(loadData, 30000);
+setInterval(loadData, 10000);
 </script>
 </body>
 </html>`;

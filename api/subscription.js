@@ -123,7 +123,26 @@ async function recordVisit(req, subText) {
     const ip = (req.headers["x-forwarded-for"] || req.headers["x-real-ip"] || "").split(",")[0]?.trim() || "unknown";
     const ua = req.headers["user-agent"] || "unknown";
     const hwid = req.headers["x-hwid"] || req.headers["hwid"] || queryHwid || null;
-    const deviceId = hwid || `${ip}_${ua}`;
+
+    let deviceId = hwid;
+    if (!deviceId) {
+      // Ищем существующее устройство с таким же клиентом и IP/подсетью, чтобы не плодить дубликаты
+      const ipPrefix = ip !== "unknown" ? ip.split(".").slice(0, 2).join(".") : null;
+      try {
+        const all = await r.hgetall("devices");
+        for (const [id, raw] of Object.entries(all)) {
+          let info;
+          try { info = JSON.parse(raw); } catch { continue; }
+          if (info.ua === ua) {
+            if (info.ip === ip || (ipPrefix && info.ip && info.ip.startsWith(ipPrefix + "."))) {
+              deviceId = id;
+              break;
+            }
+          }
+        }
+      } catch {}
+    }
+    if (!deviceId) deviceId = `${ip}_${ua}`;
 
     const platform = detectPlatform(ua);
     const client = parseClient(ua);
@@ -149,13 +168,14 @@ async function recordVisit(req, subText) {
     });
     const today = new Date().toISOString().slice(0, 10);
 
-    const pipe = r.pipeline();
-    pipe.hset("devices", deviceId, payload);
-    pipe.pfadd(`daily:${today}`, deviceId);
-    pipe.expire(`daily:${today}`, 2592000);
-    await pipe.exec();
+    // Прямая атомарная запись в Redis
+    await Promise.all([
+      r.hset("devices", deviceId, payload),
+      r.pfadd(`daily:${today}`, deviceId),
+      r.expire(`daily:${today}`, 2592000),
+    ]);
 
-    // Async background geo fetch if unknown
+    // Фоновое получение геопозиции, если еще нет
     if (ip !== "unknown" && geo.country === "??") {
       fetch(`http://ip-api.com/json/${ip}?fields=status,countryCode,city`, { signal: AbortSignal.timeout(2000) })
         .then(res => res.json())
