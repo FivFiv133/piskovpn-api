@@ -3,7 +3,6 @@ import { readFileSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { detectPlatform, parseClient, normalizeBuild } from "./device-utils.js";
-import { generateSingBoxJsonConfig } from "./json-config.js";
 
 const RAW_URL = process.env.RAW_SUB_URL || "https://raw.githubusercontent.com/FivFiv133/piskovpn-api/refs/heads/main/PiskoVPN.txt";
 const REDIS_GET_MS = 400;
@@ -102,6 +101,161 @@ export async function getSubscriptionText(r) {
   throw new Error("Subscription text not found");
 }
 
+function safeHeader(val) {
+  if (!val) return null;
+  if (/[^\x20-\x7E]/.test(val)) {
+    return "base64:" + Buffer.from(val, "utf8").toString("base64");
+  }
+  return val;
+}
+
+export function generateSingBoxJsonConfig(subText) {
+  const lines = (subText || "").split("\n").map((l) => l.trim()).filter((l) => l && !l.startsWith("#"));
+  const nodeOutbounds = [];
+  const tags = [];
+
+  for (const line of lines) {
+    if (line.startsWith("vless://")) {
+      try {
+        const url = new URL(line);
+        const uuid = url.username;
+        const host = url.hostname;
+        const port = parseInt(url.port || "443", 10);
+        const type = url.searchParams.get("type") || "tcp";
+        const security = url.searchParams.get("security") || "none";
+        const pbk = url.searchParams.get("pbk") || "";
+        const fp = url.searchParams.get("fp") || "qq";
+        const sni = url.searchParams.get("sni") || "";
+        const sid = url.searchParams.get("sid") || "";
+        const flow = url.searchParams.get("flow") || "";
+        const path = url.searchParams.get("path") || "";
+        const mode = url.searchParams.get("mode") || "";
+        const extraStr = url.searchParams.get("extra") || "";
+        let extra = null;
+        if (extraStr) {
+          try { extra = JSON.parse(extraStr); } catch {}
+        }
+        const tag = decodeURIComponent(url.hash.replace(/^#/, ""));
+        if (!tag) continue;
+        tags.push(tag);
+
+        const outbound = {
+          type: "vless",
+          tag,
+          server: host,
+          server_port: port,
+          uuid,
+        };
+
+        if (flow) {
+          outbound.flow = flow;
+        }
+
+        if (security === "reality") {
+          outbound.tls = {
+            enabled: true,
+            server_name: sni,
+            utls: {
+              enabled: true,
+              fingerprint: fp,
+            },
+            reality: {
+              enabled: true,
+              public_key: pbk,
+              short_id: sid,
+            },
+          };
+        } else if (security === "tls") {
+          outbound.tls = {
+            enabled: true,
+            server_name: sni,
+            utls: {
+              enabled: true,
+              fingerprint: fp,
+            },
+          };
+        }
+
+        if (type === "xhttp") {
+          outbound.transport = {
+            type: "xhttp",
+            path: path || "/poll",
+            mode: mode || "packet-up",
+          };
+          if (extra?.headers) {
+            outbound.transport.headers = extra.headers;
+          }
+        } else if (type === "grpc") {
+          const serviceName = url.searchParams.get("serviceName") || "";
+          outbound.transport = {
+            type: "grpc",
+            service_name: serviceName,
+          };
+        }
+
+        nodeOutbounds.push(outbound);
+      } catch {}
+    } else if (line.startsWith("hysteria2://") || line.startsWith("hy2://")) {
+      try {
+        const url = new URL(line);
+        const auth = url.username;
+        const host = url.hostname;
+        const port = parseInt(url.port || "443", 10);
+        const sni = url.searchParams.get("sni") || host;
+        const tag = decodeURIComponent(url.hash.replace(/^#/, ""));
+        if (!tag) continue;
+        tags.push(tag);
+
+        nodeOutbounds.push({
+          type: "hysteria2",
+          tag,
+          server: host,
+          server_port: port,
+          password: auth,
+          tls: {
+            enabled: true,
+            server_name: sni,
+            alpn: ["h3"],
+          },
+        });
+      } catch {}
+    }
+  }
+
+  return {
+    version: 1,
+    outbounds: [
+      {
+        type: "selector",
+        tag: "select",
+        outbounds: tags,
+        default: tags[0] || "direct",
+      },
+      {
+        type: "urltest",
+        tag: "auto",
+        outbounds: tags,
+        url: "http://www.gstatic.com/generate_204",
+        interval: "3m",
+        tolerance: 50,
+      },
+      ...nodeOutbounds,
+      {
+        type: "direct",
+        tag: "direct",
+      },
+      {
+        type: "block",
+        tag: "block",
+      },
+      {
+        type: "dns",
+        tag: "dns-out",
+      },
+    ],
+  };
+}
+
 async function recordVisit(req, subText) {
   const r = getRedis();
   if (!(await ensureRedisReady(r))) return;
@@ -195,18 +349,33 @@ export default async function handler(req, res) {
       console.error("[SUB] Analytics error:", e.message);
     }
 
-    // Извлекаем аннотации и заголовки из subText
+    // Извлекаем аннотации и заголовки из subText с безопасным кодированием для HTTP
     const profileTitleMatch = subText.match(/^#\s*profile-title:\s*(.+)$/m);
     const profileUpdateMatch = subText.match(/^#\s*profile-update-interval:\s*(.+)$/m);
     const profileWebMatch = subText.match(/^#\s*profile-web-page:\s*(.+)$/m);
     const supportUrlMatch = subText.match(/^#\s*support-url:\s*(.+)$/m);
     const announceMatch = subText.match(/^#\s*announce:\s*(.+)$/m);
 
-    if (profileTitleMatch) res.setHeader("profile-title", profileTitleMatch[1].trim());
-    if (profileUpdateMatch) res.setHeader("profile-update-interval", profileUpdateMatch[1].trim());
-    if (profileWebMatch) res.setHeader("profile-web-page", profileWebMatch[1].trim());
-    if (supportUrlMatch) res.setHeader("support-url", supportUrlMatch[1].trim());
-    if (announceMatch) res.setHeader("announce", announceMatch[1].trim());
+    if (profileTitleMatch) {
+      const safe = safeHeader(profileTitleMatch[1].trim());
+      if (safe) res.setHeader("profile-title", safe);
+    }
+    if (profileUpdateMatch) {
+      const safe = safeHeader(profileUpdateMatch[1].trim());
+      if (safe) res.setHeader("profile-update-interval", safe);
+    }
+    if (profileWebMatch) {
+      const safe = safeHeader(profileWebMatch[1].trim());
+      if (safe) res.setHeader("profile-web-page", safe);
+    }
+    if (supportUrlMatch) {
+      const safe = safeHeader(supportUrlMatch[1].trim());
+      if (safe) res.setHeader("support-url", safe);
+    }
+    if (announceMatch) {
+      const safe = safeHeader(announceMatch[1].trim());
+      if (safe) res.setHeader("announce", safe);
+    }
 
     if (isJson) {
       res.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -225,4 +394,5 @@ export default async function handler(req, res) {
     if (!res.headersSent) res.status(500).send("Internal server error");
   }
 }
+
 
