@@ -80,16 +80,8 @@ async function resolveSubscriptionBody() {
   return bundled;
 }
 
-function resolveJsonBody() {
-  const raw = readBundleText(BUNDLE_JSON_PATHS);
-  if (!raw) return null;
-  try {
-    const configs = JSON.parse(raw);
-    if (Array.isArray(configs)) {
-      return configs.map((c) => JSON.stringify(c)).join("\n");
-    }
-  } catch {}
-  return raw;
+function resolveJsonArrayBody() {
+  return readBundleText(BUNDLE_JSON_PATHS);
 }
 
 // Фетчим подписку — для админки (может подождать дольше)
@@ -193,22 +185,23 @@ export default async function handler(req, res) {
     const subText = await resolveSubscriptionBody();
     if (!subText) return res.status(500).send("Subscription not found");
 
-    const jsonNd = resolveJsonBody();
-
     let body;
+    let isJson = false;
+
     if (format === "vless" || format === "links" || format === "txt" || format === "text" || format === "raw") {
       // Прямые текстовые VLESS-ссылки
       body = subText;
       res.setHeader("Content-Type", "text/plain; charset=utf-8");
     } else if (format === "b64" || format === "base64") {
-      // Base64 ссылки
+      // Base64 VLESS-ссылки
       const linkLines = subText.split("\n").map(l => l.trim()).filter(l => l && !l.startsWith("#"));
       body = Buffer.from(linkLines.join("\n"), "utf8").toString("base64");
       res.setHeader("Content-Type", "text/plain; charset=utf-8");
     } else {
-      // По умолчанию: полноценный поток отдельных JSON-конфигураций на каждый сервер (как в Adrenaline VPN)
-      body = jsonNd || subText;
-      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      // По умолчанию: валидный JSON-массив из 35 отдельных серверов
+      body = resolveJsonArrayBody() || subText;
+      isJson = true;
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
     }
 
     // Статистика до ответа — на Vercel фон после res.send() не успевает выполниться
@@ -249,7 +242,7 @@ export default async function handler(req, res) {
       if (safe) res.setHeader("announce", safe);
     }
 
-    res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN"');
+    res.setHeader("Content-Disposition", isJson ? 'attachment; filename="PiskoVPN.json"' : 'attachment; filename="PiskoVPN"');
     res.setHeader("Cache-Control", "public, s-maxage=10, stale-while-revalidate=30");
     res.setHeader("CDN-Cache-Control", "public, s-maxage=10, stale-while-revalidate=30");
     res.setHeader("Pragma", "no-cache");
