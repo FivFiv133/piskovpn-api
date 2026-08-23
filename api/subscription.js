@@ -10,7 +10,8 @@ const REDIS_WRITE_MS = 700;
 const GITHUB_FETCH_MS = 2500;
 
 const __dir = dirname(fileURLToPath(import.meta.url));
-const BUNDLE_PATHS = [join(__dir, "..", "PiskoVPN.txt"), join(process.cwd(), "PiskoVPN.txt")];
+const BUNDLE_TXT_PATHS = [join(__dir, "..", "PiskoVPN.txt"), join(process.cwd(), "PiskoVPN.txt")];
+const BUNDLE_JSON_PATHS = [join(__dir, "..", "PiskoVPN.json"), join(process.cwd(), "PiskoVPN.json")];
 
 let redis;
 function getRedis() {
@@ -29,8 +30,8 @@ function getRedis() {
   return redis;
 }
 
-function readBundleText() {
-  for (const p of BUNDLE_PATHS) {
+function readBundleText(paths) {
+  for (const p of paths) {
     try { return readFileSync(p, "utf-8"); } catch {}
   }
   return null;
@@ -63,7 +64,7 @@ async function ensureRedisReady(r, ms = REDIS_WRITE_MS) {
 }
 
 async function resolveSubscriptionBody() {
-  const bundled = readBundleText();
+  const bundled = readBundleText(BUNDLE_TXT_PATHS);
 
   const cached = await redisGet("sub_cache");
   if (cached) return cached;
@@ -77,6 +78,10 @@ async function resolveSubscriptionBody() {
   }
 
   return bundled;
+}
+
+function resolveJsonBody() {
+  return readBundleText(BUNDLE_JSON_PATHS);
 }
 
 // Фетчим подписку — для админки (может подождать дольше)
@@ -95,7 +100,7 @@ export async function getSubscriptionText(r) {
     console.error("[SUB] Failed to fetch raw:", e.message);
   }
 
-  const bundled = readBundleText();
+  const bundled = readBundleText(BUNDLE_TXT_PATHS);
   if (bundled) return bundled;
 
   throw new Error("Subscription text not found");
@@ -107,153 +112,6 @@ function safeHeader(val) {
     return "base64:" + Buffer.from(val, "utf8").toString("base64");
   }
   return val;
-}
-
-export function generateSingBoxJsonConfig(subText) {
-  const lines = (subText || "").split("\n").map((l) => l.trim()).filter((l) => l && !l.startsWith("#"));
-  const nodeOutbounds = [];
-  const tags = [];
-
-  for (const line of lines) {
-    if (line.startsWith("vless://")) {
-      try {
-        const url = new URL(line);
-        const uuid = url.username;
-        const host = url.hostname;
-        const port = parseInt(url.port || "443", 10);
-        const type = url.searchParams.get("type") || "tcp";
-        const security = url.searchParams.get("security") || "none";
-        const pbk = url.searchParams.get("pbk") || "";
-        const fp = url.searchParams.get("fp") || "qq";
-        const sni = url.searchParams.get("sni") || "";
-        const sid = url.searchParams.get("sid") || "";
-        const flow = url.searchParams.get("flow") || "";
-        const path = url.searchParams.get("path") || "";
-        const mode = url.searchParams.get("mode") || "";
-        const extraStr = url.searchParams.get("extra") || "";
-        let extra = null;
-        if (extraStr) {
-          try { extra = JSON.parse(extraStr); } catch {}
-        }
-        const tag = decodeURIComponent(url.hash.replace(/^#/, ""));
-        if (!tag) continue;
-        tags.push(tag);
-
-        const outbound = {
-          type: "vless",
-          tag,
-          server: host,
-          server_port: port,
-          uuid,
-        };
-
-        if (flow) {
-          outbound.flow = flow;
-        }
-
-        if (security === "reality") {
-          outbound.tls = {
-            enabled: true,
-            server_name: sni,
-            utls: {
-              enabled: true,
-              fingerprint: fp,
-            },
-            reality: {
-              enabled: true,
-              public_key: pbk,
-              short_id: sid,
-            },
-          };
-        } else if (security === "tls") {
-          outbound.tls = {
-            enabled: true,
-            server_name: sni,
-            utls: {
-              enabled: true,
-              fingerprint: fp,
-            },
-          };
-        }
-
-        if (type === "xhttp") {
-          outbound.transport = {
-            type: "xhttp",
-            path: path || "/poll",
-            mode: mode || "packet-up",
-          };
-          if (extra?.headers) {
-            outbound.transport.headers = extra.headers;
-          }
-        } else if (type === "grpc") {
-          const serviceName = url.searchParams.get("serviceName") || "";
-          outbound.transport = {
-            type: "grpc",
-            service_name: serviceName,
-          };
-        }
-
-        nodeOutbounds.push(outbound);
-      } catch {}
-    } else if (line.startsWith("hysteria2://") || line.startsWith("hy2://")) {
-      try {
-        const url = new URL(line);
-        const auth = url.username;
-        const host = url.hostname;
-        const port = parseInt(url.port || "443", 10);
-        const sni = url.searchParams.get("sni") || host;
-        const tag = decodeURIComponent(url.hash.replace(/^#/, ""));
-        if (!tag) continue;
-        tags.push(tag);
-
-        nodeOutbounds.push({
-          type: "hysteria2",
-          tag,
-          server: host,
-          server_port: port,
-          password: auth,
-          tls: {
-            enabled: true,
-            server_name: sni,
-            alpn: ["h3"],
-          },
-        });
-      } catch {}
-    }
-  }
-
-  return {
-    version: 1,
-    outbounds: [
-      {
-        type: "selector",
-        tag: "select",
-        outbounds: tags,
-        default: tags[0] || "direct",
-      },
-      {
-        type: "urltest",
-        tag: "auto",
-        outbounds: tags,
-        url: "http://www.gstatic.com/generate_204",
-        interval: "3m",
-        tolerance: 50,
-      },
-      ...nodeOutbounds,
-      {
-        type: "direct",
-        tag: "direct",
-      },
-      {
-        type: "block",
-        tag: "block",
-      },
-      {
-        type: "dns",
-        tag: "dns-out",
-      },
-    ],
-  };
 }
 
 async function recordVisit(req, subText) {
@@ -333,8 +191,7 @@ export default async function handler(req, res) {
 
     let body;
     if (isJson) {
-      const jsonConfig = generateSingBoxJsonConfig(subText);
-      body = JSON.stringify(jsonConfig, null, 2);
+      body = resolveJsonBody() || subText;
     } else {
       body = subText;
     }
@@ -378,7 +235,7 @@ export default async function handler(req, res) {
     }
 
     if (isJson) {
-      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
       res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN.json"');
     } else {
       res.setHeader("Content-Type", "text/plain; charset=utf-8");
@@ -394,5 +251,6 @@ export default async function handler(req, res) {
     if (!res.headersSent) res.status(500).send("Internal server error");
   }
 }
+
 
 
