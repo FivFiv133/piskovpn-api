@@ -545,15 +545,16 @@ function getLoginHTML() {
     width: 68px;
     height: 68px;
     margin: 0 auto 20px;
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(167, 139, 250, 0.1));
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(167, 139, 250, 0.15));
     border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(139, 92, 246, 0.3);
-    box-shadow: 0 0 30px rgba(139, 92, 246, 0.2);
-    font-size: 30px;
+    border: 1px solid rgba(139, 92, 246, 0.35);
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.25);
+    color: #c4b5fd;
   }
+  .logo-wrap svg { width: 34px; height: 34px; }
   h1 { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 6px; letter-spacing: -0.03em; }
   h1 span { background: linear-gradient(135deg, #c4b5fd, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
   .sub { color: var(--text-muted); font-size: 13px; margin-bottom: 28px; font-weight: 500; }
@@ -614,7 +615,9 @@ function getLoginHTML() {
 <body>
 <div class="particles" id="pts"></div>
 <div class="login-box">
-  <div class="logo-wrap">💎</div>
+  <div class="logo-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9l4-6z"/><path d="M11 3 8 9l4 12 4-12-3-6"/><path d="M2 9h20"/></svg>
+  </div>
   <h1><span>PiskoVPN</span> Control</h1>
   <div class="sub">Вход в панель управления инфраструктурой</div>
   <form id="loginForm">
@@ -709,6 +712,14 @@ function getPanelHTML() {
     pointer-events: none;
     z-index: 0;
   }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .inline-svg { width: 14px; height: 14px; vertical-align: -2px; display: inline-block; }
+  .metric-icon { width: 22px; height: 22px; }
+  .metric-icon.purple { color: #a78bfa; }
+  .metric-icon.green { color: #34d399; }
+  .metric-icon.blue { color: #38bdf8; }
+  .metric-icon.red { color: #f43f5e; }
+
   .header {
     position: relative;
     z-index: 10;
@@ -729,12 +740,12 @@ function getPanelHTML() {
     height: 38px;
     border-radius: 12px;
     background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(167, 139, 250, 0.15));
-    border: 1px solid rgba(139, 92, 246, 0.3);
+    border: 1px solid rgba(139, 92, 246, 0.35);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
     box-shadow: 0 0 16px rgba(139, 92, 246, 0.2);
+    color: #c4b5fd;
   }
   .header h1 { font-size: 20px; color: #fff; font-weight: 800; letter-spacing: -0.03em; display: flex; align-items: center; gap: 8px; }
   .header h1 span { background: linear-gradient(135deg, #c4b5fd, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -821,7 +832,6 @@ function getPanelHTML() {
     letter-spacing: 0.04em;
     margin-bottom: 8px;
   }
-  .mono { font-family: "JetBrains Mono", monospace; }
   .bento-card .num {
     font-size: 34px;
     font-weight: 800;
@@ -842,7 +852,7 @@ function getPanelHTML() {
     gap: 8px;
     align-items: center;
   }
-  .countries-bar .title { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-right: 4px; }
+  .countries-bar .title { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-right: 4px; display: flex; align-items: center; gap: 6px; }
   .country-chip {
     display: inline-flex;
     align-items: center;
@@ -1029,16 +1039,60 @@ function getPanelHTML() {
 </head>
 <body>
 
+<svg style="display:none">
+  <symbol id="i-diamond" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 3h12l4 6-10 12L2 9l4-6z"/><path d="M11 3 8 9l4 12 4-12-3-6"/><path d="M2 9h20"/>
+  </symbol>
+  <symbol id="i-mobile" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5" y="2" width="14" height="20" rx="3" ry="3"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+  </symbol>
+  <symbol id="i-desktop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+  </symbol>
+  <symbol id="i-question" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+  </symbol>
+  <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+  </symbol>
+  <symbol id="i-file-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/>
+  </symbol>
+  <symbol id="i-file-json" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="m10 13-2 2 2 2"/><path d="m14 17 2-2-2-2"/>
+  </symbol>
+  <symbol id="i-folder-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/><path d="M12 11v6"/><path d="m9 14 3-3 3 3"/>
+  </symbol>
+  <symbol id="i-activity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+  </symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+  </symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+  </symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+  </symbol>
+  <symbol id="i-server" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/>
+  </symbol>
+</svg>
+
 <div class="header">
   <div class="header-left">
-    <div class="logo-icon">💎</div>
+    <div class="logo-icon">
+      <svg style="width:20px;height:20px"><use href="#i-diamond"/></svg>
+    </div>
     <div>
       <h1><span>PiskoVPN</span> Control</h1>
     </div>
     <span class="version-tag" id="ver">v0.2.1-X</span>
   </div>
   <div class="header-right">
-    <span style="color:var(--text-muted);font-size:12px;" id="updated"></span>
+    <span style="color:var(--text-muted);font-size:12px;" class="mono" id="updated"></span>
     <a href="/health" class="health-pill">
       <span class="status-dot online" style="margin:0"></span> Health Diagnostic
     </a>
@@ -1102,7 +1156,7 @@ function getPanelHTML() {
   <div class="section">
     <details>
       <summary style="color:#34d399">
-        <svg style="width:18px;height:18px;color:#34d399" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+        <svg style="width:18px;height:18px;color:#34d399"><use href="#i-server"/></svg>
         Мониторинг серверов (Ping Test)
       </summary>
       <div class="section-inner">
@@ -1124,7 +1178,7 @@ function getPanelHTML() {
   <div class="section">
     <details>
       <summary style="color:#fbbf24">
-        <svg style="width:18px;height:18px;color:#fbbf24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <svg style="width:18px;height:18px;color:#fbbf24"><use href="#i-activity"/></svg>
         График активности клиентов (14 дней)
       </summary>
       <div class="section-inner">
@@ -1137,7 +1191,7 @@ function getPanelHTML() {
   <div class="section">
     <details open>
       <summary style="color:#a78bfa">
-        <svg style="width:18px;height:18px;color:#a78bfa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        <svg style="width:18px;height:18px;color:#a78bfa"><use href="#i-file-text"/></svg>
         Редактор подписки и конфигураций (PiskoVPN.txt + PiskoVPN.json)
       </summary>
       <div class="section-inner">
@@ -1146,30 +1200,30 @@ function getPanelHTML() {
           <div style="background:rgba(12,10,20,0.6);border:1px solid rgba(139,92,246,0.15);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px">
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
               <span style="font-weight:700;font-size:13px;color:#c4b5fd;display:flex;align-items:center;gap:6px">
-                📄 PiskoVPN.txt (Ссылки подписки)
+                <svg style="width:16px;height:16px;color:#a78bfa"><use href="#i-file-text"/></svg> PiskoVPN.txt (Ссылки)
               </span>
               <label class="btn" style="padding:5px 12px;font-size:11px;cursor:pointer">
-                📁 Выбрать .txt файл
+                <svg style="width:13px;height:13px"><use href="#i-folder-upload"/></svg> Выбрать .txt файл
                 <input type="file" id="fileTxtInput" accept=".txt" style="display:none" onchange="handleFileSelect(event, 'subText', 'fileTxtStatus')">
               </label>
             </div>
             <span id="fileTxtStatus" style="font-size:11px;color:var(--text-muted)"></span>
-            <textarea id="subText" style="width:100%;height:220px;background:rgba(6,5,10,0.7);border:1px solid rgba(139,92,246,0.12);color:#e2e8f0;padding:12px;border-radius:10px;;font-size:12px;resize:vertical" placeholder="Загрузка PiskoVPN.txt..."></textarea>
+            <textarea id="subText" style="width:100%;height:220px;background:rgba(6,5,10,0.7);border:1px solid rgba(139,92,246,0.12);color:#e2e8f0;padding:12px;border-radius:10px;font-size:12px;resize:vertical" class="mono" placeholder="Загрузка PiskoVPN.txt..."></textarea>
           </div>
 
           <!-- JSON Panel -->
           <div style="background:rgba(12,10,20,0.6);border:1px solid rgba(16,185,129,0.15);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px">
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
               <span style="font-weight:700;font-size:13px;color:#34d399;display:flex;align-items:center;gap:6px">
-                📦 PiskoVPN.json (Конфигурации серверов)
+                <svg style="width:16px;height:16px;color:#34d399"><use href="#i-file-json"/></svg> PiskoVPN.json (Конфигурации)
               </span>
               <label class="btn" style="padding:5px 12px;font-size:11px;cursor:pointer">
-                📁 Выбрать .json файл
+                <svg style="width:13px;height:13px"><use href="#i-folder-upload"/></svg> Выбрать .json файл
                 <input type="file" id="fileJsonInput" accept=".json" style="display:none" onchange="handleFileSelect(event, 'subJsonText', 'fileJsonStatus')">
               </label>
             </div>
             <span id="fileJsonStatus" style="font-size:11px;color:var(--text-muted)"></span>
-            <textarea id="subJsonText" style="width:100%;height:220px;background:rgba(6,5,10,0.7);border:1px solid rgba(16,185,129,0.12);color:#e2e8f0;padding:12px;border-radius:10px;;font-size:12px;resize:vertical" placeholder="Загрузка PiskoVPN.json..."></textarea>
+            <textarea id="subJsonText" style="width:100%;height:220px;background:rgba(6,5,10,0.7);border:1px solid rgba(16,185,129,0.12);color:#e2e8f0;padding:12px;border-radius:10px;font-size:12px;resize:vertical" class="mono" placeholder="Загрузка PiskoVPN.json..."></textarea>
           </div>
         </div>
 
@@ -1225,7 +1279,7 @@ function renderCountries(d) {
   const list = d.topCountries || [];
   if (!list.length) { bar.style.display = "none"; return; }
   bar.style.display = "flex";
-  bar.innerHTML = '<span class="title">География клиентов:</span>' +
+  bar.innerHTML = '<span class="title"><svg style="width:13px;height:13px;color:#a78bfa"><use href="#i-globe"/></svg> География клиентов:</span>' +
     list.map(c => '<span class="country-chip"><span class="code">' + esc(c.code) + '</span><span class="cnt">×' + c.count + '</span></span>').join("");
 }
 
@@ -1236,17 +1290,17 @@ function renderCards(d) {
     const current = d.currentBuild || "unknown";
     buildsHtml = entries.map(([b,c]) => {
       const stale = current !== "unknown" && b !== "unknown" && b !== current;
-      return '<div style="display:flex;align-items:center;gap:6px;font-size:12px;"><span style="color:' + (stale ? '#fb7185' : '#c4b5fd') + ';font-weight:700">' + esc(b) + '</span><span style="color:#64748b">×' + c + '</span>' + (stale ? '<span class="badge outdated" style="font-size:10px;padding:1px 6px">old</span>' : '') + '</div>';
+      return '<div style="display:flex;align-items:center;gap:6px;font-size:12px" class="mono"><span style="color:' + (stale ? '#fb7185' : '#c4b5fd') + ';font-weight:700">' + esc(b) + '</span><span style="color:#64748b">×' + c + '</span>' + (stale ? '<span class="badge outdated" style="font-size:10px;padding:1px 6px">old</span>' : '') + '</div>';
     }).join("");
   }
 
   const cardsHtml = [
-    '<div class="bento-card purple"><div class="top-label">Всего устройств</div><div class="num">' + (d.total || 0) + '</div><div style="font-size:12px;color:var(--text-muted);margin-top:6px">Уникальных HWID & IP</div></div>',
-    '<div class="bento-card green"><div class="top-label">Активных за 24ч</div><div class="num">' + (d.active24h || 0) + '</div><div style="font-size:12px;color:var(--text-muted);margin-top:6px">Суточная аудитория</div></div>',
-    '<div class="bento-card blue"><div class="top-label">Активных за 7 дней</div><div class="num">' + (d.active7d || 0) + '</div><div style="font-size:12px;color:var(--text-muted);margin-top:6px">Недельный охват</div></div>',
-    (d.outdatedCount || 0) > 0 ? '<div class="bento-card red"><div class="top-label">Устаревший build</div><div class="num">' + d.outdatedCount + '</div><div style="font-size:12px;color:#fb7185;margin-top:6px">Требуют обновления</div></div>' : '',
-    '<div class="bento-card"><div class="top-label">Платформы</div><div style="display:flex;gap:12px;align-items:center;margin-top:4px"><span style="color:#c4b5fd;font-weight:700;font-size:16px">📱 ' + (d.platforms?.mobile || 0) + '</span><span style="color:#38bdf8;font-weight:700;font-size:16px">💻 ' + (d.platforms?.desktop || 0) + '</span></div><div style="font-size:11px;color:var(--text-muted);margin-top:8px">Mobile / Desktop</div></div>',
-    buildsHtml ? '<div class="bento-card"><div class="top-label">Билды (Актуальный: ' + esc(d.currentBuild || '?') + ')</div><div style="display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:6px">' + buildsHtml + '</div></div>' : ''
+    '<div class="bento-card purple"><div class="top-label"><span>Всего устройств</span><svg class="metric-icon purple"><use href="#i-users"/></svg></div><div class="num">' + (d.total || 0) + '</div><div style="font-size:12px;color:var(--text-muted);margin-top:6px">Уникальных HWID & IP</div></div>',
+    '<div class="bento-card green"><div class="top-label"><span>Активных за 24ч</span><svg class="metric-icon green"><use href="#i-activity"/></svg></div><div class="num">' + (d.active24h || 0) + '</div><div style="font-size:12px;color:var(--text-muted);margin-top:6px">Суточная аудитория</div></div>',
+    '<div class="bento-card blue"><div class="top-label"><span>Активных за 7 дней</span><svg class="metric-icon blue"><use href="#i-calendar"/></svg></div><div class="num">' + (d.active7d || 0) + '</div><div style="font-size:12px;color:var(--text-muted);margin-top:6px">Недельный охват</div></div>',
+    (d.outdatedCount || 0) > 0 ? '<div class="bento-card red"><div class="top-label"><span>Устаревший build</span><svg class="metric-icon red"><use href="#i-alert"/></svg></div><div class="num">' + d.outdatedCount + '</div><div style="font-size:12px;color:#fb7185;margin-top:6px">Требуют обновления</div></div>' : '',
+    '<div class="bento-card"><div class="top-label"><span>Платформы</span><svg class="metric-icon purple"><use href="#i-desktop"/></svg></div><div style="display:flex;gap:12px;align-items:center;margin-top:4px"><span style="color:#c4b5fd;font-weight:700;font-size:15px;display:flex;align-items:center;gap:4px"><svg class="inline-svg"><use href="#i-mobile"/></svg> ' + (d.platforms?.mobile || 0) + '</span><span style="color:#38bdf8;font-weight:700;font-size:15px;display:flex;align-items:center;gap:4px"><svg class="inline-svg"><use href="#i-desktop"/></svg> ' + (d.platforms?.desktop || 0) + '</span></div><div style="font-size:11px;color:var(--text-muted);margin-top:8px">Mobile / Desktop</div></div>',
+    buildsHtml ? '<div class="bento-card"><div class="top-label"><span>Билды (Актуальный: ' + esc(d.currentBuild || '?') + ')</span><svg class="metric-icon blue"><use href="#i-diamond"/></svg></div><div style="display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:6px">' + buildsHtml + '</div></div>' : ''
   ].filter(Boolean).join("");
 
   document.getElementById("cards").innerHTML = cardsHtml;
@@ -1270,9 +1324,9 @@ function timeAgo(ts) {
 }
 
 function platformBadge(p) {
-  if (p === "mobile") return '<span class="badge mobile">📱 Mobile</span>';
-  if (p === "desktop") return '<span class="badge desktop">💻 Desktop</span>';
-  return '<span class="badge unknown">❓ Unknown</span>';
+  if (p === "mobile") return '<span class="badge mobile"><svg class="inline-svg"><use href="#i-mobile"/></svg> Mobile</span>';
+  if (p === "desktop") return '<span class="badge desktop"><svg class="inline-svg"><use href="#i-desktop"/></svg> Desktop</span>';
+  return '<span class="badge unknown"><svg class="inline-svg"><use href="#i-question"/></svg> Unknown</span>';
 }
 
 function clientBadge(d) {
@@ -1333,13 +1387,13 @@ function renderTable() {
 
       return '<tr id="row-' + idEnc + '">' +
         '<td><span class="status-dot ' + st + '"></span>' + stLabel + '</td>' +
-        '<td style=";font-size:12px;font-weight:600">' + esc(d.ip) + (d.ipCount > 1 ? '<span class="badge ip-shared">×' + d.ipCount + '</span>' : '') + '</td>' +
+        '<td class="mono" style="font-size:12px;font-weight:600">' + esc(d.ip) + (d.ipCount > 1 ? '<span class="badge ip-shared">×' + d.ipCount + '</span>' : '') + '</td>' +
         '<td>' + (d.geo?.country && d.geo.country !== "??" ? '<b>' + esc(d.geo.country) + '</b> ' + esc(d.geo.city || "") : '<span style="color:#64748b">??</span>') + '</td>' +
         '<td>' + platformBadge(d.platform) + '</td>' +
         '<td>' + clientBadge(d) + '</td>' +
         '<td style="color:#94a3b8;font-size:12px" title="' + esc(d.ua) + '">' + esc(uaShort) + '</td>' +
-        '<td style=";font-size:12px" title="' + esc(d.lastSeenISO) + '">' + timeAgo(d.lastSeen) + '</td>' +
-        '<td><span class="badge ' + (d.outdated ? 'outdated' : 'client') + '" style="">' + esc(d.build) + '</span></td>' +
+        '<td class="mono" style="font-size:12px" title="' + esc(d.lastSeenISO) + '">' + timeAgo(d.lastSeen) + '</td>' +
+        '<td><span class="badge ' + (d.outdated ? 'outdated' : 'client') + ' mono">' + esc(d.build) + '</span></td>' +
         '<td><button class="btn-del-row" data-id="' + idEnc + '" onclick="deleteDevice(this.dataset.id)">Удалить</button></td>' +
         '</tr>';
     }).join("");
@@ -1486,7 +1540,7 @@ async function loadServers() {
       return '<div style="background:' + bg + ';border:1px solid ' + border + ';border-radius:12px;padding:10px 14px;font-size:12px;display:flex;align-items:center;gap:10px;min-width:210px">' +
         '<span style="width:8px;height:8px;border-radius:50%;background:' + color + ';flex-shrink:0' + (s.status === 'online' ? ';box-shadow:0 0 8px ' + color : '') + '"></span>' +
         '<span style="color:#e2e8f0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600" title="' + esc(s.host) + '">' + esc(s.name) + '</span>' +
-        '<span style="color:' + pingColor + ';font-weight:700;;font-size:11px">' + pingText + '</span>' +
+        '<span style="color:' + pingColor + ';font-weight:700;font-size:11px" class="mono">' + pingText + '</span>' +
       '</div>';
     }).join("");
   } catch(e) { box.innerHTML = '<span style="color:#f87171">Ошибка: ' + esc(e.message) + '</span>'; st.textContent = ""; }
