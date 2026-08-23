@@ -17,12 +17,11 @@ let redis;
 function getRedis() {
   if (!redis) {
     redis = new Redis(process.env.REDIS_URL, {
-      connectTimeout: 2000,
-      maxRetriesPerRequest: 1,
-      lazyConnect: true,
+      connectTimeout: 3000,
+      maxRetriesPerRequest: 2,
       retryStrategy(times) {
-        if (times > 2) return null;
-        return Math.min(times * 200, 1000);
+        if (times > 3) return null;
+        return Math.min(times * 150, 600);
       },
     });
     redis.on("error", (err) => console.error("[REDIS] Connection error:", err.message));
