@@ -102,7 +102,7 @@ export async function getSubscriptionText(r) {
   throw new Error("Subscription text not found");
 }
 
-async function recordVisit(req, body) {
+async function recordVisit(req, subText) {
   const r = getRedis();
   if (!(await ensureRedisReady(r))) return;
 
@@ -114,7 +114,6 @@ async function recordVisit(req, body) {
 
   let deviceId = hwid;
   if (!deviceId) {
-    // Если hwid не передан, проверяем существующие записи: был ли недавний визит с тем же UA и IP/сабнетом
     const ipPrefix = ip !== "unknown" ? ip.split(".").slice(0, 2).join(".") : null;
     const now = Date.now();
     try {
@@ -135,7 +134,7 @@ async function recordVisit(req, body) {
 
   const platform = detectPlatform(ua);
   const client = parseClient(ua);
-  const bodyText = typeof body === "string" ? body : "";
+  const bodyText = typeof subText === "string" ? subText : "";
   const buildMatch = bodyText.match(/^#\s*(build-\S+)/im) || bodyText.match(/^#\s*build[:\-]\s*(.+)/im);
   const build = buildMatch ? normalizeBuild(buildMatch[1].trim()) : "unknown";
 
@@ -170,17 +169,18 @@ export default async function handler(req, res) {
   try {
     const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
     const format = (url.searchParams.get("format") || "").toLowerCase();
-
-    let body;
-    let isJson = false;
+    const ua = (req.headers["user-agent"] || "").toLowerCase();
 
     const subText = await resolveSubscriptionBody();
     if (!subText) return res.status(500).send("Subscription not found");
 
-    if (format === "json" || (format === "" && (ua.includes("happ") || ua.includes("sing-box") || ua.includes("singbox")))) {
+    // Определение формата: JSON (для Happ, Sing-box или явного format=json) или обычный текст VLESS
+    const isJson = format === "json" || (format === "" && (ua.includes("happ") || ua.includes("sing-box") || ua.includes("singbox")));
+
+    let body;
+    if (isJson) {
       const jsonConfig = generateSingBoxJsonConfig(subText);
       body = JSON.stringify(jsonConfig, null, 2);
-      isJson = true;
     } else {
       body = subText;
     }
@@ -188,12 +188,25 @@ export default async function handler(req, res) {
     // Статистика до ответа — на Vercel фон после res.send() не успевает выполниться
     try {
       await Promise.race([
-        recordVisit(req, body),
+        recordVisit(req, subText),
         new Promise((resolve) => setTimeout(resolve, REDIS_WRITE_MS)),
       ]);
     } catch (e) {
       console.error("[SUB] Analytics error:", e.message);
     }
+
+    // Извлекаем аннотации и заголовки из subText
+    const profileTitleMatch = subText.match(/^#\s*profile-title:\s*(.+)$/m);
+    const profileUpdateMatch = subText.match(/^#\s*profile-update-interval:\s*(.+)$/m);
+    const profileWebMatch = subText.match(/^#\s*profile-web-page:\s*(.+)$/m);
+    const supportUrlMatch = subText.match(/^#\s*support-url:\s*(.+)$/m);
+    const announceMatch = subText.match(/^#\s*announce:\s*(.+)$/m);
+
+    if (profileTitleMatch) res.setHeader("profile-title", profileTitleMatch[1].trim());
+    if (profileUpdateMatch) res.setHeader("profile-update-interval", profileUpdateMatch[1].trim());
+    if (profileWebMatch) res.setHeader("profile-web-page", profileWebMatch[1].trim());
+    if (supportUrlMatch) res.setHeader("support-url", supportUrlMatch[1].trim());
+    if (announceMatch) res.setHeader("announce", announceMatch[1].trim());
 
     if (isJson) {
       res.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -206,7 +219,6 @@ export default async function handler(req, res) {
     res.setHeader("Cache-Control", "public, s-maxage=10, stale-while-revalidate=30");
     res.setHeader("CDN-Cache-Control", "public, s-maxage=10, stale-while-revalidate=30");
     res.setHeader("Pragma", "no-cache");
-    res.setHeader("profile-update-interval", "5");
     res.status(200).send(body);
   } catch (err) {
     console.error("[SUB] Error:", err.message);
