@@ -81,7 +81,15 @@ async function resolveSubscriptionBody() {
 }
 
 function resolveJsonBody() {
-  return readBundleText(BUNDLE_JSON_PATHS);
+  const raw = readBundleText(BUNDLE_JSON_PATHS);
+  if (!raw) return null;
+  try {
+    const configs = JSON.parse(raw);
+    if (Array.isArray(configs)) {
+      return configs.map((c) => JSON.stringify(c)).join("\n");
+    }
+  } catch {}
+  return raw;
 }
 
 // Фетчим подписку — для админки (может подождать дольше)
@@ -181,19 +189,27 @@ export default async function handler(req, res) {
   try {
     const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
     const format = (url.searchParams.get("format") || "").toLowerCase();
-    const ua = (req.headers["user-agent"] || "").toLowerCase();
 
     const subText = await resolveSubscriptionBody();
     if (!subText) return res.status(500).send("Subscription not found");
 
-    // Определение формата: JSON (для Happ, Sing-box или явного format=json) или обычный текст VLESS
-    const isJson = format === "json" || (format === "" && (ua.includes("happ") || ua.includes("sing-box") || ua.includes("singbox")));
-
     let body;
-    if (isJson) {
-      body = resolveJsonBody() || subText;
-    } else {
+
+    if (format === "links" || format === "txt" || format === "text") {
+      // Прямые текстовые ссылки без Base64
       body = subText;
+    } else if (format === "array") {
+      // Исходный JSON-массив
+      body = readBundleText(BUNDLE_JSON_PATHS) || subText;
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
+    } else {
+      // Стандартный формат подписки: Base64-строка из отдельных JSON-конфигов серверов
+      const jsonNd = resolveJsonBody();
+      if (jsonNd) {
+        body = Buffer.from(jsonNd, "utf8").toString("base64");
+      } else {
+        body = Buffer.from(subText, "utf8").toString("base64");
+      }
     }
 
     // Статистика до ответа — на Vercel фон после res.send() не успевает выполниться
@@ -234,14 +250,10 @@ export default async function handler(req, res) {
       if (safe) res.setHeader("announce", safe);
     }
 
-    if (isJson) {
-      res.setHeader("Content-Type", "application/json; charset=utf-8");
-      res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN.json"');
-    } else {
+    if (!res.getHeader("Content-Type")) {
       res.setHeader("Content-Type", "text/plain; charset=utf-8");
-      res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN"');
     }
-    
+    res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN"');
     res.setHeader("Cache-Control", "public, s-maxage=10, stale-while-revalidate=30");
     res.setHeader("CDN-Cache-Control", "public, s-maxage=10, stale-while-revalidate=30");
     res.setHeader("Pragma", "no-cache");
@@ -251,6 +263,7 @@ export default async function handler(req, res) {
     if (!res.headersSent) res.status(500).send("Internal server error");
   }
 }
+
 
 
 
