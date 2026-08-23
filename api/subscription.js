@@ -235,7 +235,7 @@ export default async function handler(req, res) {
     }
 
     if (isJson) {
-      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
       res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN.json"');
     } else {
       res.setHeader("Content-Type", "text/plain; charset=utf-8");
