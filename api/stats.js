@@ -821,6 +821,7 @@ function getPanelHTML() {
     letter-spacing: 0.04em;
     margin-bottom: 8px;
   }
+  .mono { font-family: "JetBrains Mono", monospace; }
   .bento-card .num {
     font-size: 34px;
     font-weight: 800;
@@ -1037,7 +1038,7 @@ function getPanelHTML() {
     <span class="version-tag" id="ver">v0.2.1-X</span>
   </div>
   <div class="header-right">
-    <span style="color:var(--text-muted);font-size:12px;font-family:'JetBrains Mono',monospace" id="updated"></span>
+    <span style="color:var(--text-muted);font-size:12px;" id="updated"></span>
     <a href="/health" class="health-pill">
       <span class="status-dot online" style="margin:0"></span> Health Diagnostic
     </a>
@@ -1153,7 +1154,7 @@ function getPanelHTML() {
               </label>
             </div>
             <span id="fileTxtStatus" style="font-size:11px;color:var(--text-muted)"></span>
-            <textarea id="subText" style="width:100%;height:220px;background:rgba(6,5,10,0.7);border:1px solid rgba(139,92,246,0.12);color:#e2e8f0;padding:12px;border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:12px;resize:vertical" placeholder="Загрузка PiskoVPN.txt..."></textarea>
+            <textarea id="subText" style="width:100%;height:220px;background:rgba(6,5,10,0.7);border:1px solid rgba(139,92,246,0.12);color:#e2e8f0;padding:12px;border-radius:10px;;font-size:12px;resize:vertical" placeholder="Загрузка PiskoVPN.txt..."></textarea>
           </div>
 
           <!-- JSON Panel -->
@@ -1168,7 +1169,7 @@ function getPanelHTML() {
               </label>
             </div>
             <span id="fileJsonStatus" style="font-size:11px;color:var(--text-muted)"></span>
-            <textarea id="subJsonText" style="width:100%;height:220px;background:rgba(6,5,10,0.7);border:1px solid rgba(16,185,129,0.12);color:#e2e8f0;padding:12px;border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:12px;resize:vertical" placeholder="Загрузка PiskoVPN.json..."></textarea>
+            <textarea id="subJsonText" style="width:100%;height:220px;background:rgba(6,5,10,0.7);border:1px solid rgba(16,185,129,0.12);color:#e2e8f0;padding:12px;border-radius:10px;;font-size:12px;resize:vertical" placeholder="Загрузка PiskoVPN.json..."></textarea>
           </div>
         </div>
 
@@ -1235,7 +1236,7 @@ function renderCards(d) {
     const current = d.currentBuild || "unknown";
     buildsHtml = entries.map(([b,c]) => {
       const stale = current !== "unknown" && b !== "unknown" && b !== current;
-      return '<div style="display:flex;align-items:center;gap:6px;font-size:12px;font-family:'JetBrains Mono',monospace"><span style="color:' + (stale ? '#fb7185' : '#c4b5fd') + ';font-weight:700">' + esc(b) + '</span><span style="color:#64748b">×' + c + '</span>' + (stale ? '<span class="badge outdated" style="font-size:10px;padding:1px 6px">old</span>' : '') + '</div>';
+      return '<div style="display:flex;align-items:center;gap:6px;font-size:12px;"><span style="color:' + (stale ? '#fb7185' : '#c4b5fd') + ';font-weight:700">' + esc(b) + '</span><span style="color:#64748b">×' + c + '</span>' + (stale ? '<span class="badge outdated" style="font-size:10px;padding:1px 6px">old</span>' : '') + '</div>';
     }).join("");
   }
 
@@ -1332,14 +1333,14 @@ function renderTable() {
 
       return '<tr id="row-' + idEnc + '">' +
         '<td><span class="status-dot ' + st + '"></span>' + stLabel + '</td>' +
-        '<td style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600">' + esc(d.ip) + (d.ipCount > 1 ? '<span class="badge ip-shared">×' + d.ipCount + '</span>' : '') + '</td>' +
+        '<td style=";font-size:12px;font-weight:600">' + esc(d.ip) + (d.ipCount > 1 ? '<span class="badge ip-shared">×' + d.ipCount + '</span>' : '') + '</td>' +
         '<td>' + (d.geo?.country && d.geo.country !== "??" ? '<b>' + esc(d.geo.country) + '</b> ' + esc(d.geo.city || "") : '<span style="color:#64748b">??</span>') + '</td>' +
         '<td>' + platformBadge(d.platform) + '</td>' +
         '<td>' + clientBadge(d) + '</td>' +
         '<td style="color:#94a3b8;font-size:12px" title="' + esc(d.ua) + '">' + esc(uaShort) + '</td>' +
-        '<td style="font-family:'JetBrains Mono',monospace;font-size:12px" title="' + esc(d.lastSeenISO) + '">' + timeAgo(d.lastSeen) + '</td>' +
-        '<td><span class="badge ' + (d.outdated ? 'outdated' : 'client') + '" style="font-family:'JetBrains Mono',monospace">' + esc(d.build) + '</span></td>' +
-        '<td><button class="btn-del-row" onclick="deleteDevice('' + idEnc + '')">Удалить</button></td>' +
+        '<td style=";font-size:12px" title="' + esc(d.lastSeenISO) + '">' + timeAgo(d.lastSeen) + '</td>' +
+        '<td><span class="badge ' + (d.outdated ? 'outdated' : 'client') + '" style="">' + esc(d.build) + '</span></td>' +
+        '<td><button class="btn-del-row" data-id="' + idEnc + '" onclick="deleteDevice(this.dataset.id)">Удалить</button></td>' +
         '</tr>';
     }).join("");
   }
@@ -1485,7 +1486,7 @@ async function loadServers() {
       return '<div style="background:' + bg + ';border:1px solid ' + border + ';border-radius:12px;padding:10px 14px;font-size:12px;display:flex;align-items:center;gap:10px;min-width:210px">' +
         '<span style="width:8px;height:8px;border-radius:50%;background:' + color + ';flex-shrink:0' + (s.status === 'online' ? ';box-shadow:0 0 8px ' + color : '') + '"></span>' +
         '<span style="color:#e2e8f0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600" title="' + esc(s.host) + '">' + esc(s.name) + '</span>' +
-        '<span style="color:' + pingColor + ';font-weight:700;font-family:'JetBrains Mono',monospace;font-size:11px">' + pingText + '</span>' +
+        '<span style="color:' + pingColor + ';font-weight:700;;font-size:11px">' + pingText + '</span>' +
       '</div>';
     }).join("");
   } catch(e) { box.innerHTML = '<span style="color:#f87171">Ошибка: ' + esc(e.message) + '</span>'; st.textContent = ""; }
@@ -1516,7 +1517,7 @@ async function loadChart() {
     for (let i = 0; i <= 4; i++) {
       const y = pad.t + gH - (gH * i / 4);
       ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W - pad.r, y); ctx.stroke();
-      ctx.fillStyle = "#64748b"; ctx.font = "11px 'JetBrains Mono', monospace"; ctx.textAlign = "right";
+      ctx.fillStyle = "#64748b"; ctx.font = "11px monospace"; ctx.textAlign = "right";
       ctx.fillText(Math.round(max * i / 4), pad.l - 8, y + 4);
     }
 
@@ -1551,7 +1552,7 @@ async function loadChart() {
       ctx.beginPath(); ctx.arc(x, y, 3.5, 0, Math.PI * 2);
       ctx.fillStyle = "#a78bfa"; ctx.fill();
       if (i % 2 === 0 || i === d.days.length - 1) {
-        ctx.fillStyle = "#64748b"; ctx.font = "10px 'JetBrains Mono', monospace"; ctx.textAlign = "center";
+        ctx.fillStyle = "#64748b"; ctx.font = "10px monospace"; ctx.textAlign = "center";
         ctx.fillText(p.date.slice(5), x, H - pad.b + 18);
       }
     });
