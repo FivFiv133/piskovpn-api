@@ -49,6 +49,36 @@ function isAuthed(req) {
   return cookies.auth_token && verifyToken(cookies.auth_token);
 }
 
+function formatRemarkForHapp(rawRemark) {
+  let remark = (rawRemark || "").trim();
+  const lower = remark.toLowerCase();
+
+  if (lower.includes("автовыбор")) return "🇪🇺 🔄 Автовыбор рабочего сервера";
+  if (lower.includes("нидерланд") && (lower.includes("3") || lower.includes("№3") || lower.includes("[3]"))) return "🇳🇱 ⚡ Нидерланды [3]";
+  if (lower.includes("нидерланд") && lower.includes("grpc")) return "🇳🇱 ⚡ Нидерланды (gRPC)";
+  if (lower.includes("нидерланд")) return "🇳🇱 ⚡ Нидерланды";
+
+  if (lower.includes("швейцар") && (lower.includes("2") || lower.includes("№2") || lower.includes("[2]"))) return "🇨🇭 ⚡ Швейцария [2]";
+  if (lower.includes("швейцар") && lower.includes("grpc")) return "🇨🇭 ⚡ Швейцария (gRPC)";
+  if ((lower.includes("швейцар") || lower.includes("🇨🇭")) && lower.includes("обход")) return "🇨🇭 🛡️ Обход блокировок (Швейцария)";
+  if (lower.includes("швейцар")) return "🇨🇭 ⚡ Швейцария";
+
+  if (lower.includes("герман") && lower.includes("grpc")) return "🇩🇪 ⚡ Германия (gRPC)";
+  if (lower.includes("герман")) return "🇩🇪 ⚡ Германия";
+
+  if (lower.includes("испан")) return "🇪🇸 ⚡ Испания";
+  if (lower.includes("сингапур")) return "🇸🇬 ⚡ Сингапур";
+
+  if (lower.includes("сша") && lower.includes("grpc")) return "🇺🇸 ⚡ США (gRPC)";
+  if (lower.includes("сша") || lower.includes("usa")) return "🇺🇸 ⚡ США";
+
+  if (lower.includes("литв")) return "🇱🇹 ⚡ Литва";
+  if ((lower.includes("франц") || lower.includes("🇫🇷")) && lower.includes("обход")) return "🇫🇷 🛡️ Обход блокировок (Франция)";
+
+  if (/^(\uD83C[\uDDE6-\uDDFF]){2}/.test(remark)) return remark;
+  return `🌐 ${remark}`;
+}
+
 function parseVlessLinks(rawText) {
   if (!rawText || typeof rawText !== "string") return [];
   let text = rawText.trim();
@@ -75,40 +105,6 @@ function parseVlessLinks(rawText) {
       return null;
     }
   }).filter(Boolean);
-}
-
-// Happ emoji flag formatter
-const COUNTRY_FLAGS = {
-  "автовыбор": "🇪🇺 🔄",
-  "нидерланд": "🇳🇱 ⚡",
-  "швейцар": "🇨🇭 ⚡",
-  "герман": "🇩🇪 ⚡",
-  "испан": "🇪🇸 ⚡",
-  "сингапур": "🇸🇬 ⚡",
-  "сша": "🇺🇸 ⚡",
-  "литв": "🇱🇹 ⚡",
-  "латви": "🇱🇻 ⚡",
-  "эстон": "🇪🇪 ⚡",
-  "австри": "🇦🇹 ⚡",
-  "польш": "🇵🇱 ⚡",
-  "франц": "🇫🇷 🛡️",
-  "росси": "🇷🇺 🔄",
-  "обход": "🛡️",
-};
-
-function formatRemarkForHapp(rawRemark) {
-  let remark = (rawRemark || "").trim();
-  if (/^(\uD83C[\uDDE6-\uDDFF]){2}/.test(remark)) {
-    return remark;
-  }
-  const lower = remark.toLowerCase();
-  for (const [key, prefix] of Object.entries(COUNTRY_FLAGS)) {
-    if (lower.includes(key)) {
-      const cleanName = remark.replace(/^[\s\p{Emoji}\u200d\uFE0F]+/gu, "").trim();
-      return `${prefix} ${cleanName || remark}`;
-    }
-  }
-  return `🌐 ${remark}`;
 }
 
 function convertVlessToJson(vlessItems) {
@@ -284,48 +280,50 @@ export default async function handler(req, res) {
       const currentBuildNum = parseInt(parseBuildFromSub(currentTxt) || "66", 10);
       const nextBuildNum = isNaN(currentBuildNum) ? 67 : currentBuildNum + 1;
 
-      // Анализ различий (Diff)
+      // Анализ различий (Diff) с точным поиском по названию и параметрам
       const added = [];
       const modified = [];
       const unchanged = [];
       const currentMap = new Map();
 
       currentItems.forEach((item) => {
-        const key = `${item.address}:${item.port}`;
-        currentMap.set(key, item);
+        currentMap.set(item.remark, item);
       });
 
       const processedUpstream = upstreamItems.map((up) => {
-        const key = `${up.address}:${up.port}`;
-        const curr = currentMap.get(key);
         const formattedRemark = formatRemarkForHapp(up.remark);
         up.formattedRemark = formattedRemark;
+
+        const curr = currentMap.get(formattedRemark);
 
         let status = "added";
         let changeDesc = "";
 
         if (curr) {
-          currentMap.delete(key);
+          currentMap.delete(formattedRemark);
           const sameUuid = curr.uuid === up.uuid;
           const samePbk = curr.params?.pbk === up.params?.pbk;
           const sameSni = curr.params?.sni === up.params?.sni;
-          const sameType = curr.params?.type === up.params?.type;
+          const samePort = curr.port === up.port;
+          const sameAddress = curr.address === up.address;
 
-          if (sameUuid && samePbk && sameSni && sameType) {
+          if (sameUuid && samePbk && sameSni && samePort && sameAddress) {
             status = "unchanged";
             unchanged.push(up);
           } else {
             status = "modified";
             const changes = [];
+            if (!sameAddress) changes.push(`Адрес: ${curr.address} → ${up.address}`);
+            if (!samePort) changes.push(`Порт: ${curr.port} → ${up.port}`);
             if (!sameUuid) changes.push("UUID");
             if (!samePbk) changes.push("Reality PBK");
             if (!sameSni) changes.push("SNI");
-            if (!sameType) changes.push("Type");
             changeDesc = `Изменено: ${changes.join(", ")}`;
             modified.push({ ...up, changeDesc });
           }
         } else {
           status = "added";
+          changeDesc = "Новый сервер";
           added.push(up);
         }
 
@@ -334,6 +332,7 @@ export default async function handler(req, res) {
 
       const removed = Array.from(currentMap.values()).map((item) => ({
         ...item,
+        formattedRemark: item.remark,
         status: "removed",
         changeDesc: "Удален в источнике",
       }));
