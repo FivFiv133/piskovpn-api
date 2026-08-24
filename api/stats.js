@@ -1107,6 +1107,9 @@ function getPanelHTML() {
   </div>
   <div class="header-right">
     <span style="color:var(--text-muted);font-size:12px;" class="mono" id="updated"></span>
+    <a href="/sync" class="health-pill" style="color: #c4b5fd; border-color: rgba(139,92,246,0.3); background: rgba(139,92,246,0.1);">
+      <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg> Сверка конфигов
+    </a>
     <a href="/health" class="health-pill">
       <span class="status-dot online" style="margin:0"></span> Health Diagnostic
     </a>
