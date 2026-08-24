@@ -79,6 +79,13 @@ function formatRemarkForHapp(rawRemark) {
   return `🌐 ${remark}`;
 }
 
+function getServerPriority(remark) {
+  const lower = (remark || "").toLowerCase();
+  if (lower.includes("обход") || lower.includes("🛡️")) return 1;
+  if (lower.includes("автовыбор") || lower.includes("🔄")) return 2;
+  return 3;
+}
+
 function parseVlessLinks(rawText) {
   if (!rawText || typeof rawText !== "string") return [];
   let text = rawText.trim();
@@ -277,8 +284,8 @@ export default async function handler(req, res) {
       const currentTxt = await getSubscriptionText(r).catch(() => "");
       const currentItems = parseVlessLinks(currentTxt);
 
-      const currentBuildNum = parseInt(parseBuildFromSub(currentTxt) || "66", 10);
-      const nextBuildNum = isNaN(currentBuildNum) ? 67 : currentBuildNum + 1;
+      const currentBuildNum = parseInt(parseBuildFromSub(currentTxt) || "67", 10);
+      const nextBuildNum = isNaN(currentBuildNum) ? 68 : currentBuildNum + 1;
 
       // Анализ различий (Diff) с точным поиском по названию и параметрам
       const added = [];
@@ -336,6 +343,14 @@ export default async function handler(req, res) {
         status: "removed",
         changeDesc: "Удален в источнике",
       }));
+
+      // Сортировка: Обход блокировок первые, затем Автовыбор, затем обычные серверы
+      processedUpstream.sort((a, b) => {
+        const pa = getServerPriority(a.formattedRemark);
+        const pb = getServerPriority(b.formattedRemark);
+        if (pa !== pb) return pa - pb;
+        return 0;
+      });
 
       // Формируем готовый TXT
       const updatedUrls = processedUpstream.map((item) => {
@@ -409,7 +424,7 @@ export default async function handler(req, res) {
 
       return res.status(200).json({
         ok: true,
-        build: build || "66",
+        build: build || "67",
         github: { txt: ghTxt, json: ghJson },
       });
     } catch (err) {

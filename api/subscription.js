@@ -215,7 +215,7 @@ export default async function handler(req, res) {
     res.setHeader("profile-update-interval", updateVal);
 
     // Announce (Version / Banner line in Happ)
-    const announceVal = announceMatch ? announceMatch[1].trim() : "Версия: v0.2.1-X | build-66";
+    const announceVal = announceMatch ? announceMatch[1].trim() : "Версия: v0.2.1-X | build-67";
     const safeAnnounce = safeHeader(announceVal);
     if (safeAnnounce) res.setHeader("announce", safeAnnounce);
 

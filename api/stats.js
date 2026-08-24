@@ -61,7 +61,7 @@ async function apiData(req, res) {
   const allDevices = await r.hgetall("devices");
   const now = Date.now();
 
-  let currentBuild = process.env.VPN_BUILD || "66";
+  let currentBuild = process.env.VPN_BUILD || "67";
   try {
     const { getSubscriptionText } = await import("./subscription.js");
     const sub = await getSubscriptionText(r);
@@ -187,7 +187,7 @@ async function apiRecalculate(req, res) {
   let updated = 0;
   const pipeline = r.pipeline();
 
-  let currentBuild = process.env.VPN_BUILD || "66";
+  let currentBuild = process.env.VPN_BUILD || "67";
   try {
     const { getSubscriptionText } = await import("./subscription.js");
     const sub = await getSubscriptionText(r);
