@@ -182,20 +182,20 @@ export default async function handler(req, res) {
     let body;
     let isJson = false;
 
-    if (format === "vless" || format === "links" || format === "txt" || format === "text" || format === "raw") {
-      // Прямые текстовые VLESS-ссылки
-      body = subText;
-      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    if (format === "json") {
+      // JSON-массив конфигураций Happ (Content-Type: application/json)
+      body = (await resolveJsonArrayBody()) || subText;
+      isJson = true;
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
     } else if (format === "b64" || format === "base64") {
       // Base64 VLESS-ссылки
       const linkLines = subText.split("\n").map(l => l.trim()).filter(l => l && !l.startsWith("#"));
       body = Buffer.from(linkLines.join("\n"), "utf8").toString("base64");
       res.setHeader("Content-Type", "text/plain; charset=utf-8");
     } else {
-      // По умолчанию: JSON-массив конфигураций Happ (Content-Type: application/json)
-      body = (await resolveJsonArrayBody()) || subText;
-      isJson = true;
-      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      // По умолчанию: прямые текстовые VLESS-ссылки (Content-Type: text/plain)
+      body = subText;
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
     }
 
     // Извлекаем аннотации и заголовки из subText с безопасным кодированием для HTTP
@@ -215,7 +215,7 @@ export default async function handler(req, res) {
     res.setHeader("profile-update-interval", updateVal);
 
     // Announce (Version / Banner line in Happ)
-    const announceVal = announceMatch ? announceMatch[1].trim() : "Версия: v0.2.1-X | build-65";
+    const announceVal = announceMatch ? announceMatch[1].trim() : "Версия: v0.2.1-X | build-66";
     const safeAnnounce = safeHeader(announceVal);
     if (safeAnnounce) res.setHeader("announce", safeAnnounce);
 

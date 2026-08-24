@@ -94,7 +94,7 @@ export function extractDeviceId(req, ip, ua) {
 }
 
 export function parseBuildFromSub(text) {
-  if (!text || typeof text !== "string") return process.env.VPN_BUILD || "65";
+  if (!text || typeof text !== "string") return process.env.VPN_BUILD || "66";
   const direct = text.match(/#\s*(build-\S+)/im);
   if (direct) return normalizeBuild(direct[1]);
   const legacy = text.match(/#\s*build[:\-]\s*(\S+)/im);
@@ -103,5 +103,5 @@ export function parseBuildFromSub(text) {
   if (announce) return normalizeBuild(announce[1]);
   const bnum = text.match(/build-(\d+)/i) || text.match(/build:?\s*(\d+)/i);
   if (bnum) return normalizeBuild(bnum[1]);
-  return process.env.VPN_BUILD || "65";
+  return process.env.VPN_BUILD || "66";
 }
