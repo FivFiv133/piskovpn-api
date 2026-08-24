@@ -66,11 +66,18 @@ async function resolveSubscriptionBody() {
   const bundled = readBundleText(BUNDLE_TXT_PATHS);
 
   const cached = await redisGet("sub_cache");
-  if (cached) return cached;
+  if (cached) {
+    if (bundled) {
+      const bBuild = parseInt(parseBuildFromSub(bundled) || "0", 10);
+      const cBuild = parseInt(parseBuildFromSub(cached) || "0", 10);
+      if (bBuild > cBuild) return bundled;
+    }
+    return cached;
+  }
   if (bundled) return bundled;
 
   try {
-    const resp = await fetch(RAW_URL, { signal: AbortSignal.timeout(GITHUB_FETCH_MS) });
+    const resp = await fetch(RAW_URL, { headers: { "Cache-Control": "no-cache" }, signal: AbortSignal.timeout(GITHUB_FETCH_MS) });
     if (resp.ok) return await resp.text();
   } catch (e) {
     console.error("[SUB] Failed to fetch raw:", e.message);
@@ -80,15 +87,31 @@ async function resolveSubscriptionBody() {
 }
 
 async function resolveJsonArrayBody() {
+  const bundled = readBundleText(BUNDLE_JSON_PATHS);
   const cached = await redisGet("sub_json_cache");
-  if (cached) return cached;
-  return readBundleText(BUNDLE_JSON_PATHS);
+  if (cached) {
+    if (bundled) {
+      const bBuild = parseInt(parseBuildFromSub(bundled) || "0", 10);
+      const cBuild = parseInt(parseBuildFromSub(cached) || "0", 10);
+      if (bBuild > cBuild) return bundled;
+    }
+    return cached;
+  }
+  return bundled;
 }
 
 // Фетчим подписку — для админки (может подождать дольше)
 export async function getSubscriptionText(r) {
+  const bundled = readBundleText(BUNDLE_TXT_PATHS);
   const cached = await r.get("sub_cache").catch(() => null);
-  if (cached) return cached;
+  if (cached) {
+    if (bundled) {
+      const bBuild = parseInt(parseBuildFromSub(bundled) || "0", 10);
+      const cBuild = parseInt(parseBuildFromSub(cached) || "0", 10);
+      if (bBuild > cBuild) return bundled;
+    }
+    return cached;
+  }
 
   try {
     const resp = await fetch(RAW_URL, { headers: { "Cache-Control": "no-cache" }, signal: AbortSignal.timeout(5000) });
@@ -101,7 +124,6 @@ export async function getSubscriptionText(r) {
     console.error("[SUB] Failed to fetch raw:", e.message);
   }
 
-  const bundled = readBundleText(BUNDLE_TXT_PATHS);
   if (bundled) return bundled;
 
   throw new Error("Subscription text not found");
