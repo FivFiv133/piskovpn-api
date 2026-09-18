@@ -237,12 +237,12 @@ export default async function handler(req, res) {
     res.setHeader("profile-update-interval", updateVal);
 
     // Announce (Version / Banner line in Happ)
-    const announceVal = announceMatch ? announceMatch[1].trim() : "Версия: v0.2.1-X | build-67";
+    const announceVal = announceMatch ? announceMatch[1].trim() : "Версия: v0.2.1-X | build-70";
     const safeAnnounce = safeHeader(announceVal);
     if (safeAnnounce) res.setHeader("announce", safeAnnounce);
 
     // Support URL (Telegram bot / Support link in Happ)
-    const supportVal = supportUrlMatch ? supportUrlMatch[1].trim() : "https://t.me/piskovpn_bot";
+    const supportVal = supportUrlMatch ? supportUrlMatch[1].trim() : "https://t.me/piskoapps_bot";
     res.setHeader("support-url", supportVal);
 
     if (profileWebMatch) {

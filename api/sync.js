@@ -284,8 +284,8 @@ export default async function handler(req, res) {
       const currentTxt = await getSubscriptionText(r).catch(() => "");
       const currentItems = parseVlessLinks(currentTxt);
 
-      const currentBuildNum = parseInt(parseBuildFromSub(currentTxt) || "67", 10);
-      const nextBuildNum = isNaN(currentBuildNum) ? 68 : currentBuildNum + 1;
+      const currentBuildNum = parseInt(parseBuildFromSub(currentTxt) || "70", 10);
+      const nextBuildNum = isNaN(currentBuildNum) ? 71 : currentBuildNum + 1;
 
       // Анализ различий (Diff) с точным поиском по названию и параметрам
       const added = [];
@@ -367,7 +367,7 @@ export default async function handler(req, res) {
         "# profile-title: 💎 PiskoVPN 💎",
         "# profile-update-interval: 1",
         `# announce: Версия: v0.2.1-X | build-${nextBuildNum}`,
-        "# support-url: https://t.me/piskovpn_bot",
+        "# support-url: https://t.me/piskoapps_bot",
         `# build-${nextBuildNum}`,
         "",
         ...updatedUrls,
@@ -424,7 +424,7 @@ export default async function handler(req, res) {
 
       return res.status(200).json({
         ok: true,
-        build: build || "67",
+        build: build || "70",
         github: { txt: ghTxt, json: ghJson },
       });
     } catch (err) {
