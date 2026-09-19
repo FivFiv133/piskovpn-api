@@ -75,8 +75,34 @@ function formatRemarkForHapp(rawRemark) {
   if (lower.includes("литв")) return "🇱🇹 ⚡ Литва";
   if ((lower.includes("франц") || lower.includes("🇫🇷")) && lower.includes("обход")) return "🇫🇷 🛡️ Обход блокировок (Франция)";
 
-  if (/^(\uD83C[\uDDE6-\uDDFF]){2}/.test(remark)) return remark;
-  return `🌐 ${remark}`;
+  if (lower.includes("москв") && lower.includes("grpc")) return "🇷🇺 ⚡ Москва (gRPC)";
+  if (lower.includes("москв")) return "🇷🇺 ⚡ Москва";
+  if (lower.includes("росси") && lower.includes("grpc")) return "🇷🇺 ⚡ Россия (gRPC)";
+  if (lower.includes("росси")) return "🇷🇺 ⚡ Россия";
+
+  // Универсальное форматирование для любых новых стран с флагом
+  const flagMatch = remark.match(/^([\uD83C][\uDDE6-\uDDFF]){2}/);
+  if (flagMatch) {
+    const flag = flagMatch[0];
+    let rest = remark.slice(flag.length).trim();
+    const isGrpc = /grpc/i.test(rest);
+    rest = rest.replace(/⚡?\s*grpc/gi, "").trim();
+
+    if (/^[🛡️🔄⚡]/.test(rest)) {
+      return isGrpc ? `${flag} ${rest} (gRPC)` : `${flag} ${rest}`;
+    }
+
+    if (lower.includes("обход")) {
+      return isGrpc ? `${flag} 🛡️ ${rest} (gRPC)` : `${flag} 🛡️ ${rest}`;
+    }
+    if (lower.includes("авто")) {
+      return `${flag} 🔄 ${rest}`;
+    }
+
+    return isGrpc ? `${flag} ⚡ ${rest} (gRPC)` : `${flag} ⚡ ${rest}`;
+  }
+
+  return `🌐 ⚡ ${remark}`;
 }
 
 function getServerPriority(remark) {
