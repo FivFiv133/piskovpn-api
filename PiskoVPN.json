@@ -82,7 +82,7 @@
         "settings": {
           "vnext": [
             {
-              "address": "cdn1.medoed.store",
+              "address": "pool-ch.medoed.store",
               "port": 443,
               "users": [
                 {
@@ -103,7 +103,7 @@
             "publicKey": "xG_3hrmCx40pqD6Wh_2bQgmC8nvdjCx-l6HJnEcL6AI",
             "fingerprint": "firefox",
             "serverName": "cdn1.medoed.store",
-            "shortId": "da6635db58964a27",
+            "shortId": "b4f2b5ab63691bd4",
             "spiderX": "/"
           }
         }
@@ -111,7 +111,63 @@
     ]
   },
   {
-    "remarks": "🇳🇱 ⚡ Нидерланды [3]",
+    "remarks": "🇳🇱 ⚡ Нидерланды",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "hysteria2",
+        "settings": {
+          "vnext": [
+            {
+              "address": "nl-hy2.medoed.store",
+              "port": 2443,
+              "users": [
+                {
+                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "tcp",
+          "security": "none"
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇫🇷 ⚡ Франция",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "hysteria2",
+        "settings": {
+          "vnext": [
+            {
+              "address": "fr-hy2.medoed.store",
+              "port": 2443,
+              "users": [
+                {
+                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "tcp",
+          "security": "none"
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇳🇱 ⚡ Нидерланды",
     "outbounds": [
       {
         "tag": "proxy",
@@ -119,7 +175,7 @@
         "settings": {
           "vnext": [
             {
-              "address": "cdn1.medoed.store",
+              "address": "87.58.206.68",
               "port": 443,
               "users": [
                 {
@@ -177,7 +233,7 @@
             "publicKey": "9nznamFrCxG36hILVXLg9v8ogUZMG-QoWU81AY-IP3Q",
             "fingerprint": "firefox",
             "serverName": "cdn5.medoed.store",
-            "shortId": "007b5414c510cc43",
+            "shortId": "d38a05d7c7d9920a",
             "spiderX": "/"
           }
         }
@@ -339,7 +395,7 @@
     ]
   },
   {
-    "remarks": "🇳🇱 ⚡ Нидерланды",
+    "remarks": "🇺🇸 ⚡ США",
     "outbounds": [
       {
         "tag": "proxy",
@@ -347,7 +403,7 @@
         "settings": {
           "vnext": [
             {
-              "address": "nl.medoed.store",
+              "address": "216.158.95.166",
               "port": 443,
               "users": [
                 {
@@ -365,51 +421,11 @@
           "security": "reality",
           "realitySettings": {
             "show": false,
-            "publicKey": "WQhCVV5YamFcB4Obyeez7uR2Cqh2J9EpjHbTO91ZLHE",
-            "fingerprint": "firefox",
-            "serverName": "nl.medoed.store",
-            "shortId": "a5155f75dde6ec78",
+            "publicKey": "cyCBAXCTgPeX7DWj4iVGhifXocXhlfL-abZxtm3URCw",
+            "fingerprint": "chrome",
+            "serverName": "us.medoed.store",
+            "shortId": "a657425b7ec30090",
             "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇳🇱 ⚡ Нидерланды (gRPC)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "nl.medoed.store",
-              "port": 2443,
-              "users": [
-                {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "grpc",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "WQhCVV5YamFcB4Obyeez7uR2Cqh2J9EpjHbTO91ZLHE",
-            "fingerprint": "firefox",
-            "serverName": "nl.medoed.store",
-            "shortId": "a5155f75dde6ec78",
-            "spiderX": "/"
-          },
-          "grpcSettings": {
-            "serviceName": "nl.medoed.store",
-            "multiMode": true
           }
         }
       }
