@@ -74,16 +74,10 @@ async function resolveSubscriptionBody() {
 
 async function resolveJsonArrayBody() {
   const bundled = readBundleText(BUNDLE_JSON_PATHS);
+  if (bundled) return bundled;
   const cached = await redisGet("sub_json_cache");
-  if (cached) {
-    if (bundled) {
-      const bBuild = parseInt(parseBuildFromSub(bundled) || "0", 10);
-      const cBuild = parseInt(parseBuildFromSub(cached) || "0", 10);
-      if (bBuild > cBuild) return bundled;
-    }
-    return cached;
-  }
-  return bundled;
+  if (cached) return cached;
+  return null;
 }
 
 // Фетчим подписку — для админки (может подождать дольше)
@@ -188,20 +182,14 @@ export default async function handler(req, res) {
     await recordVisit(req, subText);
 
     let body;
-    let isJson = false;
 
-    if (format === "json") {
-      // JSON-массив конфигураций Happ (Content-Type: application/json)
-      body = (await resolveJsonArrayBody()) || subText;
-      isJson = true;
-      res.setHeader("Content-Type", "application/json; charset=utf-8");
-    } else if (format === "b64" || format === "base64") {
-      // Base64 VLESS-ссылки
+    if (format === "b64" || format === "base64") {
+      // Base64 VLESS-ссылки (если явно запрошен b64)
       const linkLines = subText.split("\n").map(l => l.trim()).filter(l => l && !l.startsWith("#"));
       body = Buffer.from(linkLines.join("\n"), "utf8").toString("base64");
       res.setHeader("Content-Type", "text/plain; charset=utf-8");
     } else {
-      // По умолчанию: прямые текстовые VLESS-ссылки (Content-Type: text/plain)
+      // По умолчанию: ТОЛЬКО чистый текстовый PiskoVPN.txt (Content-Type: text/plain)
       body = subText;
       res.setHeader("Content-Type", "text/plain; charset=utf-8");
     }
@@ -239,7 +227,7 @@ export default async function handler(req, res) {
     }
 
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Content-Disposition", isJson ? 'attachment; filename="PiskoVPN.json"' : 'attachment; filename="PiskoVPN"');
+    res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN"');
     // Отключаем кеширование на прокси/edge, чтобы каждый визит сразу обновлялся в базе
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
     res.setHeader("Pragma", "no-cache");
