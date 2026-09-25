@@ -310,8 +310,8 @@ export default async function handler(req, res) {
       const currentTxt = await getSubscriptionText(r).catch(() => "");
       const currentItems = parseVlessLinks(currentTxt);
 
-      const currentBuildNum = parseInt(parseBuildFromSub(currentTxt) || "70", 10);
-      const nextBuildNum = isNaN(currentBuildNum) ? 71 : currentBuildNum + 1;
+      const currentBuildNum = parseInt(parseBuildFromSub(currentTxt) || "72", 10);
+      const nextBuildNum = isNaN(currentBuildNum) ? 73 : currentBuildNum + 1;
 
       // Анализ различий (Diff) с точным поиском по названию и параметрам
       const added = [];
@@ -450,7 +450,7 @@ export default async function handler(req, res) {
 
       return res.status(200).json({
         ok: true,
-        build: build || "70",
+        build: build || "72",
         github: { txt: ghTxt, json: ghJson },
       });
     } catch (err) {

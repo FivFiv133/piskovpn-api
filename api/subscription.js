@@ -232,15 +232,18 @@ export default async function handler(req, res) {
 
     // Profile Title
     const titleVal = profileTitleMatch ? profileTitleMatch[1].trim() : "💎 PiskoVPN 💎";
-    const safeTitle = safeHeader(titleVal);
-    if (safeTitle) res.setHeader("profile-title", safeTitle);
+    const encodedTitle = encodeURIComponent(titleVal);
+    const asciiCleanTitle = titleVal.replace(/[^\x20-\x7E]/g, "").trim() || "PiskoVPN";
+
+    // 1. profile-title (URL-encoded по спецификации клиентов Happ/Clash/Sing-box)
+    res.setHeader("profile-title", encodedTitle);
 
     // Profile Update Interval
     const updateVal = profileUpdateMatch ? profileUpdateMatch[1].trim() : "1";
     res.setHeader("profile-update-interval", updateVal);
 
     // Announce (Version / Banner line in Happ)
-    const announceVal = announceMatch ? announceMatch[1].trim() : "Версия: v0.2.1-X | build-70";
+    const announceVal = announceMatch ? announceMatch[1].trim() : "Версия: v0.2.1-X | build-72";
     const safeAnnounce = safeHeader(announceVal);
     if (safeAnnounce) res.setHeader("announce", safeAnnounce);
 
@@ -253,7 +256,8 @@ export default async function handler(req, res) {
       if (safe) res.setHeader("profile-web-page", safe);
     }
 
-    res.setHeader("Content-Disposition", isJson ? 'inline; filename="PiskoVPN.json"' : 'inline; filename="PiskoVPN.txt"');
+    // 2. Content-Disposition: attachment c ASCII-именем и RFC 5987 UTF-8 для гарантированного названия во всех приложениях
+    res.setHeader("Content-Disposition", `attachment; filename="${asciiCleanTitle}"; filename*=UTF-8''${encodedTitle}`);
     // Отключаем кеширование на прокси/edge, чтобы каждый визит сразу обновлялся в базе
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
     res.setHeader("Pragma", "no-cache");
