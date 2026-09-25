@@ -209,10 +209,9 @@ export default async function handler(req, res) {
     // Извлекаем аннотации и заголовки из subText с безопасным кодированием для HTTP
     const profileTitleMatch = subText.match(/^#\s*profile-title:\s*(.+)$/m);
     const profileUpdateMatch = subText.match(/^#\s*profile-update-interval:\s*(.+)$/m);
-    const profileWebMatch = subText.match(/^#\s*profile-web-page:\s*(.+)$/m);
+    const profileWebMatch = subText.match(/^#\s*profile-web-page(?:-url)?:\s*(.+)$/m);
     const supportUrlMatch = subText.match(/^#\s*support-url:\s*(.+)$/m);
     const announceMatch = subText.match(/^#\s*announce:\s*(.+)$/m);
-
     // Profile Title
     const titleVal = profileTitleMatch ? profileTitleMatch[1].trim() : "💎 PiskoVPN 💎";
     const safeTitle = safeHeader(titleVal);
@@ -233,9 +232,13 @@ export default async function handler(req, res) {
 
     if (profileWebMatch) {
       const safe = safeHeader(profileWebMatch[1].trim());
-      if (safe) res.setHeader("profile-web-page", safe);
+      if (safe) {
+        res.setHeader("profile-web-page", safe);
+        res.setHeader("profile-web-page-url", safe);
+      }
     }
 
+    res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Content-Disposition", isJson ? 'attachment; filename="PiskoVPN.json"' : 'attachment; filename="PiskoVPN"');
     // Отключаем кеширование на прокси/edge, чтобы каждый визит сразу обновлялся в базе
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
