@@ -198,8 +198,11 @@ export default async function handler(req, res) {
     const subText = await resolveSubscriptionBody();
     if (!subText) return res.status(500).send("Subscription not found");
 
-    // Записываем визит устройства в реальном времени
-    await recordVisit(req, subText);
+    // Записываем визит устройства с жестким таймаутом (800мс), чтобы не задерживать мобильные клиенты
+    await Promise.race([
+      recordVisit(req, subText),
+      new Promise((resolve) => setTimeout(resolve, 800)),
+    ]).catch(() => {});
 
     let body;
     let isJson = false;
@@ -250,7 +253,7 @@ export default async function handler(req, res) {
       if (safe) res.setHeader("profile-web-page", safe);
     }
 
-    res.setHeader("Content-Disposition", isJson ? 'attachment; filename="PiskoVPN.json"' : 'attachment; filename="PiskoVPN"');
+    res.setHeader("Content-Disposition", isJson ? 'inline; filename="PiskoVPN.json"' : 'inline; filename="PiskoVPN.txt"');
     // Отключаем кеширование на прокси/edge, чтобы каждый визит сразу обновлялся в базе
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
     res.setHeader("Pragma", "no-cache");
