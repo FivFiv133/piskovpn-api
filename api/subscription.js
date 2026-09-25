@@ -48,20 +48,6 @@ async function redisGet(key, ms = REDIS_GET_MS) {
   }
 }
 
-async function ensureRedisReady(r, ms = REDIS_WRITE_MS) {
-  if (r.status === "ready") return true;
-  try {
-    await Promise.race([
-      r.connect(),
-      new Promise((_, rej) => setTimeout(() => rej(new Error("redis connect timeout")), ms)),
-    ]);
-    return r.status === "ready";
-  } catch (e) {
-    console.error("[SUB] Redis connect:", e.message);
-    return false;
-  }
-}
-
 async function resolveSubscriptionBody() {
   const bundled = readBundleText(BUNDLE_TXT_PATHS);
 
@@ -198,11 +184,8 @@ export default async function handler(req, res) {
     const subText = await resolveSubscriptionBody();
     if (!subText) return res.status(500).send("Subscription not found");
 
-    // Записываем визит устройства с жестким таймаутом (800мс), чтобы не задерживать мобильные клиенты
-    await Promise.race([
-      recordVisit(req, subText),
-      new Promise((resolve) => setTimeout(resolve, 800)),
-    ]).catch(() => {});
+    // Записываем визит устройства в реальном времени
+    await recordVisit(req, subText);
 
     let body;
     let isJson = false;
@@ -232,11 +215,8 @@ export default async function handler(req, res) {
 
     // Profile Title
     const titleVal = profileTitleMatch ? profileTitleMatch[1].trim() : "💎 PiskoVPN 💎";
-    const encodedTitle = encodeURIComponent(titleVal);
-    const asciiCleanTitle = titleVal.replace(/[^\x20-\x7E]/g, "").trim() || "PiskoVPN";
-
-    // 1. profile-title (URL-encoded по спецификации клиентов Happ/Clash/Sing-box)
-    res.setHeader("profile-title", encodedTitle);
+    const safeTitle = safeHeader(titleVal);
+    if (safeTitle) res.setHeader("profile-title", safeTitle);
 
     // Profile Update Interval
     const updateVal = profileUpdateMatch ? profileUpdateMatch[1].trim() : "1";
@@ -256,8 +236,7 @@ export default async function handler(req, res) {
       if (safe) res.setHeader("profile-web-page", safe);
     }
 
-    // 2. Content-Disposition: attachment c ASCII-именем и RFC 5987 UTF-8 для гарантированного названия во всех приложениях
-    res.setHeader("Content-Disposition", `attachment; filename="${asciiCleanTitle}"; filename*=UTF-8''${encodedTitle}`);
+    res.setHeader("Content-Disposition", isJson ? 'attachment; filename="PiskoVPN.json"' : 'attachment; filename="PiskoVPN"');
     // Отключаем кеширование на прокси/edge, чтобы каждый визит сразу обновлялся в базе
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
     res.setHeader("Pragma", "no-cache");
@@ -268,8 +247,3 @@ export default async function handler(req, res) {
     if (!res.headersSent) res.status(500).send("Internal server error");
   }
 }
-
-
-
-
-
