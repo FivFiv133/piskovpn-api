@@ -194,23 +194,24 @@ export default async function handler(req, res) {
       res.setHeader("Content-Type", "text/plain; charset=utf-8");
     }
 
-    // Извлекаем аннотации и заголовки из subText с безопасным кодированием для HTTP
+    // Извлекаем аннотации и заголовки из subText
     const profileTitleMatch = subText.match(/^#\s*profile-title:\s*(.+)$/m);
     const profileUpdateMatch = subText.match(/^#\s*profile-update-interval:\s*(.+)$/m);
     const profileWebMatch = subText.match(/^#\s*profile-web-page(?:-url)?:\s*(.+)$/m);
     const supportUrlMatch = subText.match(/^#\s*support-url:\s*(.+)$/m);
     const announceMatch = subText.match(/^#\s*announce:\s*(.+)$/m);
-    // Profile Title
+
+    // Profile Title (строго без base64, чистый текст до 25 символов)
     const titleVal = profileTitleMatch ? profileTitleMatch[1].trim() : "💎 PiskoVPN 💎";
-    const safeTitle = safeHeader(titleVal);
-    if (safeTitle) res.setHeader("profile-title", safeTitle);
+    const plainTitle = titleVal.replace(/[^\x20-\x7E]/g, "").trim() || "PiskoVPN";
+    res.setHeader("profile-title", plainTitle.slice(0, 25));
 
     // Profile Update Interval
     const updateVal = profileUpdateMatch ? profileUpdateMatch[1].trim() : "1";
     res.setHeader("profile-update-interval", updateVal);
 
     // Announce (Version / Banner line in Happ)
-    const announceVal = announceMatch ? announceMatch[1].trim() : "Версия: v0.2.1-X | build-72";
+    const announceVal = announceMatch ? announceMatch[1].trim() : "Версия: v0.2.1-X | build-73";
     const safeAnnounce = safeHeader(announceVal);
     if (safeAnnounce) res.setHeader("announce", safeAnnounce);
 
@@ -219,11 +220,9 @@ export default async function handler(req, res) {
     res.setHeader("support-url", supportVal);
 
     if (profileWebMatch) {
-      const safe = safeHeader(profileWebMatch[1].trim());
-      if (safe) {
-        res.setHeader("profile-web-page", safe);
-        res.setHeader("profile-web-page-url", safe);
-      }
+      const webUrl = profileWebMatch[1].trim();
+      res.setHeader("profile-web-page", webUrl);
+      res.setHeader("profile-web-page-url", webUrl);
     }
 
     res.setHeader("Access-Control-Allow-Origin", "*");
