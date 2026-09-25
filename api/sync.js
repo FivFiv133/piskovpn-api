@@ -54,11 +54,13 @@ function formatRemarkForHapp(rawRemark) {
   const lower = remark.toLowerCase();
 
   if (lower.includes("автовыбор")) return "🇪🇺 🔄 Автовыбор рабочего сервера";
-  if (lower.includes("нидерланд") && (lower.includes("3") || lower.includes("№3") || lower.includes("[3]"))) return "🇳🇱 ⚡ Нидерланды [3]";
+  if (lower.includes("нидерланд") && (lower.includes("3") || lower.includes("№3") || lower.includes("[3]") || lower.includes("#3"))) return "🇳🇱 ⚡ Нидерланды [3]";
+  if (lower.includes("нидерланд") && (lower.includes("2") || lower.includes("№2") || lower.includes("[2]") || lower.includes("#2"))) return "🇳🇱 ⚡ Нидерланды [2]";
   if (lower.includes("нидерланд") && lower.includes("grpc")) return "🇳🇱 ⚡ Нидерланды (gRPC)";
   if (lower.includes("нидерланд")) return "🇳🇱 ⚡ Нидерланды";
 
-  if (lower.includes("швейцар") && (lower.includes("2") || lower.includes("№2") || lower.includes("[2]"))) return "🇨🇭 ⚡ Швейцария [2]";
+  if (lower.includes("швейцар") && (lower.includes("3") || lower.includes("№3") || lower.includes("[3]") || lower.includes("#3"))) return "🇨🇭 ⚡ Швейцария [3]";
+  if (lower.includes("швейцар") && (lower.includes("2") || lower.includes("№2") || lower.includes("[2]") || lower.includes("#2"))) return "🇨🇭 ⚡ Швейцария [2]";
   if (lower.includes("швейцар") && lower.includes("grpc")) return "🇨🇭 ⚡ Швейцария (gRPC)";
   if ((lower.includes("швейцар") || lower.includes("🇨🇭")) && lower.includes("обход")) return "🇨🇭 🛡️ Обход блокировок (Швейцария)";
   if (lower.includes("швейцар")) return "🇨🇭 ⚡ Швейцария";
