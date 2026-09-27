@@ -54,64 +54,95 @@ function formatRemarkForHapp(rawRemark) {
   const lower = remark.toLowerCase();
 
   if (lower.includes("автовыбор")) return "🇪🇺 🔄 Автовыбор рабочего сервера";
-  if (lower.includes("нидерланд") && (lower.includes("3") || lower.includes("№3") || lower.includes("[3]") || lower.includes("#3"))) return "🇳🇱 ⚡ Нидерланды [3]";
-  if (lower.includes("нидерланд") && (lower.includes("2") || lower.includes("№2") || lower.includes("[2]") || lower.includes("#2"))) return "🇳🇱 ⚡ Нидерланды [2]";
-  if (lower.includes("нидерланд") && lower.includes("grpc")) return "🇳🇱 ⚡ Нидерланды (gRPC)";
-  if (lower.includes("нидерланд")) return "🇳🇱 ⚡ Нидерланды";
-
-  if (lower.includes("швейцар") && (lower.includes("3") || lower.includes("№3") || lower.includes("[3]") || lower.includes("#3"))) return "🇨🇭 ⚡ Швейцария [3]";
-  if (lower.includes("швейцар") && (lower.includes("2") || lower.includes("№2") || lower.includes("[2]") || lower.includes("#2"))) return "🇨🇭 ⚡ Швейцария [2]";
-  if (lower.includes("швейцар") && lower.includes("grpc")) return "🇨🇭 ⚡ Швейцария (gRPC)";
   if ((lower.includes("швейцар") || lower.includes("🇨🇭")) && lower.includes("обход")) return "🇨🇭 🛡️ Обход блокировок (Швейцария)";
-  if (lower.includes("швейцар")) return "🇨🇭 ⚡ Швейцария";
-
-  if (lower.includes("герман") && lower.includes("grpc")) return "🇩🇪 ⚡ Германия (gRPC)";
-  if (lower.includes("герман")) return "🇩🇪 ⚡ Германия";
-
-  if (lower.includes("испан")) return "🇪🇸 ⚡ Испания";
-  if (lower.includes("сингапур")) return "🇸🇬 ⚡ Сингапур";
-
-  if (lower.includes("сша") && lower.includes("grpc")) return "🇺🇸 ⚡ США (gRPC)";
-  if (lower.includes("сша") || lower.includes("usa")) return "🇺🇸 ⚡ США";
-
-  if (lower.includes("литв")) return "🇱🇹 ⚡ Литва";
   if ((lower.includes("франц") || lower.includes("🇫🇷")) && lower.includes("обход")) return "🇫🇷 🛡️ Обход блокировок (Франция)";
 
-  if (lower.includes("москв") && lower.includes("grpc")) return "🇷🇺 ⚡ Москва (gRPC)";
-  if (lower.includes("москв")) return "🇷🇺 ⚡ Москва";
-  if (lower.includes("росси") && lower.includes("grpc")) return "🇷🇺 ⚡ Россия (gRPC)";
-  if (lower.includes("росси")) return "🇷🇺 ⚡ Россия";
+  // Белые списки: сохраняем номер #1, #2, #3
+  if (lower.includes("белые списки") || lower.includes("белый список")) {
+    const numMatch = remark.match(/(?:#|№|\[)?(\d+)(?:\])?\s*$/);
+    const num = numMatch ? ` #${numMatch[1]}` : "";
+    return `🇷🇺 ⚡ Белые списки${num}`;
+  }
 
-  // Универсальное форматирование для любых новых стран с флагом
+  // Только Torrent
+  if (lower.includes("torrent") || lower.includes("торрент")) {
+    return "🇳🇱 ⚡ Только Torrent";
+  }
+
+  // Номер сервера: #1 -> пусто, #2 -> [2], #3 -> [3], #4 -> [4]
+  let numSuffix = "";
+  if (/(?:#|№|\[)\s*2\s*\]?\s*$/i.test(remark)) {
+    numSuffix = " [2]";
+  } else if (/(?:#|№|\[)\s*3\s*\]?\s*$/i.test(remark)) {
+    numSuffix = " [3]";
+  } else if (/(?:#|№|\[)\s*4\s*\]?\s*$/i.test(remark)) {
+    numSuffix = " [4]";
+  }
+
+  const isGrpc = /grpc/i.test(remark);
+  const grpcSuffix = isGrpc ? " (gRPC)" : "";
+
+  // Проверяем известные страны
+  if (lower.includes("нидерланд") || lower.includes("netherlands")) return `🇳🇱 ⚡ Нидерланды${numSuffix}${grpcSuffix}`;
+  if (lower.includes("швейцар") || lower.includes("switzerland")) return `🇨🇭 ⚡ Швейцария${numSuffix}${grpcSuffix}`;
+  if (lower.includes("герман") || lower.includes("germany")) return `🇩🇪 ⚡ Германия${numSuffix}${grpcSuffix}`;
+  if (lower.includes("польш") || lower.includes("poland")) return `🇵🇱 ⚡ Польша${numSuffix}${grpcSuffix}`;
+  if (lower.includes("сша") || lower.includes("usa") || lower.includes("united states")) return `🇺🇸 ⚡ США${numSuffix}${grpcSuffix}`;
+  if (lower.includes("финлянд") || lower.includes("finland")) return `🇫🇮 ⚡ Финляндия${numSuffix}${grpcSuffix}`;
+  if (lower.includes("казахстан") || lower.includes("kazakhstan")) return `🇰🇿 ⚡ Казахстан${numSuffix}${grpcSuffix}`;
+  if (lower.includes("итали") || lower.includes("italy")) return `🇮🇹 ⚡ Италия${numSuffix}${grpcSuffix}`;
+  if (lower.includes("испан") || lower.includes("spain")) return `🇪🇸 ⚡ Испания${numSuffix}${grpcSuffix}`;
+  if (lower.includes("сингапур") || lower.includes("singapore")) return `🇸🇬 ⚡ Сингапур${numSuffix}${grpcSuffix}`;
+  if (lower.includes("литв") || lower.includes("lithuania")) return `🇱🇹 ⚡ Литва${numSuffix}${grpcSuffix}`;
+  if (lower.includes("москв")) return `🇷🇺 ⚡ Москва${numSuffix}${grpcSuffix}`;
+  if (lower.includes("росси") || lower.includes("russia")) return `🇷🇺 ⚡ Россия${numSuffix}${grpcSuffix}`;
+
+  // Универсальное форматирование для любых других стран с флагом
   const flagMatch = remark.match(/^([\uD83C][\uDDE6-\uDDFF]){2}/);
   if (flagMatch) {
     const flag = flagMatch[0];
     let rest = remark.slice(flag.length).trim();
-    const isGrpc = /grpc/i.test(rest);
-    rest = rest.replace(/⚡?\s*grpc/gi, "").trim();
+    rest = rest.replace(/⚡?\s*grpc/gi, "").replace(/(?:#|№|\[)\s*\d+\s*\]?\s*$/i, "").trim();
 
     if (/^[🛡️🔄⚡]/.test(rest)) {
-      return isGrpc ? `${flag} ${rest} (gRPC)` : `${flag} ${rest}`;
+      return `${flag} ${rest}${numSuffix}${grpcSuffix}`.trim();
     }
-
     if (lower.includes("обход")) {
-      return isGrpc ? `${flag} 🛡️ ${rest} (gRPC)` : `${flag} 🛡️ ${rest}`;
+      return `${flag} 🛡️ ${rest}${numSuffix}${grpcSuffix}`.trim();
     }
     if (lower.includes("авто")) {
-      return `${flag} 🔄 ${rest}`;
+      return `${flag} 🔄 ${rest}`.trim();
     }
-
-    return isGrpc ? `${flag} ⚡ ${rest} (gRPC)` : `${flag} ⚡ ${rest}`;
+    return `${flag} ⚡ ${rest}${numSuffix}${grpcSuffix}`.trim();
   }
 
-  return `🌐 ⚡ ${remark}`;
+  return `🌐 ⚡ ${remark}`.trim();
 }
 
 function getServerPriority(remark) {
   const lower = (remark || "").toLowerCase();
+  if (lower.includes("белые списки") || lower.includes("белый список")) return 0;
   if (lower.includes("обход") || lower.includes("🛡️")) return 1;
   if (lower.includes("автовыбор") || lower.includes("🔄")) return 2;
   return 3;
+}
+
+function parseSingleVless(line) {
+  try {
+    const u = new URL(line);
+    const remark = decodeURIComponent(u.hash.slice(1));
+    return {
+      url: line,
+      protocol: u.protocol.replace(":", ""),
+      address: u.hostname,
+      port: u.port || "443",
+      uuid: u.username,
+      remark,
+      params: Object.fromEntries(u.searchParams.entries()),
+    };
+  } catch {
+    return null;
+  }
 }
 
 function parseVlessLinks(rawText) {
@@ -123,23 +154,72 @@ function parseVlessLinks(rawText) {
     } catch {}
   }
   const lines = text.split("\n").map((l) => l.trim()).filter((l) => l && !l.startsWith("#"));
-  return lines.map((line) => {
-    try {
-      const u = new URL(line);
-      const remark = decodeURIComponent(u.hash.slice(1));
-      return {
-        url: line,
-        protocol: u.protocol.replace(":", ""),
-        address: u.hostname,
-        port: u.port || "443",
-        uuid: u.username,
-        remark,
-        params: Object.fromEntries(u.searchParams.entries()),
-      };
-    } catch {
-      return null;
-    }
-  }).filter(Boolean);
+  return lines.map(parseSingleVless).filter(Boolean);
+}
+
+function jsonToVless(cfg) {
+  if (!cfg || typeof cfg !== "object") return null;
+  const remark = cfg.remarks || "";
+  const proxy = (cfg.outbounds || []).find((o) => o.tag === "proxy" || o.protocol === "vless") || cfg.outbounds?.[0];
+  if (!proxy) return null;
+  const vnext = proxy.settings?.vnext?.[0];
+  if (!vnext) return null;
+  const user = vnext.users?.[0];
+  if (!user) return null;
+
+  const uuid = user.id;
+  const address = vnext.address;
+  const port = vnext.port || 443;
+  const encryption = user.encryption || "none";
+  const flow = user.flow || "";
+
+  const ss = proxy.streamSettings || {};
+  const network = ss.network || "tcp";
+  const security = ss.security || "none";
+
+  const params = new URLSearchParams();
+  if (encryption && encryption !== "none") params.set("encryption", encryption);
+  else params.set("encryption", "none");
+  if (flow) params.set("flow", flow);
+
+  params.set("type", network);
+
+  if (network === "grpc") {
+    const grpc = ss.grpcSettings || {};
+    params.set("mode", grpc.mode ? "multi" : "gun");
+    if (grpc.serviceName) params.set("serviceName", grpc.serviceName);
+    if (grpc.authority) params.set("authority", grpc.authority);
+  } else if (network === "ws") {
+    const ws = ss.wsSettings || {};
+    if (ws.path) params.set("path", ws.path);
+    if (ws.headers?.Host) params.set("host", ws.headers.Host);
+  } else if (network === "xhttp") {
+    const xhttp = ss.xhttpSettings || {};
+    if (xhttp.path) params.set("path", xhttp.path);
+    if (xhttp.host) params.set("host", xhttp.host);
+    if (xhttp.mode) params.set("mode", xhttp.mode);
+    if (xhttp.extra) params.set("extra", typeof xhttp.extra === "object" ? JSON.stringify(xhttp.extra) : xhttp.extra);
+  }
+
+  if (security === "reality") {
+    params.set("security", "reality");
+    const real = ss.realitySettings || {};
+    if (real.serverName) params.set("sni", real.serverName);
+    if (real.fingerprint) params.set("fp", real.fingerprint);
+    if (real.publicKey) params.set("pbk", real.publicKey);
+    if (real.shortId) params.set("sid", real.shortId);
+    if (real.spiderX) params.set("spx", real.spiderX);
+  } else if (security === "tls") {
+    params.set("security", "tls");
+    const tls = ss.tlsSettings || {};
+    if (tls.serverName) params.set("sni", tls.serverName);
+    if (tls.fingerprint) params.set("fp", tls.fingerprint);
+    if (tls.alpn && Array.isArray(tls.alpn)) params.set("alpn", tls.alpn.join(","));
+  }
+
+  const hash = encodeURIComponent(remark);
+  const qs = params.toString();
+  return `${proxy.protocol || "vless"}://${uuid}@${address}:${port}${qs ? "?" + qs : ""}#${hash}`;
 }
 
 function convertVlessToJson(vlessItems) {
@@ -177,6 +257,17 @@ function convertVlessToJson(vlessItems) {
       streamSettings.wsSettings = {
         path: params.path || "/",
         headers: { Host: params.host || params.sni || item.address },
+      };
+    } else if (params.type === "xhttp") {
+      let extra = undefined;
+      if (params.extra) {
+        try { extra = typeof params.extra === "string" ? JSON.parse(params.extra) : params.extra; } catch {}
+      }
+      streamSettings.xhttpSettings = {
+        path: params.path || "/",
+        host: params.host || params.sni || item.address,
+        mode: params.mode || "packet-up",
+        ...(extra ? { extra } : {}),
       };
     }
 
@@ -276,7 +367,7 @@ export default async function handler(req, res) {
   if (req.method === "POST" && action === "fetch") {
     try {
       const { upstreamUrl, customHeaders } = req.body || {};
-      const targetUrl = (upstreamUrl || "").trim() || "https://sub.medoed.store/4hokxg5sBXqNRXnL";
+      const targetUrl = (upstreamUrl || "").trim() || "https://connect.glowrobot.ru/HsKseXo3N3dfdKat";
 
       const headers = {
         "User-Agent": "Happ/3.3.6/Windows/2607171516500",
@@ -293,16 +384,42 @@ export default async function handler(req, res) {
       }
 
       const rawSub = await resp.text();
-      let decodedSub = rawSub;
-      if (!rawSub.includes("://")) {
-        try { decodedSub = Buffer.from(rawSub, "base64").toString("utf8"); } catch {}
+      let upstreamItems = [];
+      const trimmedSub = rawSub.trim();
+      let isJsonArray = false;
+      let jsonItems = null;
+
+      try {
+        if (trimmedSub.startsWith("[") && trimmedSub.endsWith("]")) {
+          jsonItems = JSON.parse(trimmedSub);
+          if (Array.isArray(jsonItems)) isJsonArray = true;
+        }
+      } catch {}
+
+      if (isJsonArray && jsonItems) {
+        upstreamItems = jsonItems.map((cfg) => {
+          const vlessUrl = jsonToVless(cfg);
+          if (!vlessUrl) return null;
+          const parsed = parseSingleVless(vlessUrl);
+          if (!parsed) return null;
+          return {
+            ...parsed,
+            rawJson: cfg,
+          };
+        }).filter(Boolean);
+      } else {
+        let decodedSub = rawSub;
+        if (!rawSub.includes("://")) {
+          try { decodedSub = Buffer.from(rawSub, "base64").toString("utf8"); } catch {}
+        }
+
+        if (decodedSub.includes("App not supported")) {
+          return res.status(400).json({ error: "Источник отклонил запрос: App not supported. Проверьте заголовки/HWID." });
+        }
+
+        upstreamItems = parseVlessLinks(decodedSub);
       }
 
-      if (decodedSub.includes("App not supported")) {
-        return res.status(400).json({ error: "Источник отклонил запрос: App not supported. Проверьте заголовки/HWID." });
-      }
-
-      const upstreamItems = parseVlessLinks(decodedSub);
       if (!upstreamItems.length) {
         return res.status(400).json({ error: "В ответе источника не найдено рабочих VLESS ссылок." });
       }
@@ -312,8 +429,8 @@ export default async function handler(req, res) {
       const currentTxt = await getSubscriptionText(r).catch(() => "");
       const currentItems = parseVlessLinks(currentTxt);
 
-      const currentBuildNum = parseInt(parseBuildFromSub(currentTxt) || "72", 10);
-      const nextBuildNum = isNaN(currentBuildNum) ? 73 : currentBuildNum + 1;
+      const currentBuildNum = parseInt(parseBuildFromSub(currentTxt) || "77", 10);
+      const nextBuildNum = isNaN(currentBuildNum) ? 78 : currentBuildNum + 1;
 
       // Анализ различий (Diff) с точным поиском по названию и параметрам
       const added = [];
@@ -372,12 +489,12 @@ export default async function handler(req, res) {
         changeDesc: "Удален в источнике",
       }));
 
-      // Сортировка: Обход блокировок первые, затем Автовыбор, затем обычные серверы
+      // Сортировка: Белые списки первые, затем Обход блокировок, затем Автовыбор, затем обычные серверы
       processedUpstream.sort((a, b) => {
         const pa = getServerPriority(a.formattedRemark);
         const pb = getServerPriority(b.formattedRemark);
         if (pa !== pb) return pa - pb;
-        return 0;
+        return a.formattedRemark.localeCompare(b.formattedRemark, "ru");
       });
 
       // Формируем готовый TXT
@@ -394,14 +511,22 @@ export default async function handler(req, res) {
       const previewTxt = [
         "# profile-title: 💎 PiskoVPN 💎",
         "# profile-update-interval: 1",
-        `# announce: Версия: v0.2.1-X | build-${nextBuildNum}`,
+        `# announce: Версия: v0.2.2-X | build-${nextBuildNum}`,
         "# support-url: https://t.me/piskoapps_bot",
         `# build-${nextBuildNum}`,
         "",
         ...updatedUrls,
       ].join("\n");
 
-      const previewJsonItems = convertVlessToJson(processedUpstream.map(p => ({ ...p, remark: p.formattedRemark })));
+      const previewJsonItems = processedUpstream.map((p) => {
+        if (p.rawJson) {
+          return {
+            ...p.rawJson,
+            remarks: p.formattedRemark,
+          };
+        }
+        return convertVlessToJson([{ ...p, remark: p.formattedRemark }])[0];
+      });
 
       return res.status(200).json({
         ok: true,
@@ -452,7 +577,7 @@ export default async function handler(req, res) {
 
       return res.status(200).json({
         ok: true,
-        build: build || "72",
+        build: build || "77",
         github: { txt: ghTxt, json: ghJson },
       });
     } catch (err) {
@@ -788,7 +913,7 @@ export default async function handler(req, res) {
       <span style="color: var(--text-muted); font-size: 11px;">Happ Client Emulation + HWID Bypass Active</span>
     </div>
     <div class="input-row">
-      <input type="text" id="upstreamUrl" class="source-input" value="https://sub.medoed.store/4hokxg5sBXqNRXnL" placeholder="https://sub.provider.com/key">
+      <input type="text" id="upstreamUrl" class="source-input" value="https://connect.glowrobot.ru/HsKseXo3N3dfdKat" placeholder="https://connect.glowrobot.ru/key">
       <button class="btn-fetch" id="btnFetch" onclick="fetchAndCompare()">
         <svg style="width:16px;height:16px"><use href="#i-zap"/></svg>
         <span>Сверить с источником</span>

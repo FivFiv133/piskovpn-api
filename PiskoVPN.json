@@ -1,6 +1,64 @@
 [
   {
-    "remarks": "🇫🇷 🛡️ Обход блокировок (Франция)",
+    "dns": {
+      "servers": [
+        "1.1.1.1",
+        "1.0.0.1"
+      ]
+    },
+    "log": {
+      "loglevel": "warning"
+    },
+    "routing": {
+      "rules": [
+        {
+          "ip": [
+            "geoip:private"
+          ],
+          "type": "field",
+          "outboundTag": "direct"
+        },
+        {
+          "type": "field",
+          "protocol": [
+            "bittorrent"
+          ],
+          "outboundTag": "block"
+        },
+        {
+          "type": "field",
+          "network": "tcp,udp",
+          "outboundTag": "proxy"
+        }
+      ],
+      "domainStrategy": "IPIfNonMatch"
+    },
+    "inbounds": [
+      {
+        "tag": "socks",
+        "port": 10808,
+        "listen": "127.0.0.1",
+        "protocol": "socks",
+        "settings": {
+          "udp": true,
+          "auth": "noauth"
+        },
+        "sniffing": {
+          "enabled": true,
+          "destOverride": [
+            "http",
+            "tls"
+          ]
+        }
+      },
+      {
+        "tag": "http",
+        "port": 10809,
+        "listen": "127.0.0.1",
+        "protocol": "http",
+        "settings": {}
+      }
+    ],
     "outbounds": [
       {
         "tag": "proxy",
@@ -8,36 +66,118 @@
         "settings": {
           "vnext": [
             {
-              "address": "37.143.15.189",
+              "address": "cdn.wnl.glowrobot.ru",
               "port": 443,
               "users": [
                 {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "id": "3d9c0b44-71c4-4ac0-b9e0-680eabad98aa",
                   "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
+                  "flow": ""
                 }
               ]
             }
           ]
         },
         "streamSettings": {
-          "network": "tcp",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "YTW20ZVXu3YK7drIMOnjSANoFGYDoBg-yn_AeeftTiM",
-            "fingerprint": "firefox",
-            "serverName": "smartcaptcha.yandexcloud.net",
-            "shortId": "9c87e37ad65ef8e1",
-            "spiderX": "/"
+          "network": "xhttp",
+          "xhttpSettings": {
+            "mode": "packet-up",
+            "host": "cdn.wnl.glowrobot.ru",
+            "path": "/uploadfiles/",
+            "extra": {
+              "mode": "packet-up",
+              "path": "/uploadfiles/",
+              "xPaddingKey": "_dc",
+              "xPaddingHeader": "X-Cache",
+              "xPaddingMethod": "tokenish",
+              "uplinkHTTPMethod": "GET",
+              "xPaddingObfsMode": true,
+              "xPaddingPlacement": "queryInHeader"
+            }
+          },
+          "security": "tls",
+          "tlsSettings": {
+            "serverName": "cdn.wnl.glowrobot.ru",
+            "fingerprint": "chrome",
+            "alpn": [
+              "h3",
+              "h2",
+              "http/1.1"
+            ]
           }
         }
+      },
+      {
+        "tag": "direct",
+        "protocol": "freedom"
+      },
+      {
+        "tag": "block",
+        "protocol": "blackhole"
       }
-    ]
+    ],
+    "remarks": "🇷🇺 ⚡ Белые списки #1"
   },
   {
-    "remarks": "🇨🇭 🛡️ Обход блокировок (Швейцария)",
+    "dns": {
+      "servers": [
+        "1.1.1.1",
+        "1.0.0.1"
+      ]
+    },
+    "log": {
+      "loglevel": "warning"
+    },
+    "routing": {
+      "rules": [
+        {
+          "ip": [
+            "geoip:private"
+          ],
+          "type": "field",
+          "outboundTag": "direct"
+        },
+        {
+          "type": "field",
+          "protocol": [
+            "bittorrent"
+          ],
+          "outboundTag": "block"
+        },
+        {
+          "type": "field",
+          "network": "tcp,udp",
+          "outboundTag": "proxy"
+        }
+      ],
+      "domainStrategy": "IPIfNonMatch"
+    },
+    "inbounds": [
+      {
+        "tag": "socks",
+        "port": 10808,
+        "listen": "127.0.0.1",
+        "protocol": "socks",
+        "settings": {
+          "udp": true,
+          "auth": "noauth"
+        },
+        "sniffing": {
+          "enabled": true,
+          "destOverride": [
+            "http",
+            "tls"
+          ]
+        }
+      },
+      {
+        "tag": "http",
+        "port": 10809,
+        "listen": "127.0.0.1",
+        "protocol": "http",
+        "settings": {}
+      }
+    ],
     "outbounds": [
       {
         "tag": "proxy",
@@ -45,92 +185,118 @@
         "settings": {
           "vnext": [
             {
-              "address": "46.254.19.239",
+              "address": "cdn.wnl.glowrobot.ru",
               "port": 443,
               "users": [
                 {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "id": "3d9c0b44-71c4-4ac0-b9e0-680eabad98aa",
                   "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
+                  "flow": ""
                 }
               ]
             }
           ]
         },
         "streamSettings": {
-          "network": "tcp",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "iilWkWiOQL3I9HWf3XDnXFpNFfH4oE1BgqWlYQn6bEE",
-            "fingerprint": "firefox",
-            "serverName": "smartcaptcha.yandexcloud.net",
-            "shortId": "eacbc1aa714063f7",
-            "spiderX": "/"
+          "network": "xhttp",
+          "xhttpSettings": {
+            "mode": "packet-up",
+            "host": "cdn.wnl.glowrobot.ru",
+            "path": "/uploadfiles/",
+            "extra": {
+              "mode": "packet-up",
+              "path": "/uploadfiles/",
+              "xPaddingKey": "_dc",
+              "xPaddingHeader": "X-Cache",
+              "xPaddingMethod": "tokenish",
+              "uplinkHTTPMethod": "GET",
+              "xPaddingObfsMode": true,
+              "xPaddingPlacement": "queryInHeader"
+            }
+          },
+          "security": "tls",
+          "tlsSettings": {
+            "serverName": "cdn.wnl.glowrobot.ru",
+            "fingerprint": "chrome",
+            "alpn": [
+              "h3",
+              "h2",
+              "http/1.1"
+            ]
           }
         }
-      }
-    ]
-  },
-  {
-    "remarks": "🇳🇱 ⚡ Нидерланды [2]",
-    "outbounds": [
+      },
       {
-        "tag": "proxy",
-        "protocol": "hysteria2",
-        "settings": {
-          "vnext": [
-            {
-              "address": "nl-hy2.medoed.store",
-              "port": 2443,
-              "users": [
-                {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "security": "none"
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇫🇷 ⚡ Франция",
-    "outbounds": [
+        "tag": "direct",
+        "protocol": "freedom"
+      },
       {
-        "tag": "proxy",
-        "protocol": "hysteria2",
-        "settings": {
-          "vnext": [
-            {
-              "address": "fr-hy2.medoed.store",
-              "port": 2443,
-              "users": [
-                {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "security": "none"
-        }
+        "tag": "block",
+        "protocol": "blackhole"
       }
-    ]
+    ],
+    "remarks": "🇷🇺 ⚡ Белые списки #2"
   },
   {
-    "remarks": "🇳🇱 ⚡ Нидерланды",
+    "dns": {
+      "servers": [
+        "1.1.1.1",
+        "1.0.0.1"
+      ]
+    },
+    "log": {
+      "loglevel": "warning"
+    },
+    "routing": {
+      "rules": [
+        {
+          "ip": [
+            "geoip:private"
+          ],
+          "type": "field",
+          "outboundTag": "direct"
+        },
+        {
+          "type": "field",
+          "protocol": [
+            "bittorrent"
+          ],
+          "outboundTag": "block"
+        },
+        {
+          "type": "field",
+          "network": "tcp,udp",
+          "outboundTag": "proxy"
+        }
+      ],
+      "domainStrategy": "IPIfNonMatch"
+    },
+    "inbounds": [
+      {
+        "tag": "socks",
+        "port": 10808,
+        "listen": "127.0.0.1",
+        "protocol": "socks",
+        "settings": {
+          "udp": true,
+          "auth": "noauth"
+        },
+        "sniffing": {
+          "enabled": true,
+          "destOverride": [
+            "http",
+            "tls"
+          ]
+        }
+      },
+      {
+        "tag": "http",
+        "port": 10809,
+        "listen": "127.0.0.1",
+        "protocol": "http",
+        "settings": {}
+      }
+    ],
     "outbounds": [
       {
         "tag": "proxy",
@@ -138,36 +304,118 @@
         "settings": {
           "vnext": [
             {
-              "address": "87.58.206.68",
+              "address": "cdn.wnl2.glowrobot.ru",
               "port": 443,
               "users": [
                 {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "id": "3d9c0b44-71c4-4ac0-b9e0-680eabad98aa",
                   "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
+                  "flow": ""
                 }
               ]
             }
           ]
         },
         "streamSettings": {
-          "network": "tcp",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "xG_3hrmCx40pqD6Wh_2bQgmC8nvdjCx-l6HJnEcL6AI",
-            "fingerprint": "firefox",
-            "serverName": "cdn1.medoed.store",
-            "shortId": "b4f2b5ab63691bd4",
-            "spiderX": "/"
+          "network": "xhttp",
+          "xhttpSettings": {
+            "mode": "packet-up",
+            "host": "cdn.wnl2.glowrobot.ru",
+            "path": "/uploadfiles/",
+            "extra": {
+              "mode": "packet-up",
+              "path": "/uploadfiles/",
+              "xPaddingKey": "_dc",
+              "xPaddingHeader": "X-Cache",
+              "xPaddingMethod": "tokenish",
+              "uplinkHTTPMethod": "GET",
+              "xPaddingObfsMode": true,
+              "xPaddingPlacement": "queryInHeader"
+            }
+          },
+          "security": "tls",
+          "tlsSettings": {
+            "serverName": "cdn.wnl2.glowrobot.ru",
+            "fingerprint": "chrome",
+            "alpn": [
+              "h3",
+              "h2",
+              "http/1.1"
+            ]
           }
         }
+      },
+      {
+        "tag": "direct",
+        "protocol": "freedom"
+      },
+      {
+        "tag": "block",
+        "protocol": "blackhole"
       }
-    ]
+    ],
+    "remarks": "🇷🇺 ⚡ Белые списки #3"
   },
   {
-    "remarks": "🇩🇪 ⚡ Германия",
+    "dns": {
+      "servers": [
+        "1.1.1.1",
+        "1.0.0.1"
+      ]
+    },
+    "log": {
+      "loglevel": "warning"
+    },
+    "routing": {
+      "rules": [
+        {
+          "ip": [
+            "geoip:private"
+          ],
+          "type": "field",
+          "outboundTag": "direct"
+        },
+        {
+          "type": "field",
+          "protocol": [
+            "bittorrent"
+          ],
+          "outboundTag": "block"
+        },
+        {
+          "type": "field",
+          "network": "tcp,udp",
+          "outboundTag": "proxy"
+        }
+      ],
+      "domainStrategy": "IPIfNonMatch"
+    },
+    "inbounds": [
+      {
+        "tag": "socks",
+        "port": 10808,
+        "listen": "127.0.0.1",
+        "protocol": "socks",
+        "settings": {
+          "udp": true,
+          "auth": "noauth"
+        },
+        "sniffing": {
+          "enabled": true,
+          "destOverride": [
+            "http",
+            "tls"
+          ]
+        }
+      },
+      {
+        "tag": "http",
+        "port": 10809,
+        "listen": "127.0.0.1",
+        "protocol": "http",
+        "settings": {}
+      }
+    ],
     "outbounds": [
       {
         "tag": "proxy",
@@ -175,50 +423,13 @@
         "settings": {
           "vnext": [
             {
-              "address": "de.medoed.store",
+              "address": "31.77.188.55",
               "port": 443,
               "users": [
                 {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "id": "3d9c0b44-71c4-4ac0-b9e0-680eabad98aa",
                   "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "0_rfdN11lCTXR1IJh-gyRgK96Y96BQbie2teWxHxsV0",
-            "fingerprint": "edge",
-            "serverName": "de.medoed.store",
-            "shortId": "ae72bb62f6dc8194",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇩🇪 ⚡ Германия (gRPC)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "de.medoed.store",
-              "port": 2443,
-              "users": [
-                {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
-                  "encryption": "none",
-                  "level": 0
+                  "flow": ""
                 }
               ]
             }
@@ -226,25 +437,91 @@
         },
         "streamSettings": {
           "network": "grpc",
+          "grpcSettings": {
+            "serviceName": null,
+            "authority": "",
+            "mode": false
+          },
           "security": "reality",
           "realitySettings": {
-            "show": false,
-            "publicKey": "0_rfdN11lCTXR1IJh-gyRgK96Y96BQbie2teWxHxsV0",
-            "fingerprint": "edge",
-            "serverName": "de.medoed.store",
-            "shortId": "ae72bb62f6dc8194",
-            "spiderX": "/"
-          },
-          "grpcSettings": {
-            "serviceName": "de.medoed.store",
-            "multiMode": true
+            "serverName": "google.com",
+            "publicKey": "nloR_6jGjL0vt9GVzTq4yvf4HtiSGNdeehPQ3ya5TEQ",
+            "shortId": "6ba85179e30d4fc2",
+            "fingerprint": "chrome"
           }
         }
+      },
+      {
+        "tag": "direct",
+        "protocol": "freedom"
+      },
+      {
+        "tag": "block",
+        "protocol": "blackhole"
       }
-    ]
+    ],
+    "remarks": "🇩🇪 ⚡ Германия"
   },
   {
-    "remarks": "🇺🇸 ⚡ США",
+    "dns": {
+      "servers": [
+        "1.1.1.1",
+        "1.0.0.1"
+      ]
+    },
+    "log": {
+      "loglevel": "warning"
+    },
+    "routing": {
+      "rules": [
+        {
+          "ip": [
+            "geoip:private"
+          ],
+          "type": "field",
+          "outboundTag": "direct"
+        },
+        {
+          "type": "field",
+          "protocol": [
+            "bittorrent"
+          ],
+          "outboundTag": "block"
+        },
+        {
+          "type": "field",
+          "network": "tcp,udp",
+          "outboundTag": "proxy"
+        }
+      ],
+      "domainStrategy": "IPIfNonMatch"
+    },
+    "inbounds": [
+      {
+        "tag": "socks",
+        "port": 10808,
+        "listen": "127.0.0.1",
+        "protocol": "socks",
+        "settings": {
+          "udp": true,
+          "auth": "noauth"
+        },
+        "sniffing": {
+          "enabled": true,
+          "destOverride": [
+            "http",
+            "tls"
+          ]
+        }
+      },
+      {
+        "tag": "http",
+        "port": 10809,
+        "listen": "127.0.0.1",
+        "protocol": "http",
+        "settings": {}
+      }
+    ],
     "outbounds": [
       {
         "tag": "proxy",
@@ -252,36 +529,105 @@
         "settings": {
           "vnext": [
             {
-              "address": "216.158.95.166",
+              "address": "31.77.188.56",
               "port": 443,
               "users": [
                 {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "id": "3d9c0b44-71c4-4ac0-b9e0-680eabad98aa",
                   "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
+                  "flow": ""
                 }
               ]
             }
           ]
         },
         "streamSettings": {
-          "network": "tcp",
+          "network": "grpc",
+          "grpcSettings": {
+            "serviceName": null,
+            "authority": "",
+            "mode": false
+          },
           "security": "reality",
           "realitySettings": {
-            "show": false,
-            "publicKey": "cyCBAXCTgPeX7DWj4iVGhifXocXhlfL-abZxtm3URCw",
-            "fingerprint": "chrome",
-            "serverName": "us.medoed.store",
-            "shortId": "a657425b7ec30090",
-            "spiderX": "/"
+            "serverName": "google.com",
+            "publicKey": "nloR_6jGjL0vt9GVzTq4yvf4HtiSGNdeehPQ3ya5TEQ",
+            "shortId": "6ba85179e30d4fc2",
+            "fingerprint": "chrome"
           }
         }
+      },
+      {
+        "tag": "direct",
+        "protocol": "freedom"
+      },
+      {
+        "tag": "block",
+        "protocol": "blackhole"
       }
-    ]
+    ],
+    "remarks": "🇩🇪 ⚡ Германия [2]"
   },
   {
-    "remarks": "🇷🇺 ⚡ Москва",
+    "dns": {
+      "servers": [
+        "1.1.1.1",
+        "1.0.0.1"
+      ]
+    },
+    "log": {
+      "loglevel": "warning"
+    },
+    "routing": {
+      "rules": [
+        {
+          "ip": [
+            "geoip:private"
+          ],
+          "type": "field",
+          "outboundTag": "direct"
+        },
+        {
+          "type": "field",
+          "protocol": [
+            "bittorrent"
+          ],
+          "outboundTag": "block"
+        },
+        {
+          "type": "field",
+          "network": "tcp,udp",
+          "outboundTag": "proxy"
+        }
+      ],
+      "domainStrategy": "IPIfNonMatch"
+    },
+    "inbounds": [
+      {
+        "tag": "socks",
+        "port": 10808,
+        "listen": "127.0.0.1",
+        "protocol": "socks",
+        "settings": {
+          "udp": true,
+          "auth": "noauth"
+        },
+        "sniffing": {
+          "enabled": true,
+          "destOverride": [
+            "http",
+            "tls"
+          ]
+        }
+      },
+      {
+        "tag": "http",
+        "port": 10809,
+        "listen": "127.0.0.1",
+        "protocol": "http",
+        "settings": {}
+      }
+    ],
     "outbounds": [
       {
         "tag": "proxy",
@@ -289,32 +635,679 @@
         "settings": {
           "vnext": [
             {
-              "address": "37.143.9.120",
-              "port": 8443,
+              "address": "13.143.194.64",
+              "port": 443,
               "users": [
                 {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "id": "3d9c0b44-71c4-4ac0-b9e0-680eabad98aa",
                   "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
+                  "flow": ""
                 }
               ]
             }
           ]
         },
         "streamSettings": {
-          "network": "tcp",
+          "network": "grpc",
+          "grpcSettings": {
+            "serviceName": null,
+            "authority": "",
+            "mode": false
+          },
           "security": "reality",
           "realitySettings": {
-            "show": false,
-            "publicKey": "8yl_xiZAawTSaeCANHnv4m26mHlxURem70PngEUnJH4",
-            "fingerprint": "firefox",
-            "serverName": "academic-speedy-leopard.ihchost.rocks",
-            "shortId": "849be43db6d5f408",
-            "spiderX": "/"
+            "serverName": "google.com",
+            "publicKey": "nloR_6jGjL0vt9GVzTq4yvf4HtiSGNdeehPQ3ya5TEQ",
+            "shortId": "6ba85179e30d4fc2",
+            "fingerprint": "chrome"
           }
         }
+      },
+      {
+        "tag": "direct",
+        "protocol": "freedom"
+      },
+      {
+        "tag": "block",
+        "protocol": "blackhole"
       }
-    ]
+    ],
+    "remarks": "🇫🇮 ⚡ Финляндия"
+  },
+  {
+    "dns": {
+      "servers": [
+        "1.1.1.1",
+        "1.0.0.1"
+      ]
+    },
+    "log": {
+      "loglevel": "warning"
+    },
+    "routing": {
+      "rules": [
+        {
+          "ip": [
+            "geoip:private"
+          ],
+          "type": "field",
+          "outboundTag": "direct"
+        },
+        {
+          "type": "field",
+          "protocol": [
+            "bittorrent"
+          ],
+          "outboundTag": "block"
+        },
+        {
+          "type": "field",
+          "network": "tcp,udp",
+          "outboundTag": "proxy"
+        }
+      ],
+      "domainStrategy": "IPIfNonMatch"
+    },
+    "inbounds": [
+      {
+        "tag": "socks",
+        "port": 10808,
+        "listen": "127.0.0.1",
+        "protocol": "socks",
+        "settings": {
+          "udp": true,
+          "auth": "noauth"
+        },
+        "sniffing": {
+          "enabled": true,
+          "destOverride": [
+            "http",
+            "tls"
+          ]
+        }
+      },
+      {
+        "tag": "http",
+        "port": 10809,
+        "listen": "127.0.0.1",
+        "protocol": "http",
+        "settings": {}
+      }
+    ],
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "13.143.185.50",
+              "port": 443,
+              "users": [
+                {
+                  "id": "3d9c0b44-71c4-4ac0-b9e0-680eabad98aa",
+                  "encryption": "none",
+                  "flow": ""
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "grpc",
+          "grpcSettings": {
+            "serviceName": null,
+            "authority": "",
+            "mode": false
+          },
+          "security": "reality",
+          "realitySettings": {
+            "serverName": "google.com",
+            "publicKey": "nloR_6jGjL0vt9GVzTq4yvf4HtiSGNdeehPQ3ya5TEQ",
+            "shortId": "6ba85179e30d4fc2",
+            "fingerprint": "chrome"
+          }
+        }
+      },
+      {
+        "tag": "direct",
+        "protocol": "freedom"
+      },
+      {
+        "tag": "block",
+        "protocol": "blackhole"
+      }
+    ],
+    "remarks": "🇮🇹 ⚡ Италия"
+  },
+  {
+    "dns": {
+      "servers": [
+        "1.1.1.1",
+        "1.0.0.1"
+      ]
+    },
+    "log": {
+      "loglevel": "warning"
+    },
+    "routing": {
+      "rules": [
+        {
+          "ip": [
+            "geoip:private"
+          ],
+          "type": "field",
+          "outboundTag": "direct"
+        },
+        {
+          "type": "field",
+          "protocol": [
+            "bittorrent"
+          ],
+          "outboundTag": "block"
+        },
+        {
+          "type": "field",
+          "network": "tcp,udp",
+          "outboundTag": "proxy"
+        }
+      ],
+      "domainStrategy": "IPIfNonMatch"
+    },
+    "inbounds": [
+      {
+        "tag": "socks",
+        "port": 10808,
+        "listen": "127.0.0.1",
+        "protocol": "socks",
+        "settings": {
+          "udp": true,
+          "auth": "noauth"
+        },
+        "sniffing": {
+          "enabled": true,
+          "destOverride": [
+            "http",
+            "tls"
+          ]
+        }
+      },
+      {
+        "tag": "http",
+        "port": 10809,
+        "listen": "127.0.0.1",
+        "protocol": "http",
+        "settings": {}
+      }
+    ],
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "31.76.1.133",
+              "port": 443,
+              "users": [
+                {
+                  "id": "3d9c0b44-71c4-4ac0-b9e0-680eabad98aa",
+                  "encryption": "none",
+                  "flow": ""
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "grpc",
+          "grpcSettings": {
+            "serviceName": null,
+            "authority": "",
+            "mode": false
+          },
+          "security": "reality",
+          "realitySettings": {
+            "serverName": "google.com",
+            "publicKey": "nloR_6jGjL0vt9GVzTq4yvf4HtiSGNdeehPQ3ya5TEQ",
+            "shortId": "6ba85179e30d4fc2",
+            "fingerprint": "chrome"
+          }
+        }
+      },
+      {
+        "tag": "direct",
+        "protocol": "freedom"
+      },
+      {
+        "tag": "block",
+        "protocol": "blackhole"
+      }
+    ],
+    "remarks": "🇰🇿 ⚡ Казахстан"
+  },
+  {
+    "dns": {
+      "servers": [
+        "1.1.1.1",
+        "1.0.0.1"
+      ]
+    },
+    "log": {
+      "loglevel": "warning"
+    },
+    "routing": {
+      "rules": [
+        {
+          "ip": [
+            "geoip:private"
+          ],
+          "type": "field",
+          "outboundTag": "direct"
+        },
+        {
+          "type": "field",
+          "protocol": [
+            "bittorrent"
+          ],
+          "outboundTag": "block"
+        },
+        {
+          "type": "field",
+          "network": "tcp,udp",
+          "outboundTag": "proxy"
+        }
+      ],
+      "domainStrategy": "IPIfNonMatch"
+    },
+    "inbounds": [
+      {
+        "tag": "socks",
+        "port": 10808,
+        "listen": "127.0.0.1",
+        "protocol": "socks",
+        "settings": {
+          "udp": true,
+          "auth": "noauth"
+        },
+        "sniffing": {
+          "enabled": true,
+          "destOverride": [
+            "http",
+            "tls"
+          ]
+        }
+      },
+      {
+        "tag": "http",
+        "port": 10809,
+        "listen": "127.0.0.1",
+        "protocol": "http",
+        "settings": {}
+      }
+    ],
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "132.243.221.200",
+              "port": 443,
+              "users": [
+                {
+                  "id": "3d9c0b44-71c4-4ac0-b9e0-680eabad98aa",
+                  "encryption": "none",
+                  "flow": ""
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "grpc",
+          "grpcSettings": {
+            "serviceName": null,
+            "authority": "",
+            "mode": false
+          },
+          "security": "reality",
+          "realitySettings": {
+            "serverName": "google.com",
+            "publicKey": "nloR_6jGjL0vt9GVzTq4yvf4HtiSGNdeehPQ3ya5TEQ",
+            "shortId": "6ba85179e30d4fc2",
+            "fingerprint": "chrome"
+          }
+        }
+      },
+      {
+        "tag": "direct",
+        "protocol": "freedom"
+      },
+      {
+        "tag": "block",
+        "protocol": "blackhole"
+      }
+    ],
+    "remarks": "🇳🇱 ⚡ Только Torrent"
+  },
+  {
+    "dns": {
+      "servers": [
+        "1.1.1.1",
+        "1.0.0.1"
+      ]
+    },
+    "log": {
+      "loglevel": "warning"
+    },
+    "routing": {
+      "rules": [
+        {
+          "ip": [
+            "geoip:private"
+          ],
+          "type": "field",
+          "outboundTag": "direct"
+        },
+        {
+          "type": "field",
+          "protocol": [
+            "bittorrent"
+          ],
+          "outboundTag": "block"
+        },
+        {
+          "type": "field",
+          "network": "tcp,udp",
+          "outboundTag": "proxy"
+        }
+      ],
+      "domainStrategy": "IPIfNonMatch"
+    },
+    "inbounds": [
+      {
+        "tag": "socks",
+        "port": 10808,
+        "listen": "127.0.0.1",
+        "protocol": "socks",
+        "settings": {
+          "udp": true,
+          "auth": "noauth"
+        },
+        "sniffing": {
+          "enabled": true,
+          "destOverride": [
+            "http",
+            "tls"
+          ]
+        }
+      },
+      {
+        "tag": "http",
+        "port": 10809,
+        "listen": "127.0.0.1",
+        "protocol": "http",
+        "settings": {}
+      }
+    ],
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "31.76.82.96",
+              "port": 443,
+              "users": [
+                {
+                  "id": "3d9c0b44-71c4-4ac0-b9e0-680eabad98aa",
+                  "encryption": "none",
+                  "flow": ""
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "grpc",
+          "grpcSettings": {
+            "serviceName": null,
+            "authority": "",
+            "mode": false
+          },
+          "security": "reality",
+          "realitySettings": {
+            "serverName": "google.com",
+            "publicKey": "nloR_6jGjL0vt9GVzTq4yvf4HtiSGNdeehPQ3ya5TEQ",
+            "shortId": "6ba85179e30d4fc2",
+            "fingerprint": "chrome"
+          }
+        }
+      },
+      {
+        "tag": "direct",
+        "protocol": "freedom"
+      },
+      {
+        "tag": "block",
+        "protocol": "blackhole"
+      }
+    ],
+    "remarks": "🇵🇱 ⚡ Польша"
+  },
+  {
+    "dns": {
+      "servers": [
+        "1.1.1.1",
+        "1.0.0.1"
+      ]
+    },
+    "log": {
+      "loglevel": "warning"
+    },
+    "routing": {
+      "rules": [
+        {
+          "ip": [
+            "geoip:private"
+          ],
+          "type": "field",
+          "outboundTag": "direct"
+        },
+        {
+          "type": "field",
+          "protocol": [
+            "bittorrent"
+          ],
+          "outboundTag": "block"
+        },
+        {
+          "type": "field",
+          "network": "tcp,udp",
+          "outboundTag": "proxy"
+        }
+      ],
+      "domainStrategy": "IPIfNonMatch"
+    },
+    "inbounds": [
+      {
+        "tag": "socks",
+        "port": 10808,
+        "listen": "127.0.0.1",
+        "protocol": "socks",
+        "settings": {
+          "udp": true,
+          "auth": "noauth"
+        },
+        "sniffing": {
+          "enabled": true,
+          "destOverride": [
+            "http",
+            "tls"
+          ]
+        }
+      },
+      {
+        "tag": "http",
+        "port": 10809,
+        "listen": "127.0.0.1",
+        "protocol": "http",
+        "settings": {}
+      }
+    ],
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "31.76.82.96",
+              "port": 443,
+              "users": [
+                {
+                  "id": "3d9c0b44-71c4-4ac0-b9e0-680eabad98aa",
+                  "encryption": "none",
+                  "flow": ""
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "grpc",
+          "grpcSettings": {
+            "serviceName": null,
+            "authority": "",
+            "mode": false
+          },
+          "security": "reality",
+          "realitySettings": {
+            "serverName": "google.com",
+            "publicKey": "nloR_6jGjL0vt9GVzTq4yvf4HtiSGNdeehPQ3ya5TEQ",
+            "shortId": "6ba85179e30d4fc2",
+            "fingerprint": "chrome"
+          }
+        }
+      },
+      {
+        "tag": "direct",
+        "protocol": "freedom"
+      },
+      {
+        "tag": "block",
+        "protocol": "blackhole"
+      }
+    ],
+    "remarks": "🇵🇱 ⚡ Польша [2]"
+  },
+  {
+    "dns": {
+      "servers": [
+        "1.1.1.1",
+        "1.0.0.1"
+      ]
+    },
+    "log": {
+      "loglevel": "warning"
+    },
+    "routing": {
+      "rules": [
+        {
+          "ip": [
+            "geoip:private"
+          ],
+          "type": "field",
+          "outboundTag": "direct"
+        },
+        {
+          "type": "field",
+          "protocol": [
+            "bittorrent"
+          ],
+          "outboundTag": "block"
+        },
+        {
+          "type": "field",
+          "network": "tcp,udp",
+          "outboundTag": "proxy"
+        }
+      ],
+      "domainStrategy": "IPIfNonMatch"
+    },
+    "inbounds": [
+      {
+        "tag": "socks",
+        "port": 10808,
+        "listen": "127.0.0.1",
+        "protocol": "socks",
+        "settings": {
+          "udp": true,
+          "auth": "noauth"
+        },
+        "sniffing": {
+          "enabled": true,
+          "destOverride": [
+            "http",
+            "tls"
+          ]
+        }
+      },
+      {
+        "tag": "http",
+        "port": 10809,
+        "listen": "127.0.0.1",
+        "protocol": "http",
+        "settings": {}
+      }
+    ],
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "13.143.185.50",
+              "port": 443,
+              "users": [
+                {
+                  "id": "3d9c0b44-71c4-4ac0-b9e0-680eabad98aa",
+                  "encryption": "none",
+                  "flow": ""
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "grpc",
+          "grpcSettings": {
+            "serviceName": null,
+            "authority": "",
+            "mode": false
+          },
+          "security": "reality",
+          "realitySettings": {
+            "serverName": "google.com",
+            "publicKey": "nloR_6jGjL0vt9GVzTq4yvf4HtiSGNdeehPQ3ya5TEQ",
+            "shortId": "6ba85179e30d4fc2",
+            "fingerprint": "chrome"
+          }
+        }
+      },
+      {
+        "tag": "direct",
+        "protocol": "freedom"
+      },
+      {
+        "tag": "block",
+        "protocol": "blackhole"
+      }
+    ],
+    "remarks": "🇺🇸 ⚡ США"
   }
 ]
