@@ -61,7 +61,7 @@ async function apiData(req, res) {
   const allDevices = await r.hgetall("devices");
   const now = Date.now();
 
-  let currentBuild = process.env.VPN_BUILD || "72";
+  let currentBuild = process.env.VPN_BUILD || "78";
   try {
     const { getSubscriptionText } = await import("./subscription.js");
     const sub = await getSubscriptionText(r);
@@ -175,7 +175,7 @@ async function apiData(req, res) {
     outdatedCount,
     topCountries,
     devices,
-    version: process.env.VPN_VERSION || "v0.2.1-X",
+    version: process.env.VPN_VERSION || "v0.2.2-X",
     updated: new Date().toISOString(),
   });
 }
@@ -187,7 +187,7 @@ async function apiRecalculate(req, res) {
   let updated = 0;
   const pipeline = r.pipeline();
 
-  let currentBuild = process.env.VPN_BUILD || "72";
+  let currentBuild = process.env.VPN_BUILD || "78";
   try {
     const { getSubscriptionText } = await import("./subscription.js");
     const sub = await getSubscriptionText(r);
@@ -1103,7 +1103,7 @@ function getPanelHTML() {
     <div>
       <h1><span>PiskoVPN</span> Control</h1>
     </div>
-    <span class="version-tag" id="ver">v0.2.1-X</span>
+    <span class="version-tag" id="ver">v0.2.2-X</span>
   </div>
   <div class="header-right">
     <span style="color:var(--text-muted);font-size:12px;" class="mono" id="updated"></span>

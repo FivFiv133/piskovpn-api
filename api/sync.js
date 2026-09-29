@@ -53,9 +53,28 @@ function formatRemarkForHapp(rawRemark) {
   let remark = (rawRemark || "").trim();
   const lower = remark.toLowerCase();
 
-  if (lower.includes("автовыбор")) return "🇪🇺 🔄 Автовыбор рабочего сервера";
-  if ((lower.includes("швейцар") || lower.includes("🇨🇭")) && lower.includes("обход")) return "🇨🇭 🛡️ Обход блокировок (Швейцария)";
-  if ((lower.includes("франц") || lower.includes("🇫🇷")) && lower.includes("обход")) return "🇫🇷 🛡️ Обход блокировок (Франция)";
+  if (lower.includes("автовыбор") || (lower.includes("🇪🇺") && lower.includes("авто"))) return "🇪🇺 🔄 Автовыбор рабочего сервера";
+
+  // Обход блокировок
+  if (lower.includes("обход")) {
+    let flag = "🛡️";
+    let country = "";
+    if (lower.includes("швейцар") || lower.includes("🇨🇭")) { flag = "🇨🇭"; country = "Швейцария"; }
+    else if (lower.includes("франц") || lower.includes("🇫🇷")) { flag = "🇫🇷"; country = "Франция"; }
+    else if (lower.includes("герман") || lower.includes("🇩🇪")) { flag = "🇩🇪"; country = "Германия"; }
+    else if (lower.includes("нидерланд") || lower.includes("🇳🇱")) { flag = "🇳🇱"; country = "Нидерланды"; }
+    else if (lower.includes("росси") || lower.includes("🇷🇺")) { flag = "🇷🇺"; country = "Россия"; }
+    else {
+      const fMatch = remark.match(/([\uD83C][\uDDE6-\uDDFF]){2}/);
+      if (fMatch) flag = fMatch[0];
+    }
+
+    const numMatch = remark.match(/(?:#|№|\[)?(\d+)(?:\])?/);
+    const num = numMatch ? "#" + numMatch[1] : "";
+    const countryWithNum = [country, num].filter(Boolean).join(" ");
+    const namePart = countryWithNum ? " (" + countryWithNum + ")" : (num ? " #" + num : "");
+    return flag + " 🛡️ Обход блокировок" + namePart;
+  }
 
   // Белые списки: сохраняем номер #1, #2, #3
   if (lower.includes("белые списки") || lower.includes("белый список")) {
@@ -121,9 +140,9 @@ function formatRemarkForHapp(rawRemark) {
 
 function getServerPriority(remark) {
   const lower = (remark || "").toLowerCase();
-  if (lower.includes("белые списки") || lower.includes("белый список")) return 0;
-  if (lower.includes("обход") || lower.includes("🛡️")) return 1;
-  if (lower.includes("автовыбор") || lower.includes("🔄")) return 2;
+  if (lower.includes("обход") || lower.includes("🛡️")) return 0;
+  if (lower.includes("автовыбор") || lower.includes("🔄")) return 1;
+  if (lower.includes("белые списки") || lower.includes("белый список")) return 2;
   return 3;
 }
 
@@ -225,6 +244,37 @@ function jsonToVless(cfg) {
 function convertVlessToJson(vlessItems) {
   return vlessItems.map((item) => {
     const params = item.params || {};
+
+    if (item.protocol === "hysteria2") {
+      return {
+        remarks: item.remark,
+        outbounds: [
+          {
+            tag: "proxy",
+            protocol: "hysteria2",
+            settings: {
+              servers: [
+                {
+                  address: item.address,
+                  port: parseInt(item.port, 10) || 443,
+                  password: item.uuid,
+                },
+              ],
+            },
+            streamSettings: {
+              network: "udp",
+              security: "tls",
+              tlsSettings: {
+                allowInsecure: params.insecure === "1",
+                serverName: params.sni || item.address,
+                alpn: params.alpn ? params.alpn.split(",") : ["h3"],
+              },
+            },
+          },
+        ],
+      };
+    }
+
     const streamSettings = {
       network: params.type || "tcp",
       security: params.security || "none",
@@ -367,7 +417,7 @@ export default async function handler(req, res) {
   if (req.method === "POST" && action === "fetch") {
     try {
       const { upstreamUrl, customHeaders } = req.body || {};
-      const targetUrl = (upstreamUrl || "").trim() || "https://connect.glowrobot.ru/HsKseXo3N3dfdKat";
+      const targetUrl = (upstreamUrl || "").trim() || "https://sub.medoed.store/4hokxg5sBXqNRXnL";
 
       const headers = {
         "User-Agent": "Happ/3.3.6/Windows/2607171516500",
@@ -429,8 +479,8 @@ export default async function handler(req, res) {
       const currentTxt = await getSubscriptionText(r).catch(() => "");
       const currentItems = parseVlessLinks(currentTxt);
 
-      const currentBuildNum = parseInt(parseBuildFromSub(currentTxt) || "77", 10);
-      const nextBuildNum = isNaN(currentBuildNum) ? 78 : currentBuildNum + 1;
+      const currentBuildNum = parseInt(parseBuildFromSub(currentTxt) || "78", 10);
+      const nextBuildNum = isNaN(currentBuildNum) ? 79 : currentBuildNum + 1;
 
       // Анализ различий (Diff) с точным поиском по названию и параметрам
       const added = [];
@@ -489,12 +539,12 @@ export default async function handler(req, res) {
         changeDesc: "Удален в источнике",
       }));
 
-      // Сортировка: Белые списки первые, затем Обход блокировок, затем Автовыбор, затем обычные серверы
+      // Сортировка: Обход блокировок первые, затем Автовыбор, затем обычные серверы
       processedUpstream.sort((a, b) => {
         const pa = getServerPriority(a.formattedRemark);
         const pb = getServerPriority(b.formattedRemark);
         if (pa !== pb) return pa - pb;
-        return a.formattedRemark.localeCompare(b.formattedRemark, "ru");
+        return 0;
       });
 
       // Формируем готовый TXT
@@ -577,7 +627,7 @@ export default async function handler(req, res) {
 
       return res.status(200).json({
         ok: true,
-        build: build || "77",
+        build: build || "78",
         github: { txt: ghTxt, json: ghJson },
       });
     } catch (err) {
@@ -913,7 +963,7 @@ export default async function handler(req, res) {
       <span style="color: var(--text-muted); font-size: 11px;">Happ Client Emulation + HWID Bypass Active</span>
     </div>
     <div class="input-row">
-      <input type="text" id="upstreamUrl" class="source-input" value="https://connect.glowrobot.ru/HsKseXo3N3dfdKat" placeholder="https://connect.glowrobot.ru/key">
+      <input type="text" id="upstreamUrl" class="source-input" value="https://sub.medoed.store/4hokxg5sBXqNRXnL" placeholder="https://sub.medoed.store/key">
       <button class="btn-fetch" id="btnFetch" onclick="fetchAndCompare()">
         <svg style="width:16px;height:16px"><use href="#i-zap"/></svg>
         <span>Сверить с источником</span>
