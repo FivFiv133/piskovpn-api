@@ -311,17 +311,9 @@ async function pushToGithub(path, content, ghToken, repo) {
 // API: получить текст подписки TXT и JSON
 async function apiGetSub(req, res) {
   const r = getRedis();
-  const { getSubscriptionText } = await import("./subscription.js");
+  const { getSubscriptionText, getSubscriptionJson } = await import("./subscription.js");
   const txt = await getSubscriptionText(r).catch(() => "");
-
-  let json = await r.get("sub_json_cache").catch(() => null);
-  if (!json) {
-    const { readFileSync } = await import("fs");
-    const { join } = await import("path");
-    try {
-      json = readFileSync(join(process.cwd(), "PiskoVPN.json"), "utf8");
-    } catch {}
-  }
+  const json = await getSubscriptionJson(r).catch(() => "");
   return res.status(200).json({ txt: txt || "", json: json || "", text: txt || "" });
 }
 

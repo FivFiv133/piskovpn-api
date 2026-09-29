@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import { detectPlatform, parseClient, normalizeBuild, extractDeviceId, parseBuildFromSub } from "./device-utils.js";
 
 const RAW_URL = process.env.RAW_SUB_URL || "https://raw.githubusercontent.com/FivFiv133/piskovpn-api/refs/heads/main/PiskoVPN.txt";
+const RAW_JSON_URL = process.env.RAW_SUB_JSON_URL || "https://raw.githubusercontent.com/FivFiv133/piskovpn-api/refs/heads/main/PiskoVPN.json";
 const REDIS_GET_MS = 400;
 const REDIS_WRITE_MS = 700;
 const GITHUB_FETCH_MS = 2500;
@@ -72,12 +73,24 @@ async function resolveSubscriptionBody() {
   return bundled;
 }
 
-async function resolveJsonArrayBody() {
+async function resolveJsonArrayBody(bBuild = 0, cBuild = 0) {
   const bundled = readBundleText(BUNDLE_JSON_PATHS);
-  if (bundled) return bundled;
+
   const cached = await redisGet("sub_json_cache");
-  if (cached) return cached;
-  return null;
+  if (cached) {
+    if (bundled && bBuild > cBuild) return bundled;
+    return cached;
+  }
+  if (bundled) return bundled;
+
+  try {
+    const resp = await fetch(RAW_JSON_URL, { headers: { "Cache-Control": "no-cache" }, signal: AbortSignal.timeout(GITHUB_FETCH_MS) });
+    if (resp.ok) return await resp.text();
+  } catch (e) {
+    console.error("[SUB] Failed to fetch raw JSON:", e.message);
+  }
+
+  return bundled;
 }
 
 // Фетчим подписку — для админки (может подождать дольше)
@@ -107,6 +120,37 @@ export async function getSubscriptionText(r) {
   if (bundled) return bundled;
 
   throw new Error("Subscription text not found");
+}
+
+export async function getSubscriptionJson(r) {
+  const bundled = readBundleText(BUNDLE_JSON_PATHS);
+  const bundledTxt = readBundleText(BUNDLE_TXT_PATHS);
+  const cached = await r.get("sub_json_cache").catch(() => null);
+  const cachedTxt = await r.get("sub_cache").catch(() => null);
+
+  if (cached) {
+    if (bundled && bundledTxt && cachedTxt) {
+      const bBuild = parseInt(parseBuildFromSub(bundledTxt) || "0", 10);
+      const cBuild = parseInt(parseBuildFromSub(cachedTxt) || "0", 10);
+      if (bBuild > cBuild) return bundled;
+    }
+    return cached;
+  }
+
+  try {
+    const resp = await fetch(RAW_JSON_URL, { headers: { "Cache-Control": "no-cache" }, signal: AbortSignal.timeout(5000) });
+    if (resp.ok) {
+      const text = await resp.text();
+      await r.set("sub_json_cache", text, "EX", 60).catch(() => {});
+      return text;
+    }
+  } catch (e) {
+    console.error("[SUB] Failed to fetch raw JSON:", e.message);
+  }
+
+  if (bundled) return bundled;
+
+  return null;
 }
 
 function safeHeader(val) {
@@ -181,17 +225,35 @@ export default async function handler(req, res) {
     // Записываем визит устройства в реальном времени
     await recordVisit(req, subText);
 
+    const bundledTxt = readBundleText(BUNDLE_TXT_PATHS);
+    const bBuild = parseInt(parseBuildFromSub(bundledTxt) || "0", 10);
+    const cBuild = parseInt(parseBuildFromSub(subText) || "0", 10);
+
     let body;
 
-    if (format === "b64" || format === "base64") {
+    if (format === "txt" || format === "text" || format === "vless") {
+      // Текстовый формат VLESS ссылок (если явно запрошен format=txt / format=vless)
+      body = subText;
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN.txt"');
+    } else if (format === "b64" || format === "base64") {
       // Base64 VLESS-ссылки (если явно запрошен b64)
       const linkLines = subText.split("\n").map(l => l.trim()).filter(l => l && !l.startsWith("#"));
       body = Buffer.from(linkLines.join("\n"), "utf8").toString("base64");
       res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN.txt"');
     } else {
-      // По умолчанию: ТОЛЬКО чистый текстовый PiskoVPN.txt (Content-Type: text/plain)
-      body = subText;
-      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      // ПО УМОЛЧАНИЮ: JSON массив Xray конфигураций (основной формат для полноценной работы обхода и мобильного интернета)
+      const jsonBody = await resolveJsonArrayBody(bBuild, cBuild);
+      if (jsonBody) {
+        body = jsonBody;
+        res.setHeader("Content-Type", "application/json; charset=utf-8");
+        res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN.json"');
+      } else {
+        body = subText;
+        res.setHeader("Content-Type", "text/plain; charset=utf-8");
+        res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN.txt"');
+      }
     }
 
     // Извлекаем аннотации и заголовки из subText
@@ -226,7 +288,6 @@ export default async function handler(req, res) {
     }
 
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN"');
     // Отключаем кеширование на прокси/edge, чтобы каждый визит сразу обновлялся в базе
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
     res.setHeader("Pragma", "no-cache");
