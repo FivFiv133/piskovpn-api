@@ -53,17 +53,25 @@ function formatRemarkForHapp(rawRemark) {
   let remark = (rawRemark || "").trim();
   const lower = remark.toLowerCase();
 
-  if (lower.includes("автовыбор") || (lower.includes("🇪🇺") && lower.includes("авто"))) return "🇪🇺 🔄 Автовыбор рабочего сервера";
+  // Автовыбор (НЕ добавляем "ВСТРОЕН ОБХОД")
+  if (lower.includes("fastest") || lower.includes("автовыбор") || (lower.includes("🇪🇺") && lower.includes("авто"))) {
+    return "🇪🇺 🔄 Автовыбор рабочего сервера";
+  }
 
-  // Обход блокировок
+  // Если уже сформировано с встроенным обходом
+  if (lower.includes("(встроен обход)")) {
+    return remark;
+  }
+
+  // Обход блокировок (если старый формат)
   if (lower.includes("обход")) {
     let flag = "🛡️";
     let country = "";
-    if (lower.includes("швейцар") || lower.includes("🇨🇭")) { flag = "🇨🇭"; country = "Швейцария"; }
-    else if (lower.includes("франц") || lower.includes("🇫🇷")) { flag = "🇫🇷"; country = "Франция"; }
-    else if (lower.includes("герман") || lower.includes("🇩🇪")) { flag = "🇩🇪"; country = "Германия"; }
-    else if (lower.includes("нидерланд") || lower.includes("🇳🇱")) { flag = "🇳🇱"; country = "Нидерланды"; }
-    else if (lower.includes("росси") || lower.includes("🇷🇺")) { flag = "🇷🇺"; country = "Россия"; }
+    if (lower.includes("швейцар") || lower.includes("🇨🇭") || lower.includes("switz")) { flag = "🇨🇭"; country = "Швейцария"; }
+    else if (lower.includes("франц") || lower.includes("🇫🇷") || lower.includes("france")) { flag = "🇫🇷"; country = "Франция"; }
+    else if (lower.includes("герман") || lower.includes("🇩🇪") || lower.includes("germany")) { flag = "🇩🇪"; country = "Германия"; }
+    else if (lower.includes("нидерланд") || lower.includes("🇳🇱") || lower.includes("nether")) { flag = "🇳🇱"; country = "Нидерланды"; }
+    else if (lower.includes("росси") || lower.includes("🇷🇺") || lower.includes("russia")) { flag = "🇷🇺"; country = "Россия"; }
     else {
       const fMatch = remark.match(/([\uD83C][\uDDE6-\uDDFF]){2}/);
       if (fMatch) flag = fMatch[0];
@@ -101,20 +109,33 @@ function formatRemarkForHapp(rawRemark) {
   const isGrpc = /grpc/i.test(remark);
   const grpcSuffix = isGrpc ? " (gRPC)" : "";
 
-  // Проверяем известные страны
-  if (lower.includes("нидерланд") || lower.includes("netherlands")) return `🇳🇱 ⚡ Нидерланды${numSuffix}${grpcSuffix}`;
-  if (lower.includes("швейцар") || lower.includes("switzerland")) return `🇨🇭 ⚡ Швейцария${numSuffix}${grpcSuffix}`;
-  if (lower.includes("герман") || lower.includes("germany")) return `🇩🇪 ⚡ Германия${numSuffix}${grpcSuffix}`;
-  if (lower.includes("польш") || lower.includes("poland")) return `🇵🇱 ⚡ Польша${numSuffix}${grpcSuffix}`;
-  if (lower.includes("сша") || lower.includes("usa") || lower.includes("united states")) return `🇺🇸 ⚡ США${numSuffix}${grpcSuffix}`;
-  if (lower.includes("финлянд") || lower.includes("finland")) return `🇫🇮 ⚡ Финляндия${numSuffix}${grpcSuffix}`;
-  if (lower.includes("казахстан") || lower.includes("kazakhstan")) return `🇰🇿 ⚡ Казахстан${numSuffix}${grpcSuffix}`;
-  if (lower.includes("итали") || lower.includes("italy")) return `🇮🇹 ⚡ Италия${numSuffix}${grpcSuffix}`;
-  if (lower.includes("испан") || lower.includes("spain")) return `🇪🇸 ⚡ Испания${numSuffix}${grpcSuffix}`;
-  if (lower.includes("сингапур") || lower.includes("singapore")) return `🇸🇬 ⚡ Сингапур${numSuffix}${grpcSuffix}`;
-  if (lower.includes("литв") || lower.includes("lithuania")) return `🇱🇹 ⚡ Литва${numSuffix}${grpcSuffix}`;
-  if (lower.includes("москв")) return `🇷🇺 ⚡ Москва${numSuffix}${grpcSuffix}`;
-  if (lower.includes("росси") || lower.includes("russia")) return `🇷🇺 ⚡ Россия${numSuffix}${grpcSuffix}`;
+  // Словарь стран (английские и русские названия)
+  const countries = [
+    { match: ["norway", "норвег"], flag: "🇳🇴", name: "Норвегия" },
+    { match: ["sweden", "швеци"], flag: "🇸🇪", name: "Швеция" },
+    { match: ["netherlands", "нидерланд", "holland"], flag: "🇳🇱", name: "Нидерланды" },
+    { match: ["germany", "герман"], flag: "🇩🇪", name: "Германия" },
+    { match: ["usa", "united states", "сша", "америк"], flag: "🇺🇸", name: "США" },
+    { match: ["japan", "япон"], flag: "🇯🇵", name: "Япония" },
+    { match: ["turkey", "турци"], flag: "🇹🇷", name: "Турция" },
+    { match: ["kazakhstan", "казахстан"], flag: "🇰🇿", name: "Казахстан" },
+    { match: ["russia", "росси", "москв"], flag: "🇷🇺", name: "Россия" },
+    { match: ["finland", "финлянд"], flag: "🇫🇮", name: "Финляндия" },
+    { match: ["poland", "польш"], flag: "🇵🇱", name: "Польша" },
+    { match: ["switzerland", "швейцар"], flag: "🇨🇭", name: "Швейцария" },
+    { match: ["france", "франц"], flag: "🇫🇷", name: "Франция" },
+    { match: ["spain", "испан"], flag: "🇪🇸", name: "Испания" },
+    { match: ["italy", "итали"], flag: "🇮🇹", name: "Италия" },
+    { match: ["singapore", "сингапур"], flag: "🇸🇬", name: "Сингапур" },
+    { match: ["lithuania", "литв"], flag: "🇱🇹", name: "Литва" },
+    { match: ["uk", "united kingdom", "britain", "великобрит", "англи"], flag: "🇬🇧", name: "Великобритания" },
+  ];
+
+  for (const c of countries) {
+    if (c.match.some((m) => lower.includes(m))) {
+      return `${c.flag} ⚡ ${c.name}${numSuffix}${grpcSuffix} (ВСТРОЕН ОБХОД)`;
+    }
+  }
 
   // Универсальное форматирование для любых других стран с флагом
   const flagMatch = remark.match(/^([\uD83C][\uDDE6-\uDDFF]){2}/);
@@ -124,25 +145,19 @@ function formatRemarkForHapp(rawRemark) {
     rest = rest.replace(/⚡?\s*grpc/gi, "").replace(/(?:#|№|\[)\s*\d+\s*\]?\s*$/i, "").trim();
 
     if (/^[🛡️🔄⚡]/.test(rest)) {
-      return `${flag} ${rest}${numSuffix}${grpcSuffix}`.trim();
+      return `${flag} ${rest}${numSuffix}${grpcSuffix} (ВСТРОЕН ОБХОД)`.trim();
     }
-    if (lower.includes("обход")) {
-      return `${flag} 🛡️ ${rest}${numSuffix}${grpcSuffix}`.trim();
-    }
-    if (lower.includes("авто")) {
-      return `${flag} 🔄 ${rest}`.trim();
-    }
-    return `${flag} ⚡ ${rest}${numSuffix}${grpcSuffix}`.trim();
+    return `${flag} ⚡ ${rest}${numSuffix}${grpcSuffix} (ВСТРОЕН ОБХОД)`.trim();
   }
 
-  return `🌐 ⚡ ${remark}`.trim();
+  return `🌐 ⚡ ${remark} (ВСТРОЕН ОБХОД)`.trim();
 }
 
 function getServerPriority(remark) {
   const lower = (remark || "").toLowerCase();
-  if (lower.includes("обход") || lower.includes("🛡️")) return 0;
-  if (lower.includes("автовыбор") || lower.includes("🔄")) return 1;
-  if (lower.includes("белые списки") || lower.includes("белый список")) return 2;
+  if (lower.includes("автовыбор") || lower.includes("🔄")) return 0;
+  if (lower.includes("белые списки") || lower.includes("белый список")) return 1;
+  if (lower.includes("обход") || lower.includes("🛡️")) return 2;
   return 3;
 }
 
@@ -179,8 +194,9 @@ function parseVlessLinks(rawText) {
 function jsonToVless(cfg) {
   if (!cfg || typeof cfg !== "object") return null;
   const remark = cfg.remarks || "";
-  const proxy = (cfg.outbounds || []).find((o) => o.tag === "proxy" || o.protocol === "vless") || cfg.outbounds?.[0];
-  if (!proxy) return null;
+  const proxy = (cfg.outbounds || []).find((o) => o.tag === "proxy")
+    || (cfg.outbounds || []).find((o) => o.protocol === "vless" && o.settings?.vnext?.[0]?.users?.[0]?.id)
+    || cfg.outbounds?.[0];
   const vnext = proxy.settings?.vnext?.[0];
   if (!vnext) return null;
   const user = vnext.users?.[0];
@@ -417,7 +433,7 @@ export default async function handler(req, res) {
   if (req.method === "POST" && action === "fetch") {
     try {
       const { upstreamUrl, customHeaders } = req.body || {};
-      const targetUrl = (upstreamUrl || "").trim() || "https://sub.medoed.store/4hokxg5sBXqNRXnL";
+      const targetUrl = (upstreamUrl || "").trim() || "https://sub.sosa.ink/MVQ57MTLAW-_0HtV";
 
       const headers = {
         "User-Agent": "Happ/3.3.6/Windows/2607171516500",
@@ -963,7 +979,7 @@ export default async function handler(req, res) {
       <span style="color: var(--text-muted); font-size: 11px;">Happ Client Emulation + HWID Bypass Active</span>
     </div>
     <div class="input-row">
-      <input type="text" id="upstreamUrl" class="source-input" value="https://sub.medoed.store/4hokxg5sBXqNRXnL" placeholder="https://sub.medoed.store/key">
+      <input type="text" id="upstreamUrl" class="source-input" value="https://sub.sosa.ink/MVQ57MTLAW-_0HtV" placeholder="https://sub.sosa.ink/key">
       <button class="btn-fetch" id="btnFetch" onclick="fetchAndCompare()">
         <svg style="width:16px;height:16px"><use href="#i-zap"/></svg>
         <span>Сверить с источником</span>
