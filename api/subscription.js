@@ -263,10 +263,10 @@ export default async function handler(req, res) {
     const supportUrlMatch = subText.match(/^#\s*support-url:\s*(.+)$/m);
     const announceMatch = subText.match(/^#\s*announce:\s*(.+)$/m);
 
-    // Profile Title (строго без base64, чистый текст до 25 символов)
+    // Profile Title (с сохранением эмодзи/смайликов через safeHeader)
     const titleVal = profileTitleMatch ? profileTitleMatch[1].trim() : "💎 PiskoVPN 💎";
-    const plainTitle = titleVal.replace(/[^\x20-\x7E]/g, "").trim() || "PiskoVPN";
-    res.setHeader("profile-title", plainTitle.slice(0, 25));
+    const safeTitle = safeHeader(titleVal);
+    if (safeTitle) res.setHeader("profile-title", safeTitle);
 
     // Profile Update Interval
     const updateVal = profileUpdateMatch ? profileUpdateMatch[1].trim() : "1";
