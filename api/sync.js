@@ -53,9 +53,28 @@ function formatRemarkForHapp(rawRemark) {
   let remark = (rawRemark || "").trim();
   const lower = remark.toLowerCase();
 
+  // Исключаем разделители и текстовые баннеры
+  if (lower.includes("глушат") || lower.includes("моб. интернет")) {
+    return null;
+  }
+
+  // Авто-обход
+  if (lower.includes("авто-обход") || lower.includes("авто обход") || lower.includes("автообход")) {
+    return "🇸🇴 🛡️ Авто-обход";
+  }
+
+  // Обходы с номерами (🇸🇴 Обход №1.0, №2.0 и т.д.)
+  if (lower.includes("обход")) {
+    const numMatch = remark.match(/№\s*([0-9.]+)/);
+    if (numMatch) {
+      return `🇸🇴 🛡️ Обход №${numMatch[1]}`;
+    }
+    return `🇸🇴 🛡️ ${remark.replace(/^[🇸🇴\s🛡️]+/, "").trim()}`;
+  }
+
   // Автовыбор (НЕ добавляем "ВСТРОЕН ОБХОД")
-  if (lower.includes("fastest") || lower.includes("автовыбор") || (lower.includes("🇪🇺") && lower.includes("авто"))) {
-    return "🇪🇺 🔄 Автовыбор рабочего сервера";
+  if (lower.includes("fastest") || lower.includes("автовыбор") || lower.includes("авто-выбор") || (lower.includes("🇪🇺") && lower.includes("авто"))) {
+    return "🇪🇺 🔄 Авто-выбор";
   }
 
   // Если уже сформировано с встроенным обходом
@@ -63,26 +82,8 @@ function formatRemarkForHapp(rawRemark) {
     return remark;
   }
 
-  // Обход блокировок (если старый формат)
-  if (lower.includes("обход")) {
-    let flag = "🛡️";
-    let country = "";
-    if (lower.includes("швейцар") || lower.includes("🇨🇭") || lower.includes("switz")) { flag = "🇨🇭"; country = "Швейцария"; }
-    else if (lower.includes("франц") || lower.includes("🇫🇷") || lower.includes("france")) { flag = "🇫🇷"; country = "Франция"; }
-    else if (lower.includes("герман") || lower.includes("🇩🇪") || lower.includes("germany")) { flag = "🇩🇪"; country = "Германия"; }
-    else if (lower.includes("нидерланд") || lower.includes("🇳🇱") || lower.includes("nether")) { flag = "🇳🇱"; country = "Нидерланды"; }
-    else if (lower.includes("росси") || lower.includes("🇷🇺") || lower.includes("russia")) { flag = "🇷🇺"; country = "Россия"; }
-    else {
-      const fMatch = remark.match(/([\uD83C][\uDDE6-\uDDFF]){2}/);
-      if (fMatch) flag = fMatch[0];
-    }
-
-    const numMatch = remark.match(/(?:#|№|\[)?(\d+)(?:\])?/);
-    const num = numMatch ? "#" + numMatch[1] : "";
-    const countryWithNum = [country, num].filter(Boolean).join(" ");
-    const namePart = countryWithNum ? " (" + countryWithNum + ")" : (num ? " #" + num : "");
-    return flag + " 🛡️ Обход блокировок" + namePart;
-  }
+  // Очищаем от Gemini и прочих приписок
+  remark = remark.replace(/\|\s*🤖?\s*gemini/gi, "").trim();
 
   // Белые списки: сохраняем номер #1, #2, #3
   if (lower.includes("белые списки") || lower.includes("белый список")) {
@@ -111,29 +112,30 @@ function formatRemarkForHapp(rawRemark) {
 
   // Словарь стран (английские и русские названия)
   const countries = [
+    { match: ["germany", "герман"], flag: "🇩🇪", name: "Германия" },
+    { match: ["netherlands", "нидерланд", "holland"], flag: "🇳🇱", name: "Нидерланды" },
+    { match: ["estonia", "эстон"], flag: "🇪🇪", name: "Эстония" },
+    { match: ["poland", "польш"], flag: "🇵🇱", name: "Польша" },
+    { match: ["finland", "финлянд"], flag: "🇫🇮", name: "Финляндия" },
+    { match: ["uk", "united kingdom", "britain", "великобрит", "англи"], flag: "🇬🇧", name: "Великобритания" },
+    { match: ["usa", "united states", "сша", "америк"], flag: "🇺🇸", name: "США" },
     { match: ["norway", "норвег"], flag: "🇳🇴", name: "Норвегия" },
     { match: ["sweden", "швеци"], flag: "🇸🇪", name: "Швеция" },
-    { match: ["netherlands", "нидерланд", "holland"], flag: "🇳🇱", name: "Нидерланды" },
-    { match: ["germany", "герман"], flag: "🇩🇪", name: "Германия" },
-    { match: ["usa", "united states", "сша", "америк"], flag: "🇺🇸", name: "США" },
     { match: ["japan", "япон"], flag: "🇯🇵", name: "Япония" },
     { match: ["turkey", "турци"], flag: "🇹🇷", name: "Турция" },
     { match: ["kazakhstan", "казахстан"], flag: "🇰🇿", name: "Казахстан" },
     { match: ["russia", "росси", "москв"], flag: "🇷🇺", name: "Россия" },
-    { match: ["finland", "финлянд"], flag: "🇫🇮", name: "Финляндия" },
-    { match: ["poland", "польш"], flag: "🇵🇱", name: "Польша" },
     { match: ["switzerland", "швейцар"], flag: "🇨🇭", name: "Швейцария" },
     { match: ["france", "франц"], flag: "🇫🇷", name: "Франция" },
     { match: ["spain", "испан"], flag: "🇪🇸", name: "Испания" },
     { match: ["italy", "итали"], flag: "🇮🇹", name: "Италия" },
     { match: ["singapore", "сингапур"], flag: "🇸🇬", name: "Сингапур" },
     { match: ["lithuania", "литв"], flag: "🇱🇹", name: "Литва" },
-    { match: ["uk", "united kingdom", "britain", "великобрит", "англи"], flag: "🇬🇧", name: "Великобритания" },
   ];
 
   for (const c of countries) {
     if (c.match.some((m) => lower.includes(m))) {
-      return `${c.flag} ⚡ ${c.name}${numSuffix}${grpcSuffix} (ВСТРОЕН ОБХОД)`;
+      return `${c.flag} ⚡ ${c.name}${numSuffix}${grpcSuffix}`;
     }
   }
 
@@ -145,20 +147,21 @@ function formatRemarkForHapp(rawRemark) {
     rest = rest.replace(/⚡?\s*grpc/gi, "").replace(/(?:#|№|\[)\s*\d+\s*\]?\s*$/i, "").trim();
 
     if (/^[🛡️🔄⚡]/.test(rest)) {
-      return `${flag} ${rest}${numSuffix}${grpcSuffix} (ВСТРОЕН ОБХОД)`.trim();
+      return `${flag} ${rest}${numSuffix}${grpcSuffix}`.trim();
     }
-    return `${flag} ⚡ ${rest}${numSuffix}${grpcSuffix} (ВСТРОЕН ОБХОД)`.trim();
+    return `${flag} ⚡ ${rest}${numSuffix}${grpcSuffix}`.trim();
   }
 
-  return `🌐 ⚡ ${remark} (ВСТРОЕН ОБХОД)`.trim();
+  return `🌐 ⚡ ${remark}`.trim();
 }
 
 function getServerPriority(remark) {
   const lower = (remark || "").toLowerCase();
-  if (lower.includes("автовыбор") || lower.includes("🔄")) return 0;
-  if (lower.includes("белые списки") || lower.includes("белый список")) return 1;
-  if (lower.includes("обход") || lower.includes("🛡️")) return 2;
-  return 3;
+  if (lower.includes("авто-обход") || lower.includes("авто обход")) return 0;
+  if (lower.includes("обход") || lower.includes("🛡️")) return 1;
+  if (lower.includes("автовыбор") || lower.includes("авто-выбор") || lower.includes("🔄")) return 2;
+  if (lower.includes("белые списки") || lower.includes("белый список")) return 3;
+  return 4;
 }
 
 function parseSingleVless(line) {
@@ -433,7 +436,7 @@ export default async function handler(req, res) {
   if (req.method === "POST" && action === "fetch") {
     try {
       const { upstreamUrl, customHeaders } = req.body || {};
-      const targetUrl = (upstreamUrl || "").trim() || "https://sub.sosa.ink/MVQ57MTLAW-_0HtV";
+      const targetUrl = (upstreamUrl || "").trim() || "https://cdn.extra-network.ru/sqH-czvW9N4CpzCJ";
 
       const headers = {
         "User-Agent": "Happ/3.3.6/Windows/2607171516500",
@@ -495,8 +498,8 @@ export default async function handler(req, res) {
       const currentTxt = await getSubscriptionText(r).catch(() => "");
       const currentItems = parseVlessLinks(currentTxt);
 
-      const currentBuildNum = parseInt(parseBuildFromSub(currentTxt) || "78", 10);
-      const nextBuildNum = isNaN(currentBuildNum) ? 79 : currentBuildNum + 1;
+      const currentBuildNum = parseInt(parseBuildFromSub(currentTxt) || "79", 10);
+      const nextBuildNum = isNaN(currentBuildNum) ? 80 : currentBuildNum + 1;
 
       // Анализ различий (Diff) с точным поиском по названию и параметрам
       const added = [];
@@ -508,45 +511,48 @@ export default async function handler(req, res) {
         currentMap.set(item.remark, item);
       });
 
-      const processedUpstream = upstreamItems.map((up) => {
-        const formattedRemark = formatRemarkForHapp(up.remark);
-        up.formattedRemark = formattedRemark;
+      const processedUpstream = upstreamItems
+        .map((up) => {
+          const formattedRemark = formatRemarkForHapp(up.remark);
+          if (!formattedRemark) return null;
+          up.formattedRemark = formattedRemark;
 
-        const curr = currentMap.get(formattedRemark);
+          const curr = currentMap.get(formattedRemark);
 
-        let status = "added";
-        let changeDesc = "";
+          let status = "added";
+          let changeDesc = "";
 
-        if (curr) {
-          currentMap.delete(formattedRemark);
-          const sameUuid = curr.uuid === up.uuid;
-          const samePbk = curr.params?.pbk === up.params?.pbk;
-          const sameSni = curr.params?.sni === up.params?.sni;
-          const samePort = curr.port === up.port;
-          const sameAddress = curr.address === up.address;
+          if (curr) {
+            currentMap.delete(formattedRemark);
+            const sameUuid = curr.uuid === up.uuid;
+            const samePbk = curr.params?.pbk === up.params?.pbk;
+            const sameSni = curr.params?.sni === up.params?.sni;
+            const samePort = curr.port === up.port;
+            const sameAddress = curr.address === up.address;
 
-          if (sameUuid && samePbk && sameSni && samePort && sameAddress) {
-            status = "unchanged";
-            unchanged.push(up);
+            if (sameUuid && samePbk && sameSni && samePort && sameAddress) {
+              status = "unchanged";
+              unchanged.push(up);
+            } else {
+              status = "modified";
+              const changes = [];
+              if (!sameAddress) changes.push(`Адрес: ${curr.address} → ${up.address}`);
+              if (!samePort) changes.push(`Порт: ${curr.port} → ${up.port}`);
+              if (!sameUuid) changes.push("UUID");
+              if (!samePbk) changes.push("Reality PBK");
+              if (!sameSni) changes.push("SNI");
+              changeDesc = `Изменено: ${changes.join(", ")}`;
+              modified.push({ ...up, changeDesc });
+            }
           } else {
-            status = "modified";
-            const changes = [];
-            if (!sameAddress) changes.push(`Адрес: ${curr.address} → ${up.address}`);
-            if (!samePort) changes.push(`Порт: ${curr.port} → ${up.port}`);
-            if (!sameUuid) changes.push("UUID");
-            if (!samePbk) changes.push("Reality PBK");
-            if (!sameSni) changes.push("SNI");
-            changeDesc = `Изменено: ${changes.join(", ")}`;
-            modified.push({ ...up, changeDesc });
+            status = "added";
+            changeDesc = "Новый сервер";
+            added.push(up);
           }
-        } else {
-          status = "added";
-          changeDesc = "Новый сервер";
-          added.push(up);
-        }
 
-        return { ...up, status, changeDesc };
-      });
+          return { ...up, status, changeDesc };
+        })
+        .filter(Boolean);
 
       const removed = Array.from(currentMap.values()).map((item) => ({
         ...item,
@@ -643,7 +649,7 @@ export default async function handler(req, res) {
 
       return res.status(200).json({
         ok: true,
-        build: build || "78",
+        build: build || "79",
         github: { txt: ghTxt, json: ghJson },
       });
     } catch (err) {
@@ -979,7 +985,7 @@ export default async function handler(req, res) {
       <span style="color: var(--text-muted); font-size: 11px;">Happ Client Emulation + HWID Bypass Active</span>
     </div>
     <div class="input-row">
-      <input type="text" id="upstreamUrl" class="source-input" value="https://sub.sosa.ink/MVQ57MTLAW-_0HtV" placeholder="https://sub.sosa.ink/key">
+      <input type="text" id="upstreamUrl" class="source-input" value="https://cdn.extra-network.ru/sqH-czvW9N4CpzCJ" placeholder="https://cdn.extra-network.ru/key">
       <button class="btn-fetch" id="btnFetch" onclick="fetchAndCompare()">
         <svg style="width:16px;height:16px"><use href="#i-zap"/></svg>
         <span>Сверить с источником</span>
