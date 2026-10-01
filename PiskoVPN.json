@@ -532,6 +532,83 @@
     ]
   },
   {
+    "remarks": "🇨🇭 ⚡ Швейцария",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "ch.medoed.store",
+              "port": 443,
+              "users": [
+                {
+                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "tcp",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "eVmvkMp8xcEJF7WPVaJLUWbIIcoxAkMSm2RgvqPBiVk",
+            "fingerprint": "firefox",
+            "serverName": "ch.medoed.store",
+            "shortId": "114ad0230e7566a3",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇨🇭 ⚡ Швейцария (gRPC)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "ch.medoed.store",
+              "port": 2443,
+              "users": [
+                {
+                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "grpc",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "eVmvkMp8xcEJF7WPVaJLUWbIIcoxAkMSm2RgvqPBiVk",
+            "fingerprint": "firefox",
+            "serverName": "ch.medoed.store",
+            "shortId": "114ad0230e7566a3",
+            "spiderX": "/"
+          },
+          "grpcSettings": {
+            "serviceName": "ch.medoed.store",
+            "multiMode": true
+          }
+        }
+      }
+    ]
+  },
+  {
     "remarks": "🇷🇺 ⚡ Москва",
     "outbounds": [
       {
