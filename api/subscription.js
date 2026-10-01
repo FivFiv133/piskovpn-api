@@ -231,11 +231,12 @@ export default async function handler(req, res) {
 
     let body;
 
-    if (format === "txt" || format === "text" || format === "vless") {
-      // Текстовый формат VLESS ссылок (если явно запрошен format=txt / format=vless)
-      body = subText;
-      res.setHeader("Content-Type", "text/plain; charset=utf-8");
-      res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN.txt"');
+    if (format === "json") {
+      // JSON формат Xray конфигураций
+      const jsonBody = await resolveJsonArrayBody(bBuild, cBuild);
+      body = jsonBody || subText;
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN.json"');
     } else if (format === "b64" || format === "base64") {
       // Base64 VLESS-ссылки (если явно запрошен b64)
       const linkLines = subText.split("\n").map(l => l.trim()).filter(l => l && !l.startsWith("#"));
@@ -243,17 +244,10 @@ export default async function handler(req, res) {
       res.setHeader("Content-Type", "text/plain; charset=utf-8");
       res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN.txt"');
     } else {
-      // ПО УМОЛЧАНИЮ: JSON массив Xray конфигураций (основной формат для полноценной работы обхода и мобильного интернета)
-      const jsonBody = await resolveJsonArrayBody(bBuild, cBuild);
-      if (jsonBody) {
-        body = jsonBody;
-        res.setHeader("Content-Type", "application/json; charset=utf-8");
-        res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN.json"');
-      } else {
-        body = subText;
-        res.setHeader("Content-Type", "text/plain; charset=utf-8");
-        res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN.txt"');
-      }
+      // По умолчанию: чистый текстовый PiskoVPN.txt (Content-Type: text/plain; charset=utf-8)
+      body = subText;
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.setHeader("Content-Disposition", 'attachment; filename="PiskoVPN.txt"');
     }
 
     // Извлекаем аннотации и заголовки из subText
@@ -273,7 +267,7 @@ export default async function handler(req, res) {
     res.setHeader("profile-update-interval", updateVal);
 
     // Announce (Version / Banner line in Happ)
-    const announceVal = announceMatch ? announceMatch[1].trim() : "Версия: v0.2.2-X | build-79";
+    const announceVal = announceMatch ? announceMatch[1].trim() : "Версия: v0.2.2-X | build-81";
     const safeAnnounce = safeHeader(announceVal);
     if (safeAnnounce) res.setHeader("announce", safeAnnounce);
 
