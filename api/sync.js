@@ -164,9 +164,64 @@ function formatRemarkForHapp(rawRemark) {
   return `🌐 ⚡ ${remark}`.trim();
 }
 
+const backupCountryMap = {
+  "vk": { flag: "🇷🇺", name: "Россия" },
+  "beget": { flag: "🇷🇺", name: "Россия" },
+  "timeweb": { flag: "🇷🇺", name: "Россия" },
+  "russia": { flag: "🇷🇺", name: "Россия" },
+  "bulgaria": { flag: "🇧🇬", name: "Болгария" },
+  "switzerland": { flag: "🇨🇭", name: "Швейцария" },
+  "czechia": { flag: "🇨🇿", name: "Чехия" },
+  "germany": { flag: "🇩🇪", name: "Германия" },
+  "estonia": { flag: "🇪🇪", name: "Эстония" },
+  "finland": { flag: "🇫🇮", name: "Финляндия" },
+  "france": { flag: "🇫🇷", name: "Франция" },
+  "united kingdom": { flag: "🇬🇧", name: "Великобритания" },
+  "uk": { flag: "🇬🇧", name: "Великобритания" },
+  "the netherlands": { flag: "🇳🇱", name: "Нидерланды" },
+  "netherlands": { flag: "🇳🇱", name: "Нидерланды" },
+  "poland": { flag: "🇵🇱", name: "Польша" },
+  "serbia": { flag: "🇷🇸", name: "Сербия" },
+  "sweden": { flag: "🇸🇪", name: "Швеция" },
+  "united states": { flag: "🇺🇸", name: "США" },
+  "usa": { flag: "🇺🇸", name: "США" },
+};
+
+function formatBackupRemark(originalRemark, countryCounters) {
+  let rem = (originalRemark || "").trim();
+  try { rem = decodeURIComponent(rem); } catch {}
+
+  const flagMatch = rem.match(/^([\uD83C][\uDDE6-\uDDFF]){2}/);
+  let flag = flagMatch ? flagMatch[0] : "";
+
+  let text = rem;
+  if (flag) text = text.slice(flag.length).trim();
+  text = text.replace(/—?\s*#\d+.*$/i, "").trim();
+
+  const lower = text.toLowerCase();
+  let countryName = "Сервер";
+
+  for (const [key, val] of Object.entries(backupCountryMap)) {
+    if (lower === key || lower.includes(key)) {
+      if (!flag) flag = val.flag;
+      countryName = val.name;
+      break;
+    }
+  }
+
+  if (!flag) flag = "🌐";
+
+  const countKey = `${flag}_${countryName}`;
+  countryCounters[countKey] = (countryCounters[countKey] || 0) + 1;
+  const num = countryCounters[countKey];
+
+  return `${flag} 🛡️ Резервный обход (${countryName} #${num})`;
+}
+
 function getServerPriority(remark) {
   const lower = (remark || "").toLowerCase();
-  if (lower.includes("обход") || lower.includes("🛡️")) return 0;
+  if (lower.includes("резервный обход")) return 10;
+  if (lower.includes("обход") || (lower.includes("🛡️") && !lower.includes("резервный"))) return 0;
   if (lower.includes("авто-выбор") || lower.includes("автовыбор") || lower.includes("🔄")) return 1;
   if (lower.includes("белые списки") || lower.includes("белый список")) return 2;
   return 3;
@@ -443,8 +498,9 @@ export default async function handler(req, res) {
   // API Action: Сверить конфиги
   if (req.method === "POST" && action === "fetch") {
     try {
-      const { upstreamUrl, customHeaders } = req.body || {};
+      const { upstreamUrl, backupUrl, customHeaders } = req.body || {};
       const targetUrl = (upstreamUrl || "").trim() || "https://sub.medoed.store/4hokxg5sBXqNRXnL";
+      const targetBackupUrl = (backupUrl !== undefined ? backupUrl : "https://raw.githubusercontent.com/zieng2/wl/refs/heads/main/vless_universal.txt").trim();
 
       const headers = {
         "User-Agent": "Happ/3.3.6/Windows/2607171516500",
@@ -497,17 +553,60 @@ export default async function handler(req, res) {
         upstreamItems = parseVlessLinks(decodedSub);
       }
 
-      if (!upstreamItems.length) {
-        return res.status(400).json({ error: "В ответе источника не найдено рабочих VLESS ссылок." });
+      // Fetch backup source if provided
+      let backupItems = [];
+      if (targetBackupUrl) {
+        try {
+          const bResp = await fetch(targetBackupUrl, { signal: AbortSignal.timeout(8000) });
+          if (bResp.ok) {
+            const bRaw = await bResp.text();
+            backupItems = parseVlessLinks(bRaw);
+          }
+        } catch (e) {
+          console.error("Backup fetch failed:", e.message);
+        }
       }
+
+      if (!upstreamItems.length && !backupItems.length) {
+        return res.status(400).json({ error: "В ответе источников не найдено рабочих VLESS ссылок." });
+      }
+
+      // Форматируем основной источник и сортируем: Обходы (0) -> Автовыбор (1) -> Обычные (2, 3)
+      const processedMain = upstreamItems
+        .map((up) => {
+          const formattedRemark = formatRemarkForHapp(up.remark);
+          if (!formattedRemark) return null;
+          return { ...up, formattedRemark };
+        })
+        .filter(Boolean);
+
+      processedMain.sort((a, b) => {
+        const pa = getServerPriority(a.formattedRemark);
+        const pb = getServerPriority(b.formattedRemark);
+        if (pa !== pb) return pa - pb;
+        return 0;
+      });
+
+      // Форматируем резервный источник: flag 🛡️ Резервный обход (Страна #1.2.3...)
+      const countryCounters = {};
+      const processedBackup = backupItems
+        .map((b) => {
+          const formattedRemark = formatBackupRemark(b.remark, countryCounters);
+          if (!formattedRemark) return null;
+          return { ...b, formattedRemark };
+        })
+        .filter(Boolean);
+
+      // Резервные обходы идут строго в самом низу после всех основных серверов
+      const allUpstream = [...processedMain, ...processedBackup];
 
       const r = getRedis();
       const { getSubscriptionText } = await import("./subscription.js");
       const currentTxt = await getSubscriptionText(r).catch(() => "");
       const currentItems = parseVlessLinks(currentTxt);
 
-      const currentBuildNum = parseInt(parseBuildFromSub(currentTxt) || "81", 10);
-      const nextBuildNum = isNaN(currentBuildNum) ? 82 : currentBuildNum + 1;
+      const currentBuildNum = parseInt(parseBuildFromSub(currentTxt) || "104", 10);
+      const nextBuildNum = isNaN(currentBuildNum) ? 105 : currentBuildNum + 1;
 
       // Анализ различий (Diff) с точным поиском по названию и параметрам
       const added = [];
@@ -519,19 +618,15 @@ export default async function handler(req, res) {
         currentMap.set(item.remark, item);
       });
 
-      const processedUpstream = upstreamItems
+      const processedUpstream = allUpstream
         .map((up) => {
-          const formattedRemark = formatRemarkForHapp(up.remark);
-          if (!formattedRemark) return null;
-          up.formattedRemark = formattedRemark;
-
-          const curr = currentMap.get(formattedRemark);
+          const curr = currentMap.get(up.formattedRemark);
 
           let status = "added";
           let changeDesc = "";
 
           if (curr) {
-            currentMap.delete(formattedRemark);
+            currentMap.delete(up.formattedRemark);
             const sameUuid = curr.uuid === up.uuid;
             const samePbk = curr.params?.pbk === up.params?.pbk;
             const sameSni = curr.params?.sni === up.params?.sni;
@@ -569,14 +664,6 @@ export default async function handler(req, res) {
         changeDesc: "Удален в источнике",
       }));
 
-      // Сортировка: Обход блокировок первые, затем Автовыбор, затем обычные серверы
-      processedUpstream.sort((a, b) => {
-        const pa = getServerPriority(a.formattedRemark);
-        const pb = getServerPriority(b.formattedRemark);
-        if (pa !== pb) return pa - pb;
-        return 0;
-      });
-
       // Формируем готовый TXT
       const updatedUrls = processedUpstream.map((item) => {
         try {
@@ -611,7 +698,7 @@ export default async function handler(req, res) {
       return res.status(200).json({
         ok: true,
         fetchTime,
-        upstreamCount: upstreamItems.length,
+        upstreamCount: allUpstream.length,
         currentCount: currentItems.length,
         currentBuild: currentBuildNum,
         nextBuild: nextBuildNum,
@@ -657,7 +744,7 @@ export default async function handler(req, res) {
 
       return res.status(200).json({
         ok: true,
-        build: build || "81",
+        build: build || "104",
         github: { txt: ghTxt, json: ghJson },
       });
     } catch (err) {
@@ -987,16 +1074,27 @@ export default async function handler(req, res) {
   </div>
 
   <!-- Source Input Box -->
-  <div class="source-box">
-    <div class="source-label">
-      <span>Ссылка на источник (Upstream Provider URL)</span>
-      <span style="color: var(--text-muted); font-size: 11px;">Happ Client Emulation + HWID Bypass Active</span>
+  <div class="source-box" style="display: flex; flex-direction: column; gap: 16px;">
+    <div>
+      <div class="source-label" style="margin-bottom: 8px;">
+        <span style="font-weight: 700; color: #fff;">Основной источник (Medoed):</span>
+        <span style="color: var(--text-muted); font-size: 11px;">Happ Client Emulation + HWID Bypass</span>
+      </div>
+      <input type="text" id="upstreamUrl" class="source-input" style="width: 100%; box-sizing: border-box;" value="https://sub.medoed.store/4hokxg5sBXqNRXnL" placeholder="https://sub.medoed.store/key">
     </div>
-    <div class="input-row">
-      <input type="text" id="upstreamUrl" class="source-input" value="https://sub.medoed.store/4hokxg5sBXqNRXnL" placeholder="https://sub.medoed.store/key">
+
+    <div>
+      <div class="source-label" style="margin-bottom: 8px;">
+        <span style="font-weight: 700; color: #a78bfa;">Резервный источник (GitHub):</span>
+        <span style="color: var(--text-muted); font-size: 11px;">Резервные обходы блокировок (vless_universal.txt)</span>
+      </div>
+      <input type="text" id="backupUrl" class="source-input" style="width: 100%; box-sizing: border-box;" value="https://raw.githubusercontent.com/zieng2/wl/refs/heads/main/vless_universal.txt" placeholder="https://raw.githubusercontent.com/.../vless_universal.txt">
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; margin-top: 4px;">
       <button class="btn-fetch" id="btnFetch" onclick="fetchAndCompare()">
         <svg style="width:16px;height:16px"><use href="#i-zap"/></svg>
-        <span>Сверить с источником</span>
+        <span>Сверить источники</span>
       </button>
     </div>
   </div>
@@ -1062,7 +1160,8 @@ function showToast(msg, isError = false) {
 async function fetchAndCompare() {
   const btn = document.getElementById("btnFetch");
   const url = document.getElementById("upstreamUrl").value.trim();
-  if (!url) return showToast("Укажите URL источника", true);
+  const backupUrl = (document.getElementById("backupUrl") ? document.getElementById("backupUrl").value.trim() : "");
+  if (!url) return showToast("Укажите Основной URL источника", true);
 
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> <span>Сверяем...</span>';
@@ -1071,7 +1170,7 @@ async function fetchAndCompare() {
     const resp = await fetch("/api/sync?action=fetch", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ upstreamUrl: url })
+      body: JSON.stringify({ upstreamUrl: url, backupUrl: backupUrl })
     });
     const data = await resp.json();
 
@@ -1087,7 +1186,7 @@ async function fetchAndCompare() {
     showToast("Ошибка сети: " + e.message, true);
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '<svg style="width:16px;height:16px"><use href="#i-zap"/></svg> <span>Сверить с источником</span>';
+    btn.innerHTML = '<svg style="width:16px;height:16px"><use href="#i-zap"/></svg> <span>Сверить источники</span>';
   }
 }
 
