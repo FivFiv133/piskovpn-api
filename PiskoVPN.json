@@ -455,43 +455,6 @@
     ]
   },
   {
-    "remarks": "🇪🇪 ⚡ Эстония",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "ee.cdntrahatel.store",
-              "port": 2083,
-              "users": [
-                {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "3dg3UTHzD7FA6iIPlD8Oo4TPoyOQ9HoctnfLLZlcTBU",
-            "fingerprint": "firefox",
-            "serverName": "ee.cdntrahatel.store",
-            "shortId": "9a95e6d1ecb1c531",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
     "remarks": "🇩🇪 ⚡ Германия",
     "outbounds": [
       {
@@ -935,127 +898,7 @@
         "settings": {
           "vnext": [
             {
-              "address": "78.159.246.110",
-              "port": 443,
-              "users": [
-                {
-                  "id": "bc5ec86c-3e65-4272-994c-59a924c72a68",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "ws",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "fbsv6.guardora.pro",
-            "fingerprint": "firefox",
-            "alpn": [
-              "http/1.1"
-            ]
-          },
-          "wsSettings": {
-            "path": "/ws",
-            "headers": {
-              "Host": "fbsv6.guardora.pro"
-            }
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #10)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "78.159.246.110",
-              "port": 443,
-              "users": [
-                {
-                  "id": "bc5ec86c-3e65-4272-994c-59a924c72a68",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "ws",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "fbsv6.guardora.pro",
-            "fingerprint": "chrome"
-          },
-          "wsSettings": {
-            "path": "/ws",
-            "headers": {
-              "Host": "fbsv6.guardora.pro"
-            }
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #11)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "78.159.246.110",
-              "port": 443,
-              "users": [
-                {
-                  "id": "bc5ec86c-3e65-4272-994c-59a924c72a68",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "ws",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "fbsv6.guardora.pro",
-            "fingerprint": "firefox"
-          },
-          "wsSettings": {
-            "path": "/ws",
-            "headers": {
-              "Host": "fbsv6.guardora.pro"
-            }
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #12)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "78.159.246.110",
+              "address": "217.19.122.200",
               "port": 443,
               "users": [
                 {
@@ -1089,7 +932,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #13)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #10)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -1097,7 +940,49 @@
         "settings": {
           "vnext": [
             {
-              "address": "78.159.246.110",
+              "address": "217.19.122.200",
+              "port": 443,
+              "users": [
+                {
+                  "id": "bc5ec86c-3e65-4272-994c-59a924c72a68",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "fbsv6.guardora.pro",
+            "fingerprint": "firefox",
+            "alpn": [
+              "http/1.1"
+            ]
+          },
+          "wsSettings": {
+            "path": "/ws",
+            "headers": {
+              "Host": "fbsv6.guardora.pro"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #11)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "217.19.122.200",
               "port": 443,
               "users": [
                 {
@@ -1128,7 +1013,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #14)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #12)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -1136,7 +1021,7 @@
         "settings": {
           "vnext": [
             {
-              "address": "78.159.246.110",
+              "address": "46.243.232.125",
               "port": 443,
               "users": [
                 {
@@ -1154,7 +1039,91 @@
           "tlsSettings": {
             "allowInsecure": false,
             "serverName": "fbsv6.guardora.pro",
-            "fingerprint": "random"
+            "fingerprint": "chrome"
+          },
+          "wsSettings": {
+            "path": "/ws",
+            "headers": {
+              "Host": "fbsv6.guardora.pro"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #13)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "46.243.232.125",
+              "port": 443,
+              "users": [
+                {
+                  "id": "bc5ec86c-3e65-4272-994c-59a924c72a68",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "fbsv6.guardora.pro",
+            "fingerprint": "chrome",
+            "alpn": [
+              "http/1.1"
+            ]
+          },
+          "wsSettings": {
+            "path": "/ws",
+            "headers": {
+              "Host": "fbsv6.guardora.pro"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #14)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "46.243.232.125",
+              "port": 443,
+              "users": [
+                {
+                  "id": "bc5ec86c-3e65-4272-994c-59a924c72a68",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "fbsv6.guardora.pro",
+            "fingerprint": "firefox",
+            "alpn": [
+              "http/1.1"
+            ]
           },
           "wsSettings": {
             "path": "/ws",
@@ -1175,7 +1144,7 @@
         "settings": {
           "vnext": [
             {
-              "address": "78.159.246.110",
+              "address": "46.243.232.125",
               "port": 443,
               "users": [
                 {
@@ -1193,10 +1162,7 @@
           "tlsSettings": {
             "allowInsecure": false,
             "serverName": "fbsv6.guardora.pro",
-            "fingerprint": "random",
-            "alpn": [
-              "http/1.1"
-            ]
+            "fingerprint": "chrome"
           },
           "wsSettings": {
             "path": "/ws",
@@ -1217,7 +1183,7 @@
         "settings": {
           "vnext": [
             {
-              "address": "78.159.246.110",
+              "address": "46.243.232.125",
               "port": 443,
               "users": [
                 {
@@ -1256,7 +1222,7 @@
         "settings": {
           "vnext": [
             {
-              "address": "217.19.122.200",
+              "address": "46.243.232.125",
               "port": 443,
               "users": [
                 {
@@ -1274,10 +1240,7 @@
           "tlsSettings": {
             "allowInsecure": false,
             "serverName": "fbsv6.guardora.pro",
-            "fingerprint": "chrome",
-            "alpn": [
-              "http/1.1"
-            ]
+            "fingerprint": "firefox"
           },
           "wsSettings": {
             "path": "/ws",
@@ -1291,327 +1254,6 @@
   },
   {
     "remarks": "🇷🇺 🛡️ Резервный обход (Россия #18)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "217.19.122.200",
-              "port": 443,
-              "users": [
-                {
-                  "id": "bc5ec86c-3e65-4272-994c-59a924c72a68",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "ws",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "fbsv6.guardora.pro",
-            "fingerprint": "firefox",
-            "alpn": [
-              "http/1.1"
-            ]
-          },
-          "wsSettings": {
-            "path": "/ws",
-            "headers": {
-              "Host": "fbsv6.guardora.pro"
-            }
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #19)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "217.19.122.200",
-              "port": 443,
-              "users": [
-                {
-                  "id": "bc5ec86c-3e65-4272-994c-59a924c72a68",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "ws",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "fbsv6.guardora.pro",
-            "fingerprint": "chrome"
-          },
-          "wsSettings": {
-            "path": "/ws",
-            "headers": {
-              "Host": "fbsv6.guardora.pro"
-            }
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #20)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "46.243.232.125",
-              "port": 443,
-              "users": [
-                {
-                  "id": "bc5ec86c-3e65-4272-994c-59a924c72a68",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "ws",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "fbsv6.guardora.pro",
-            "fingerprint": "chrome"
-          },
-          "wsSettings": {
-            "path": "/ws",
-            "headers": {
-              "Host": "fbsv6.guardora.pro"
-            }
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #21)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "46.243.232.125",
-              "port": 443,
-              "users": [
-                {
-                  "id": "bc5ec86c-3e65-4272-994c-59a924c72a68",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "ws",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "fbsv6.guardora.pro",
-            "fingerprint": "chrome",
-            "alpn": [
-              "http/1.1"
-            ]
-          },
-          "wsSettings": {
-            "path": "/ws",
-            "headers": {
-              "Host": "fbsv6.guardora.pro"
-            }
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #22)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "46.243.232.125",
-              "port": 443,
-              "users": [
-                {
-                  "id": "bc5ec86c-3e65-4272-994c-59a924c72a68",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "ws",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "fbsv6.guardora.pro",
-            "fingerprint": "firefox",
-            "alpn": [
-              "http/1.1"
-            ]
-          },
-          "wsSettings": {
-            "path": "/ws",
-            "headers": {
-              "Host": "fbsv6.guardora.pro"
-            }
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #23)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "46.243.232.125",
-              "port": 443,
-              "users": [
-                {
-                  "id": "bc5ec86c-3e65-4272-994c-59a924c72a68",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "ws",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "fbsv6.guardora.pro",
-            "fingerprint": "chrome"
-          },
-          "wsSettings": {
-            "path": "/ws",
-            "headers": {
-              "Host": "fbsv6.guardora.pro"
-            }
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #24)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "46.243.232.125",
-              "port": 443,
-              "users": [
-                {
-                  "id": "bc5ec86c-3e65-4272-994c-59a924c72a68",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "ws",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "fbsv6.guardora.pro",
-            "fingerprint": "firefox"
-          },
-          "wsSettings": {
-            "path": "/ws",
-            "headers": {
-              "Host": "fbsv6.guardora.pro"
-            }
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #25)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "46.243.232.125",
-              "port": 443,
-              "users": [
-                {
-                  "id": "bc5ec86c-3e65-4272-994c-59a924c72a68",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "ws",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "fbsv6.guardora.pro",
-            "fingerprint": "firefox"
-          },
-          "wsSettings": {
-            "path": "/ws",
-            "headers": {
-              "Host": "fbsv6.guardora.pro"
-            }
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #26)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -1653,7 +1295,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #27)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #19)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -1692,7 +1334,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #28)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #20)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -1728,7 +1370,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #29)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #21)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -1764,7 +1406,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #30)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #22)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -1800,7 +1442,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #31)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #23)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -1836,7 +1478,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #32)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #24)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -1913,7 +1555,84 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #33)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #25)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.141.227.180",
+              "port": 2053,
+              "users": [
+                {
+                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "xhttp",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "dismissaltree.net",
+            "fingerprint": "firefox"
+          },
+          "xhttpSettings": {
+            "path": "/api/v1/upload",
+            "host": "dismissaltree.net",
+            "mode": "auto",
+            "extra": {
+              "host": "",
+              "path": "",
+              "mode": "",
+              "headers": null,
+              "xPaddingBytes": "100-1000",
+              "xPaddingObfsMode": false,
+              "xPaddingKey": "",
+              "xPaddingHeader": "",
+              "xPaddingPlacement": "",
+              "xPaddingMethod": "",
+              "uplinkHTTPMethod": "",
+              "sessionIDPlacement": "",
+              "sessionIDKey": "",
+              "sessionIDTable": "",
+              "sessionIDLength": "0",
+              "seqPlacement": "",
+              "seqKey": "",
+              "uplinkDataPlacement": "",
+              "uplinkDataKey": "",
+              "uplinkChunkSize": "0",
+              "noGRPCHeader": false,
+              "noSSEHeader": false,
+              "scMaxEachPostBytes": "1000000",
+              "scMinPostsIntervalMs": "30",
+              "scMaxBufferedPosts": 0,
+              "scStreamUpServerSecs": "0",
+              "serverMaxHeaderBytes": 0,
+              "xmux": {
+                "maxConcurrency": "16-32",
+                "maxConnections": "0",
+                "cMaxReuseTimes": "64-128",
+                "hMaxRequestTimes": "0",
+                "hMaxReusableSecs": "0",
+                "hKeepAlivePeriod": 0
+              },
+              "downloadSettings": null,
+              "extra": null
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #26)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -1944,52 +1663,53 @@
           "xhttpSettings": {
             "path": "/api/v1/upload",
             "host": "dismissaltree.net",
-            "mode": "auto"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #34)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "185.141.227.180",
-              "port": 2053,
-              "users": [
-                {
-                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
+            "mode": "auto",
+            "extra": {
+              "host": "",
+              "path": "",
+              "mode": "",
+              "headers": null,
+              "xPaddingBytes": "100-1000",
+              "xPaddingObfsMode": false,
+              "xPaddingKey": "",
+              "xPaddingHeader": "",
+              "xPaddingPlacement": "",
+              "xPaddingMethod": "",
+              "uplinkHTTPMethod": "",
+              "sessionIDPlacement": "",
+              "sessionIDKey": "",
+              "sessionIDTable": "",
+              "sessionIDLength": "0",
+              "seqPlacement": "",
+              "seqKey": "",
+              "uplinkDataPlacement": "",
+              "uplinkDataKey": "",
+              "uplinkChunkSize": "0",
+              "noGRPCHeader": false,
+              "noSSEHeader": false,
+              "scMaxEachPostBytes": "1000000",
+              "scMinPostsIntervalMs": "30",
+              "scMaxBufferedPosts": 0,
+              "scStreamUpServerSecs": "0",
+              "serverMaxHeaderBytes": 0,
+              "xmux": {
+                "maxConcurrency": "16-32",
+                "maxConnections": "0",
+                "cMaxReuseTimes": "64-128",
+                "hMaxRequestTimes": "0",
+                "hMaxReusableSecs": "0",
+                "hKeepAlivePeriod": 0
+              },
+              "downloadSettings": null,
+              "extra": null
             }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "dismissaltree.net",
-            "fingerprint": "random"
-          },
-          "xhttpSettings": {
-            "path": "/api/v1/upload",
-            "host": "dismissaltree.net",
-            "mode": "auto"
           }
         }
       }
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #35)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #27)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -2066,7 +1786,45 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #36)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #28)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.141.227.180",
+              "port": 2053,
+              "users": [
+                {
+                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "xhttp",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "dismissaltree.net",
+            "fingerprint": "random"
+          },
+          "xhttpSettings": {
+            "path": "/api/v1/upload",
+            "host": "dismissaltree.net",
+            "mode": "auto"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #29)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -2143,7 +1901,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #37)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #30)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -2224,84 +1982,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #38)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "185.141.227.180",
-              "port": 2053,
-              "users": [
-                {
-                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "dismissaltree.net",
-            "fingerprint": "random"
-          },
-          "xhttpSettings": {
-            "path": "/api/v1/upload",
-            "host": "dismissaltree.net",
-            "mode": "auto",
-            "extra": {
-              "host": "",
-              "path": "",
-              "mode": "",
-              "headers": null,
-              "xPaddingBytes": "100-1000",
-              "xPaddingObfsMode": false,
-              "xPaddingKey": "",
-              "xPaddingHeader": "",
-              "xPaddingPlacement": "",
-              "xPaddingMethod": "",
-              "uplinkHTTPMethod": "",
-              "sessionIDPlacement": "",
-              "sessionIDKey": "",
-              "sessionIDTable": "",
-              "sessionIDLength": "0",
-              "seqPlacement": "",
-              "seqKey": "",
-              "uplinkDataPlacement": "",
-              "uplinkDataKey": "",
-              "uplinkChunkSize": "0",
-              "noGRPCHeader": false,
-              "noSSEHeader": false,
-              "scMaxEachPostBytes": "1000000",
-              "scMinPostsIntervalMs": "30",
-              "scMaxBufferedPosts": 0,
-              "scStreamUpServerSecs": "0",
-              "serverMaxHeaderBytes": 0,
-              "xmux": {
-                "maxConcurrency": "16-32",
-                "maxConnections": "0",
-                "cMaxReuseTimes": "64-128",
-                "hMaxRequestTimes": "0",
-                "hMaxReusableSecs": "0",
-                "hKeepAlivePeriod": 0
-              },
-              "downloadSettings": null,
-              "extra": null
-            }
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #39)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #31)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -2343,7 +2024,90 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #40)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #32)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.141.227.180",
+              "port": 2053,
+              "users": [
+                {
+                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "xhttp",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "dismissaltree.net",
+            "fingerprint": "random",
+            "alpn": [
+              "h2"
+            ]
+          },
+          "xhttpSettings": {
+            "path": "/api/v1/upload",
+            "host": "dismissaltree.net",
+            "mode": "auto"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #33)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.141.227.180",
+              "port": 2053,
+              "users": [
+                {
+                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "xhttp",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "dismissaltree.net",
+            "fingerprint": "random",
+            "alpn": [
+              "h2",
+              "http/1.1"
+            ]
+          },
+          "xhttpSettings": {
+            "path": "/api/v1/upload",
+            "host": "dismissaltree.net",
+            "mode": "auto"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #34)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -2424,7 +2188,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #41)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #35)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -2450,14 +2214,129 @@
           "tlsSettings": {
             "allowInsecure": false,
             "serverName": "dismissaltree.net",
-            "fingerprint": "random",
+            "fingerprint": "chrome"
+          },
+          "xhttpSettings": {
+            "path": "/api/v1/upload",
+            "host": "dismissaltree.net",
+            "mode": "auto",
+            "extra": {
+              "host": "",
+              "path": "",
+              "mode": "",
+              "headers": null,
+              "xPaddingBytes": "0",
+              "xPaddingObfsMode": false,
+              "xPaddingKey": "",
+              "xPaddingHeader": "",
+              "xPaddingPlacement": "",
+              "xPaddingMethod": "",
+              "uplinkHTTPMethod": "",
+              "sessionIDPlacement": "",
+              "sessionIDKey": "",
+              "sessionIDTable": "",
+              "sessionIDLength": "0",
+              "seqPlacement": "",
+              "seqKey": "",
+              "uplinkDataPlacement": "",
+              "uplinkDataKey": "",
+              "uplinkChunkSize": "0",
+              "noGRPCHeader": false,
+              "noSSEHeader": false,
+              "scMaxEachPostBytes": "1000000",
+              "scMinPostsIntervalMs": "30",
+              "scMaxBufferedPosts": 0,
+              "scStreamUpServerSecs": "0",
+              "serverMaxHeaderBytes": 0,
+              "xmux": {
+                "maxConcurrency": "0",
+                "maxConnections": "0",
+                "cMaxReuseTimes": "0",
+                "hMaxRequestTimes": "0",
+                "hMaxReusableSecs": "0",
+                "hKeepAlivePeriod": 0
+              },
+              "downloadSettings": null,
+              "extra": null
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #36)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "78.159.246.179",
+              "port": 2053,
+              "users": [
+                {
+                  "id": "c2bbf90c-7f13-47dd-b68d-f0bd38b6b3c8",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "xhttp",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "randomquaint.net",
+            "fingerprint": "safari",
             "alpn": [
               "h2"
             ]
           },
           "xhttpSettings": {
             "path": "/api/v1/upload",
-            "host": "dismissaltree.net",
+            "host": "randomquaint.net",
+            "mode": "auto"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #37)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "78.159.246.179",
+              "port": 2053,
+              "users": [
+                {
+                  "id": "c2bbf90c-7f13-47dd-b68d-f0bd38b6b3c8",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "xhttp",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "randomquaint.net",
+            "fingerprint": "safari"
+          },
+          "xhttpSettings": {
+            "path": "/api/v1/upload",
+            "host": "randomquaint.net",
             "mode": "auto"
           }
         }
@@ -2545,6 +2424,246 @@
     ]
   },
   {
+    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #3)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.91.54.30",
+              "port": 8444,
+              "users": [
+                {
+                  "id": "0f4081e7-612b-425f-8def-eebf144aedba",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "grpc",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "ITd6cmCxudmTvGcwnAzpd0VRe8jS9KJAQ1tmtVN3mCM",
+            "fingerprint": "firefox",
+            "serverName": "ads.x5.ru",
+            "shortId": "9e15546f267baa64",
+            "spiderX": "/"
+          },
+          "grpcSettings": {
+            "serviceName": "grpc-reality",
+            "multiMode": false
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #4)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.91.54.30",
+              "port": 8444,
+              "users": [
+                {
+                  "id": "0f4081e7-612b-425f-8def-eebf144aedba",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "grpc",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "ITd6cmCxudmTvGcwnAzpd0VRe8jS9KJAQ1tmtVN3mCM",
+            "fingerprint": "ios",
+            "serverName": "ads.x5.ru",
+            "shortId": "9e15546f267baa64",
+            "spiderX": "/"
+          },
+          "grpcSettings": {
+            "serviceName": "grpc-reality",
+            "multiMode": false
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #5)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.91.54.30",
+              "port": 8444,
+              "users": [
+                {
+                  "id": "0f4081e7-612b-425f-8def-eebf144aedba",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "grpc",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "ITd6cmCxudmTvGcwnAzpd0VRe8jS9KJAQ1tmtVN3mCM",
+            "fingerprint": "safari",
+            "serverName": "ads.x5.ru",
+            "shortId": "9e15546f267baa64",
+            "spiderX": "/"
+          },
+          "grpcSettings": {
+            "serviceName": "grpc-reality",
+            "multiMode": false
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #6)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.91.52.96",
+              "port": 8444,
+              "users": [
+                {
+                  "id": "0f4081e7-612b-425f-8def-eebf144aedba",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "grpc",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "ITd6cmCxudmTvGcwnAzpd0VRe8jS9KJAQ1tmtVN3mCM",
+            "fingerprint": "chrome",
+            "serverName": "ads.x5.ru",
+            "shortId": "9e15546f267baa64",
+            "spiderX": "/"
+          },
+          "grpcSettings": {
+            "serviceName": "grpc-reality",
+            "multiMode": false
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #7)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.91.52.96",
+              "port": 8444,
+              "users": [
+                {
+                  "id": "0f4081e7-612b-425f-8def-eebf144aedba",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "grpc",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "ITd6cmCxudmTvGcwnAzpd0VRe8jS9KJAQ1tmtVN3mCM",
+            "fingerprint": "edge",
+            "serverName": "ads.x5.ru",
+            "shortId": "9e15546f267baa64",
+            "spiderX": "/"
+          },
+          "grpcSettings": {
+            "serviceName": "grpc-reality",
+            "multiMode": false
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #8)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.91.52.96",
+              "port": 8444,
+              "users": [
+                {
+                  "id": "0f4081e7-612b-425f-8def-eebf144aedba",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "grpc",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "ITd6cmCxudmTvGcwnAzpd0VRe8jS9KJAQ1tmtVN3mCM",
+            "fingerprint": "safari",
+            "serverName": "ads.x5.ru",
+            "shortId": "9e15546f267baa64",
+            "spiderX": "/"
+          },
+          "grpcSettings": {
+            "serviceName": "grpc-reality",
+            "multiMode": false
+          }
+        }
+      }
+    ]
+  },
+  {
     "remarks": "🇨🇭 🛡️ Резервный обход (Швейцария #1)",
     "outbounds": [
       {
@@ -2557,7 +2676,7 @@
               "port": 443,
               "users": [
                 {
-                  "id": "2ae77c9b-8751-4f5e-9aa3-ed728eaa13f7",
+                  "id": "f92190c7-f9d7-4f6f-913c-b6e73ce11af5",
                   "encryption": "none",
                   "level": 0
                 }
@@ -2599,7 +2718,7 @@
               "port": 443,
               "users": [
                 {
-                  "id": "2ae77c9b-8751-4f5e-9aa3-ed728eaa13f7",
+                  "id": "f92190c7-f9d7-4f6f-913c-b6e73ce11af5",
                   "encryption": "none",
                   "level": 0
                 }
@@ -2641,7 +2760,7 @@
               "port": 443,
               "users": [
                 {
-                  "id": "2ae77c9b-8751-4f5e-9aa3-ed728eaa13f7",
+                  "id": "f92190c7-f9d7-4f6f-913c-b6e73ce11af5",
                   "encryption": "none",
                   "level": 0
                 }
@@ -2794,6 +2913,48 @@
         "settings": {
           "vnext": [
             {
+              "address": "91.215.43.80",
+              "port": 443,
+              "users": [
+                {
+                  "id": "3ebf23f9-e64a-4cad-a970-0562bc0fd8c0",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "sand.api.downloader-pet.xyz",
+            "fingerprint": "firefox",
+            "alpn": [
+              "http/1.1"
+            ]
+          },
+          "wsSettings": {
+            "path": "/gateway/v1/ws/74c4d5e82a8e50ccf09fc628c17dc9be",
+            "headers": {
+              "Host": "sand.api.downloader-pet.xyz"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #3)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
               "address": "45.132.176.161",
               "port": 9891,
               "users": [
@@ -2826,7 +2987,7 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #3)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #4)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -2861,86 +3022,6 @@
             "path": "/",
             "host": "rumulti.federal-usa.com",
             "mode": "packet-up",
-            "extra": {
-              "host": "",
-              "path": "",
-              "mode": "",
-              "headers": {},
-              "xPaddingBytes": "100-1000",
-              "xPaddingObfsMode": false,
-              "xPaddingKey": "",
-              "xPaddingHeader": "",
-              "xPaddingPlacement": "",
-              "xPaddingMethod": "",
-              "uplinkHTTPMethod": "",
-              "sessionIDPlacement": "",
-              "sessionIDKey": "",
-              "sessionIDTable": "",
-              "sessionIDLength": "0",
-              "seqPlacement": "",
-              "seqKey": "",
-              "uplinkDataPlacement": "",
-              "uplinkDataKey": "",
-              "uplinkChunkSize": "0",
-              "noGRPCHeader": false,
-              "noSSEHeader": false,
-              "scMaxEachPostBytes": "1000000",
-              "scMinPostsIntervalMs": "30",
-              "scMaxBufferedPosts": 0,
-              "scStreamUpServerSecs": "20-80",
-              "serverMaxHeaderBytes": 0,
-              "xmux": {
-                "maxConcurrency": "16-32",
-                "maxConnections": "0",
-                "cMaxReuseTimes": "0",
-                "hMaxRequestTimes": "600-900",
-                "hMaxReusableSecs": "1800-3000",
-                "hKeepAlivePeriod": 0
-              },
-              "downloadSettings": null,
-              "extra": null
-            }
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #4)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "188.68.218.37",
-              "port": 8443,
-              "users": [
-                {
-                  "id": "d13baced-948a-40d7-be31-7b44fa768552",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "J5ITJbg5FQFembAfkogKHHQB6DigsFXQxK7xu-QMWUs",
-            "fingerprint": "ios",
-            "serverName": "rumulti.federal-usa.com",
-            "shortId": "6b2f4e6ac9b1d2f0",
-            "spiderX": "/"
-          },
-          "xhttpSettings": {
-            "path": "/",
-            "host": "rumulti.federal-usa.com",
-            "mode": "auto",
             "extra": {
               "host": "",
               "path": "",
@@ -3012,7 +3093,7 @@
           "realitySettings": {
             "show": false,
             "publicKey": "J5ITJbg5FQFembAfkogKHHQB6DigsFXQxK7xu-QMWUs",
-            "fingerprint": "firefox",
+            "fingerprint": "chrome",
             "serverName": "rumulti.federal-usa.com",
             "shortId": "6b2f4e6ac9b1d2f0",
             "spiderX": "/"
@@ -3074,11 +3155,11 @@
         "settings": {
           "vnext": [
             {
-              "address": "45.132.176.161",
-              "port": 9891,
+              "address": "188.68.218.37",
+              "port": 8443,
               "users": [
                 {
-                  "id": "5d16ac22-6eea-426f-b778-6f4c2961faef",
+                  "id": "d13baced-948a-40d7-be31-7b44fa768552",
                   "encryption": "none",
                   "level": 0
                 }
@@ -3087,19 +3168,20 @@
           ]
         },
         "streamSettings": {
-          "network": "grpc",
+          "network": "xhttp",
           "security": "reality",
           "realitySettings": {
             "show": false,
-            "publicKey": "Dfgu8Ey0M8Hz4gXGZAwQ3H9jLt2HByVsjAOTWiuKDB0",
+            "publicKey": "J5ITJbg5FQFembAfkogKHHQB6DigsFXQxK7xu-QMWUs",
             "fingerprint": "firefox",
-            "serverName": "dl.google.com",
-            "shortId": "",
+            "serverName": "rumulti.federal-usa.com",
+            "shortId": "6b2f4e6ac9b1d2f0",
             "spiderX": "/"
           },
-          "grpcSettings": {
-            "serviceName": "grpc-tunnel",
-            "multiMode": false
+          "xhttpSettings": {
+            "path": "/",
+            "host": "rumulti.federal-usa.com",
+            "mode": "packet-up"
           }
         }
       }
@@ -3140,7 +3222,7 @@
           "xhttpSettings": {
             "path": "/",
             "host": "rumulti.federal-usa.com",
-            "mode": "packet-up",
+            "mode": "auto",
             "extra": {
               "host": "",
               "path": "",
@@ -3220,87 +3302,6 @@
           "xhttpSettings": {
             "path": "/",
             "host": "rumulti.federal-usa.com",
-            "mode": "packet-up"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #9)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "45.132.176.161",
-              "port": 9891,
-              "users": [
-                {
-                  "id": "5d16ac22-6eea-426f-b778-6f4c2961faef",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "grpc",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "Dfgu8Ey0M8Hz4gXGZAwQ3H9jLt2HByVsjAOTWiuKDB0",
-            "fingerprint": "ios",
-            "serverName": "dl.google.com",
-            "shortId": "",
-            "spiderX": "/"
-          },
-          "grpcSettings": {
-            "serviceName": "grpc-tunnel",
-            "multiMode": false
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #10)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "188.68.218.37",
-              "port": 8443,
-              "users": [
-                {
-                  "id": "d13baced-948a-40d7-be31-7b44fa768552",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "J5ITJbg5FQFembAfkogKHHQB6DigsFXQxK7xu-QMWUs",
-            "fingerprint": "chrome",
-            "serverName": "rumulti.federal-usa.com",
-            "shortId": "6b2f4e6ac9b1d2f0",
-            "spiderX": "/"
-          },
-          "xhttpSettings": {
-            "path": "/",
-            "host": "rumulti.federal-usa.com",
             "mode": "auto",
             "extra": {
               "host": "",
@@ -3347,7 +3348,47 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #11)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #9)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "45.132.176.161",
+              "port": 9891,
+              "users": [
+                {
+                  "id": "5d16ac22-6eea-426f-b778-6f4c2961faef",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "grpc",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "Dfgu8Ey0M8Hz4gXGZAwQ3H9jLt2HByVsjAOTWiuKDB0",
+            "fingerprint": "firefox",
+            "serverName": "dl.google.com",
+            "shortId": "",
+            "spiderX": "/"
+          },
+          "grpcSettings": {
+            "serviceName": "grpc-tunnel",
+            "multiMode": false
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #10)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -3373,7 +3414,7 @@
           "realitySettings": {
             "show": false,
             "publicKey": "J5ITJbg5FQFembAfkogKHHQB6DigsFXQxK7xu-QMWUs",
-            "fingerprint": "chrome",
+            "fingerprint": "ios",
             "serverName": "rumulti.federal-usa.com",
             "shortId": "6b2f4e6ac9b1d2f0",
             "spiderX": "/"
@@ -3427,7 +3468,128 @@
     ]
   },
   {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #11)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "91.215.43.80",
+              "port": 443,
+              "users": [
+                {
+                  "id": "3ebf23f9-e64a-4cad-a970-0562bc0fd8c0",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "sand.api.downloader-pet.xyz",
+            "fingerprint": "firefox"
+          },
+          "wsSettings": {
+            "path": "/gateway/v1/ws/74c4d5e82a8e50ccf09fc628c17dc9be",
+            "headers": {
+              "Host": "sand.api.downloader-pet.xyz"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
     "remarks": "🇩🇪 🛡️ Резервный обход (Германия #12)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "91.215.43.80",
+              "port": 443,
+              "users": [
+                {
+                  "id": "3ebf23f9-e64a-4cad-a970-0562bc0fd8c0",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "sand.api.downloader-pet.xyz",
+            "fingerprint": "random",
+            "alpn": [
+              "http/1.1"
+            ]
+          },
+          "wsSettings": {
+            "path": "/gateway/v1/ws/74c4d5e82a8e50ccf09fc628c17dc9be",
+            "headers": {
+              "Host": "sand.api.downloader-pet.xyz"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #13)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "45.132.176.161",
+              "port": 9891,
+              "users": [
+                {
+                  "id": "5d16ac22-6eea-426f-b778-6f4c2961faef",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "grpc",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "Dfgu8Ey0M8Hz4gXGZAwQ3H9jLt2HByVsjAOTWiuKDB0",
+            "fingerprint": "ios",
+            "serverName": "dl.google.com",
+            "shortId": "",
+            "spiderX": "/"
+          },
+          "grpcSettings": {
+            "serviceName": "grpc-tunnel",
+            "multiMode": false
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #14)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -3507,7 +3669,7 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #13)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #15)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -3587,7 +3749,7 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #14)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #16)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -3667,7 +3829,87 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #15)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #17)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "188.68.218.37",
+              "port": 8443,
+              "users": [
+                {
+                  "id": "d13baced-948a-40d7-be31-7b44fa768552",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "xhttp",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "J5ITJbg5FQFembAfkogKHHQB6DigsFXQxK7xu-QMWUs",
+            "fingerprint": "chrome",
+            "serverName": "rumulti.federal-usa.com",
+            "shortId": "6b2f4e6ac9b1d2f0",
+            "spiderX": "/"
+          },
+          "xhttpSettings": {
+            "path": "/",
+            "host": "rumulti.federal-usa.com",
+            "mode": "packet-up",
+            "extra": {
+              "host": "",
+              "path": "",
+              "mode": "",
+              "headers": {},
+              "xPaddingBytes": "100-1000",
+              "xPaddingObfsMode": false,
+              "xPaddingKey": "",
+              "xPaddingHeader": "",
+              "xPaddingPlacement": "",
+              "xPaddingMethod": "",
+              "uplinkHTTPMethod": "",
+              "sessionIDPlacement": "",
+              "sessionIDKey": "",
+              "sessionIDTable": "",
+              "sessionIDLength": "0",
+              "seqPlacement": "",
+              "seqKey": "",
+              "uplinkDataPlacement": "",
+              "uplinkDataKey": "",
+              "uplinkChunkSize": "0",
+              "noGRPCHeader": false,
+              "noSSEHeader": false,
+              "scMaxEachPostBytes": "1000000",
+              "scMinPostsIntervalMs": "30",
+              "scMaxBufferedPosts": 0,
+              "scStreamUpServerSecs": "20-80",
+              "serverMaxHeaderBytes": 0,
+              "xmux": {
+                "maxConcurrency": "16-32",
+                "maxConnections": "0",
+                "cMaxReuseTimes": "0",
+                "hMaxRequestTimes": "600-900",
+                "hMaxReusableSecs": "1800-3000",
+                "hKeepAlivePeriod": 0
+              },
+              "downloadSettings": null,
+              "extra": null
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #18)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -3707,7 +3949,7 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #16)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #19)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -3747,7 +3989,7 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #17)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #20)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -3787,7 +4029,7 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #18)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #21)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -3828,7 +4070,7 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #19)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #22)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -3868,7 +4110,7 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #20)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #23)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -3908,7 +4150,7 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #21)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #24)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -3948,7 +4190,7 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #22)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #25)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -3956,11 +4198,11 @@
         "settings": {
           "vnext": [
             {
-              "address": "176.108.253.120",
-              "port": 443,
+              "address": "45.9.24.199",
+              "port": 7443,
               "users": [
                 {
-                  "id": "0dca2cfe-98eb-4f9d-9a47-cf87510c558b",
+                  "id": "65cd649c-f2f5-49c4-8f57-94d9b706e846",
                   "encryption": "none",
                   "level": 0
                 }
@@ -3969,26 +4211,142 @@
           ]
         },
         "streamSettings": {
-          "network": "grpc",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "de.avroraservice.online",
-            "fingerprint": "chrome",
-            "alpn": [
-              "h2"
-            ]
+          "network": "xhttp",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "ypzgxQ7VhTlTqjT0pAzWBIyotcG7SYqMpErwMBDci0g",
+            "fingerprint": "random",
+            "serverName": "shprcdn.homes",
+            "shortId": "",
+            "spiderX": "/"
           },
-          "grpcSettings": {
-            "serviceName": "cdn.v1.DeService",
-            "multiMode": false
+          "xhttpSettings": {
+            "path": "/content/dash/segments/",
+            "host": "shprcdn.homes",
+            "mode": "stream-one",
+            "extra": {
+              "host": "",
+              "path": "",
+              "mode": "",
+              "headers": null,
+              "xPaddingBytes": "50-150",
+              "xPaddingObfsMode": false,
+              "xPaddingKey": "",
+              "xPaddingHeader": "",
+              "xPaddingPlacement": "",
+              "xPaddingMethod": "",
+              "uplinkHTTPMethod": "",
+              "sessionIDPlacement": "",
+              "sessionIDKey": "",
+              "sessionIDTable": "",
+              "sessionIDLength": "0",
+              "seqPlacement": "",
+              "seqKey": "",
+              "uplinkDataPlacement": "",
+              "uplinkDataKey": "",
+              "uplinkChunkSize": "0",
+              "noGRPCHeader": false,
+              "noSSEHeader": false,
+              "scMaxEachPostBytes": "0",
+              "scMinPostsIntervalMs": "0",
+              "scMaxBufferedPosts": 0,
+              "scStreamUpServerSecs": "0",
+              "serverMaxHeaderBytes": 0,
+              "xmux": {
+                "maxConcurrency": "16-32",
+                "maxConnections": "0",
+                "cMaxReuseTimes": "256-512",
+                "hMaxRequestTimes": "0",
+                "hMaxReusableSecs": "900-1500",
+                "hKeepAlivePeriod": 0
+              },
+              "downloadSettings": null,
+              "extra": null
+            }
           }
         }
       }
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #23)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #26)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "84.201.180.177",
+              "port": 7443,
+              "users": [
+                {
+                  "id": "b4370239-e25b-4396-8d67-2c6f2f6c8655",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "8qUiIosG5-OQWo0tD29BQCbxb50neUg8BynxdAvDzB4",
+            "fingerprint": "firefox",
+            "serverName": "api.dobro.ru",
+            "shortId": "132142",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #27)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "91.215.43.80",
+              "port": 443,
+              "users": [
+                {
+                  "id": "3ebf23f9-e64a-4cad-a970-0562bc0fd8c0",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "sand.api.downloader-pet.xyz",
+            "fingerprint": "firefox"
+          },
+          "wsSettings": {
+            "path": "/gateway/v1/ws/74c4d5e82a8e50ccf09fc628c17dc9be",
+            "headers": {
+              "Host": "sand.api.downloader-pet.xyz"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #28)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -4000,7 +4358,7 @@
               "port": 443,
               "users": [
                 {
-                  "id": "c5cc5f17-60ca-4a9c-a5ed-6453bf87127c",
+                  "id": "aaeddd52-ec54-4e66-abc2-a03fb1db4d5f",
                   "encryption": "none",
                   "flow": "xtls-rprx-vision",
                   "level": 0
@@ -4025,7 +4383,7 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #24)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #29)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -4037,44 +4395,7 @@
               "port": 443,
               "users": [
                 {
-                  "id": "c5cc5f17-60ca-4a9c-a5ed-6453bf87127c",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "raw",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "AiG06E-jizo9xtBbulKQvdQqhZfobZJBTQIKkaDjaiU",
-            "fingerprint": "firefox",
-            "serverName": "max.ru",
-            "shortId": "a1b2c3d4e5",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #25)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "188.225.62.104",
-              "port": 443,
-              "users": [
-                {
-                  "id": "c5cc5f17-60ca-4a9c-a5ed-6453bf87127c",
+                  "id": "aaeddd52-ec54-4e66-abc2-a03fb1db4d5f",
                   "encryption": "none",
                   "flow": "xtls-rprx-vision",
                   "level": 0
@@ -4099,7 +4420,7 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #26)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #30)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -4111,7 +4432,7 @@
               "port": 443,
               "users": [
                 {
-                  "id": "c5cc5f17-60ca-4a9c-a5ed-6453bf87127c",
+                  "id": "aaeddd52-ec54-4e66-abc2-a03fb1db4d5f",
                   "encryption": "none",
                   "flow": "xtls-rprx-vision",
                   "level": 0
@@ -4136,7 +4457,44 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #27)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #31)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "188.225.62.104",
+              "port": 443,
+              "users": [
+                {
+                  "id": "aaeddd52-ec54-4e66-abc2-a03fb1db4d5f",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "AiG06E-jizo9xtBbulKQvdQqhZfobZJBTQIKkaDjaiU",
+            "fingerprint": "firefox",
+            "serverName": "max.ru",
+            "shortId": "a1b2c3d4e5",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #32)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -4148,7 +4506,7 @@
               "port": 443,
               "users": [
                 {
-                  "id": "0cb30c12-9afe-4011-a2cd-6f244681b421",
+                  "id": "c5ef208a-7308-4f62-addc-aafb3f8d25f5",
                   "encryption": "none",
                   "level": 0
                 }
@@ -4178,191 +4536,6 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #28)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "185.229.9.234",
-              "port": 443,
-              "users": [
-                {
-                  "id": "400b9d54-360e-4c25-a727-1572f9c29807",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "raw",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "lIgF8B3ICGAQ6ExbRe9YDu8ZD1Ozzqu7-YO7hfuXfRw",
-            "fingerprint": "firefox",
-            "serverName": "api.ok.ru",
-            "shortId": "cc8069f6c2cbcb32",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #29)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "31.177.111.114",
-              "port": 443,
-              "users": [
-                {
-                  "id": "400b9d54-360e-4c25-a727-1572f9c29807",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "raw",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "cKE5quiMcRgilQjWqhvZiKzHZi2XQDsL9fbEOZykWi0",
-            "fingerprint": "firefox",
-            "serverName": "www.vk.com",
-            "shortId": "73ac62e56cfd3455",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #30)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "185.229.9.175",
-              "port": 443,
-              "users": [
-                {
-                  "id": "400b9d54-360e-4c25-a727-1572f9c29807",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "raw",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "Eutx4frdhG1y7THj7k3CjazAsrCMj932RtbV4a1QfQk",
-            "fingerprint": "firefox",
-            "serverName": "api.ok.ru",
-            "shortId": "d5b6308860d578bb",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #31)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "185.229.9.175",
-              "port": 443,
-              "users": [
-                {
-                  "id": "400b9d54-360e-4c25-a727-1572f9c29807",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "raw",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "1ea_kTf2MvXh9PtpzQdjQWb5ls5BjyUtSbn-qiR8ZXk",
-            "fingerprint": "firefox",
-            "serverName": "yandex.ru",
-            "shortId": "cb0e256070ac91c7",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #32)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "31.177.111.114",
-              "port": 443,
-              "users": [
-                {
-                  "id": "400b9d54-360e-4c25-a727-1572f9c29807",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "raw",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "k-E1YJ4oOVPhmILq1gBiBm_u3Vo8oYrMNDp85h80Pig",
-            "fingerprint": "firefox",
-            "serverName": "yandex.ru",
-            "shortId": "035818587187be68",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
     "remarks": "🇩🇪 🛡️ Резервный обход (Германия #33)",
     "outbounds": [
       {
@@ -4375,7 +4548,7 @@
               "port": 443,
               "users": [
                 {
-                  "id": "400b9d54-360e-4c25-a727-1572f9c29807",
+                  "id": "ff42e50a-b1b2-4f89-96ed-582eb2e7df21",
                   "encryption": "none",
                   "flow": "xtls-rprx-vision",
                   "level": 0
@@ -4408,11 +4581,11 @@
         "settings": {
           "vnext": [
             {
-              "address": "185.229.9.175",
+              "address": "91.240.87.166",
               "port": 443,
               "users": [
                 {
-                  "id": "400b9d54-360e-4c25-a727-1572f9c29807",
+                  "id": "ff42e50a-b1b2-4f89-96ed-582eb2e7df21",
                   "encryption": "none",
                   "flow": "xtls-rprx-vision",
                   "level": 0
@@ -4426,10 +4599,10 @@
           "security": "reality",
           "realitySettings": {
             "show": false,
-            "publicKey": "ZO7C9aMpoVJ6CmkKWUBS20eKe542_tGIc6wZFGB-yjY",
+            "publicKey": "2ZUQYIhUijdJ1vRL8iR8RxjmJvRVHYp-JoWevQ2LyR4",
             "fingerprint": "firefox",
-            "serverName": "www.vk.com",
-            "shortId": "b4e5b7cefcd0d47c",
+            "serverName": "yandex.ru",
+            "shortId": "7bb730e3e6616d31",
             "spiderX": "/"
           }
         }
@@ -4449,7 +4622,7 @@
               "port": 443,
               "users": [
                 {
-                  "id": "400b9d54-360e-4c25-a727-1572f9c29807",
+                  "id": "ff42e50a-b1b2-4f89-96ed-582eb2e7df21",
                   "encryption": "none",
                   "flow": "xtls-rprx-vision",
                   "level": 0
@@ -4482,11 +4655,159 @@
         "settings": {
           "vnext": [
             {
+              "address": "185.229.9.234",
+              "port": 443,
+              "users": [
+                {
+                  "id": "ff42e50a-b1b2-4f89-96ed-582eb2e7df21",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "fsyvGBPzzwpnSA0UnJML_cDqviNSEdj9zktpC1EeFhY",
+            "fingerprint": "firefox",
+            "serverName": "yandex.ru",
+            "shortId": "743541f932fa3959",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #37)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.229.9.175",
+              "port": 443,
+              "users": [
+                {
+                  "id": "ff42e50a-b1b2-4f89-96ed-582eb2e7df21",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "2QoNARj5aaa5-kUEiwx38KzbbiENQZ95V7x9jFo6f2A",
+            "fingerprint": "firefox",
+            "serverName": "max.ru",
+            "shortId": "88a84e3390fcf4a7",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #38)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "31.177.111.114",
+              "port": 443,
+              "users": [
+                {
+                  "id": "ff42e50a-b1b2-4f89-96ed-582eb2e7df21",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "k-E1YJ4oOVPhmILq1gBiBm_u3Vo8oYrMNDp85h80Pig",
+            "fingerprint": "firefox",
+            "serverName": "yandex.ru",
+            "shortId": "035818587187be68",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #39)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.229.9.175",
+              "port": 443,
+              "users": [
+                {
+                  "id": "ff42e50a-b1b2-4f89-96ed-582eb2e7df21",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "Eutx4frdhG1y7THj7k3CjazAsrCMj932RtbV4a1QfQk",
+            "fingerprint": "firefox",
+            "serverName": "api.ok.ru",
+            "shortId": "d5b6308860d578bb",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #40)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
               "address": "185.229.9.235",
               "port": 43005,
               "users": [
                 {
-                  "id": "400b9d54-360e-4c25-a727-1572f9c29807",
+                  "id": "ff42e50a-b1b2-4f89-96ed-582eb2e7df21",
                   "encryption": "none",
                   "flow": "xtls-rprx-vision",
                   "level": 0
@@ -4511,7 +4832,44 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #37)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #41)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.229.9.234",
+              "port": 443,
+              "users": [
+                {
+                  "id": "ff42e50a-b1b2-4f89-96ed-582eb2e7df21",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "7o36V1H4H_34kTMpwCfJmDB1bbd21Rgbk2dM_dAonyM",
+            "fingerprint": "firefox",
+            "serverName": "www.vk.com",
+            "shortId": "0bb3fbdc6cb178d4",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #42)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -4523,7 +4881,7 @@
               "port": 443,
               "users": [
                 {
-                  "id": "400b9d54-360e-4c25-a727-1572f9c29807",
+                  "id": "ff42e50a-b1b2-4f89-96ed-582eb2e7df21",
                   "encryption": "none",
                   "level": 0
                 }
@@ -4553,7 +4911,7 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #38)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #43)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -4565,7 +4923,7 @@
               "port": 443,
               "users": [
                 {
-                  "id": "400b9d54-360e-4c25-a727-1572f9c29807",
+                  "id": "ff42e50a-b1b2-4f89-96ed-582eb2e7df21",
                   "encryption": "none",
                   "flow": "xtls-rprx-vision",
                   "level": 0
@@ -4579,10 +4937,10 @@
           "security": "reality",
           "realitySettings": {
             "show": false,
-            "publicKey": "2QoNARj5aaa5-kUEiwx38KzbbiENQZ95V7x9jFo6f2A",
+            "publicKey": "ZO7C9aMpoVJ6CmkKWUBS20eKe542_tGIc6wZFGB-yjY",
             "fingerprint": "firefox",
-            "serverName": "max.ru",
-            "shortId": "88a84e3390fcf4a7",
+            "serverName": "www.vk.com",
+            "shortId": "b4e5b7cefcd0d47c",
             "spiderX": "/"
           }
         }
@@ -4590,7 +4948,7 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #39)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #44)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -4598,11 +4956,53 @@
         "settings": {
           "vnext": [
             {
-              "address": "91.240.87.166",
+              "address": "37.139.42.138",
               "port": 443,
               "users": [
                 {
-                  "id": "400b9d54-360e-4c25-a727-1572f9c29807",
+                  "id": "ff42e50a-b1b2-4f89-96ed-582eb2e7df21",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "dostavitos.stroymatdv.cc",
+            "fingerprint": "edge",
+            "alpn": [
+              "http/1.1"
+            ]
+          },
+          "wsSettings": {
+            "path": "/e7ws",
+            "headers": {
+              "Host": "dostavitos.stroymatdv.cc"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #45)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.229.9.175",
+              "port": 443,
+              "users": [
+                {
+                  "id": "ff42e50a-b1b2-4f89-96ed-582eb2e7df21",
                   "encryption": "none",
                   "flow": "xtls-rprx-vision",
                   "level": 0
@@ -4616,10 +5016,10 @@
           "security": "reality",
           "realitySettings": {
             "show": false,
-            "publicKey": "2ZUQYIhUijdJ1vRL8iR8RxjmJvRVHYp-JoWevQ2LyR4",
+            "publicKey": "1ea_kTf2MvXh9PtpzQdjQWb5ls5BjyUtSbn-qiR8ZXk",
             "fingerprint": "firefox",
             "serverName": "yandex.ru",
-            "shortId": "7bb730e3e6616d31",
+            "shortId": "cb0e256070ac91c7",
             "spiderX": "/"
           }
         }
@@ -4627,7 +5027,44 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #40)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #46)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "31.177.111.114",
+              "port": 443,
+              "users": [
+                {
+                  "id": "ff42e50a-b1b2-4f89-96ed-582eb2e7df21",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "cKE5quiMcRgilQjWqhvZiKzHZi2XQDsL9fbEOZykWi0",
+            "fingerprint": "firefox",
+            "serverName": "www.vk.com",
+            "shortId": "73ac62e56cfd3455",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #47)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -4639,7 +5076,7 @@
               "port": 443,
               "users": [
                 {
-                  "id": "400b9d54-360e-4c25-a727-1572f9c29807",
+                  "id": "ff42e50a-b1b2-4f89-96ed-582eb2e7df21",
                   "encryption": "none",
                   "flow": "xtls-rprx-vision",
                   "level": 0
@@ -4653,10 +5090,10 @@
           "security": "reality",
           "realitySettings": {
             "show": false,
-            "publicKey": "7o36V1H4H_34kTMpwCfJmDB1bbd21Rgbk2dM_dAonyM",
+            "publicKey": "lIgF8B3ICGAQ6ExbRe9YDu8ZD1Ozzqu7-YO7hfuXfRw",
             "fingerprint": "firefox",
-            "serverName": "www.vk.com",
-            "shortId": "0bb3fbdc6cb178d4",
+            "serverName": "api.ok.ru",
+            "shortId": "cc8069f6c2cbcb32",
             "spiderX": "/"
           }
         }
@@ -4664,7 +5101,7 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #41)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #48)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -4676,7 +5113,7 @@
               "port": 7445,
               "users": [
                 {
-                  "id": "400b9d54-360e-4c25-a727-1572f9c29807",
+                  "id": "ff42e50a-b1b2-4f89-96ed-582eb2e7df21",
                   "encryption": "none",
                   "flow": "xtls-rprx-vision",
                   "level": 0
@@ -4701,44 +5138,7 @@
     ]
   },
   {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #42)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "185.229.9.234",
-              "port": 443,
-              "users": [
-                {
-                  "id": "400b9d54-360e-4c25-a727-1572f9c29807",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "raw",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "fsyvGBPzzwpnSA0UnJML_cDqviNSEdj9zktpC1EeFhY",
-            "fingerprint": "firefox",
-            "serverName": "yandex.ru",
-            "shortId": "743541f932fa3959",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #43)",
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #49)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -4750,7 +5150,7 @@
               "port": 443,
               "users": [
                 {
-                  "id": "75568964-2920-429d-87f1-b5e27d9359d7",
+                  "id": "80d6ee85-fe70-46f7-a220-161f2ffb84c2",
                   "encryption": "none",
                   "level": 0
                 }
@@ -4934,12 +5334,13 @@
         "settings": {
           "vnext": [
             {
-              "address": "185.229.9.176",
-              "port": 49111,
+              "address": "46.243.234.157",
+              "port": 8445,
               "users": [
                 {
-                  "id": "e35296cf-ba7d-4fac-a67e-313d98a4f648",
+                  "id": "bb26e00a-f640-408b-bc9a-279879085c29",
                   "encryption": "none",
+                  "flow": "xtls-rprx-vision",
                   "level": 0
                 }
               ]
@@ -4947,19 +5348,15 @@
           ]
         },
         "streamSettings": {
-          "network": "grpc",
+          "network": "raw",
           "security": "reality",
           "realitySettings": {
             "show": false,
-            "publicKey": "JFfEOGfcJA9jM2XP6a5msLrdlohpM_cvnL40u9wcREI",
+            "publicKey": "HVR_0ft6MHL84tW3jBjQFjbtgP4Y01NDFbnHNxsSRWE",
             "fingerprint": "firefox",
-            "serverName": "max.ru",
+            "serverName": "passport.yandex.ru",
             "shortId": "",
             "spiderX": "/"
-          },
-          "grpcSettings": {
-            "serviceName": "grpc",
-            "multiMode": false
           }
         }
       }
@@ -5048,51 +5445,11 @@
         "settings": {
           "vnext": [
             {
-              "address": "185.22.235.63",
+              "address": "194.55.239.114",
               "port": 443,
               "users": [
                 {
-                  "id": "141a9655-34f0-4ede-9943-fb1cdacbf887",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "grpc",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "1vSZjvhZO01oAEH3b7eebR1qF5dLU1Dq2E7xu8pwGSs",
-            "fingerprint": "firefox",
-            "serverName": "api-maps.yandex.ru",
-            "shortId": "428ef87fd47a3a33",
-            "spiderX": "/"
-          },
-          "grpcSettings": {
-            "serviceName": "grpc-vk",
-            "multiMode": false
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇬🇧 🛡️ Резервный обход (Великобритания #2)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "194.55.239.177",
-              "port": 443,
-              "users": [
-                {
-                  "id": "141a9655-34f0-4ede-9943-fb1cdacbf887",
+                  "id": "7043b24d-82f0-4e31-b02b-93cc62c7c562",
                   "encryption": "none",
                   "level": 0
                 }
@@ -5120,7 +5477,7 @@
     ]
   },
   {
-    "remarks": "🇬🇧 🛡️ Резервный обход (Великобритания #3)",
+    "remarks": "🇬🇧 🛡️ Резервный обход (Великобритания #2)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -5132,7 +5489,7 @@
               "port": 443,
               "users": [
                 {
-                  "id": "141a9655-34f0-4ede-9943-fb1cdacbf887",
+                  "id": "7043b24d-82f0-4e31-b02b-93cc62c7c562",
                   "encryption": "none",
                   "level": 0
                 }
@@ -5162,7 +5519,7 @@
     ]
   },
   {
-    "remarks": "🇬🇧 🛡️ Резервный обход (Великобритания #4)",
+    "remarks": "🇬🇧 🛡️ Резервный обход (Великобритания #3)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -5174,7 +5531,7 @@
               "port": 443,
               "users": [
                 {
-                  "id": "141a9655-34f0-4ede-9943-fb1cdacbf887",
+                  "id": "7043b24d-82f0-4e31-b02b-93cc62c7c562",
                   "encryption": "none",
                   "level": 0
                 }
@@ -5189,13 +5546,55 @@
             "show": false,
             "publicKey": "1vSZjvhZO01oAEH3b7eebR1qF5dLU1Dq2E7xu8pwGSs",
             "fingerprint": "firefox",
-            "serverName": "ads.x5.ru",
+            "serverName": "api-maps.yandex.ru",
             "shortId": "428ef87fd47a3a33",
             "spiderX": "/"
           },
           "grpcSettings": {
             "serviceName": "grpc-vk",
             "multiMode": false
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇬🇧 🛡️ Резервный обход (Великобритания #4)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "188.225.46.167",
+              "port": 443,
+              "users": [
+                {
+                  "id": "7043b24d-82f0-4e31-b02b-93cc62c7c562",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "twwswp.smartnet.net.ru",
+            "fingerprint": "firefox",
+            "alpn": [
+              "http/1.1"
+            ]
+          },
+          "wsSettings": {
+            "path": "/api/v2/vms/stream/sined",
+            "headers": {
+              "Host": "twwswp.smartnet.net.ru"
+            }
           }
         }
       }
@@ -5210,11 +5609,11 @@
         "settings": {
           "vnext": [
             {
-              "address": "185.22.235.63",
+              "address": "194.55.239.115",
               "port": 443,
               "users": [
                 {
-                  "id": "141a9655-34f0-4ede-9943-fb1cdacbf887",
+                  "id": "7043b24d-82f0-4e31-b02b-93cc62c7c562",
                   "encryption": "none",
                   "level": 0
                 }
@@ -5254,7 +5653,7 @@
               "port": 443,
               "users": [
                 {
-                  "id": "141a9655-34f0-4ede-9943-fb1cdacbf887",
+                  "id": "7043b24d-82f0-4e31-b02b-93cc62c7c562",
                   "encryption": "none",
                   "level": 0
                 }
@@ -5269,7 +5668,7 @@
             "show": false,
             "publicKey": "1vSZjvhZO01oAEH3b7eebR1qF5dLU1Dq2E7xu8pwGSs",
             "fingerprint": "firefox",
-            "serverName": "smartcaptcha.yandexcloud.net",
+            "serverName": "ads.x5.ru",
             "shortId": "428ef87fd47a3a33",
             "spiderX": "/"
           },
@@ -5290,11 +5689,11 @@
         "settings": {
           "vnext": [
             {
-              "address": "194.55.239.113",
+              "address": "194.55.239.114",
               "port": 443,
               "users": [
                 {
-                  "id": "141a9655-34f0-4ede-9943-fb1cdacbf887",
+                  "id": "7043b24d-82f0-4e31-b02b-93cc62c7c562",
                   "encryption": "none",
                   "level": 0
                 }
@@ -5330,93 +5729,11 @@
         "settings": {
           "vnext": [
             {
-              "address": "194.55.239.113",
+              "address": "185.22.235.181",
               "port": 443,
               "users": [
                 {
-                  "id": "141a9655-34f0-4ede-9943-fb1cdacbf887",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "grpc",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "1vSZjvhZO01oAEH3b7eebR1qF5dLU1Dq2E7xu8pwGSs",
-            "fingerprint": "firefox",
-            "serverName": "smartcaptcha.yandexcloud.net",
-            "shortId": "428ef87fd47a3a33",
-            "spiderX": "/"
-          },
-          "grpcSettings": {
-            "serviceName": "grpc-vk",
-            "multiMode": false
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇬🇧 🛡️ Резервный обход (Великобритания #9)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "188.225.46.98",
-              "port": 443,
-              "users": [
-                {
-                  "id": "141a9655-34f0-4ede-9943-fb1cdacbf887",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "ws",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "twwswp.smartnet.net.ru",
-            "fingerprint": "firefox",
-            "alpn": [
-              "http/1.1"
-            ]
-          },
-          "wsSettings": {
-            "path": "/api/v2/vms/stream/sined",
-            "headers": {
-              "Host": "twwswp.smartnet.net.ru"
-            }
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇬🇧 🛡️ Резервный обход (Великобритания #10)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "194.55.239.115",
-              "port": 443,
-              "users": [
-                {
-                  "id": "141a9655-34f0-4ede-9943-fb1cdacbf887",
+                  "id": "7043b24d-82f0-4e31-b02b-93cc62c7c562",
                   "encryption": "none",
                   "level": 0
                 }
@@ -5444,6 +5761,86 @@
     ]
   },
   {
+    "remarks": "🇬🇧 🛡️ Резервный обход (Великобритания #9)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.22.235.181",
+              "port": 443,
+              "users": [
+                {
+                  "id": "7043b24d-82f0-4e31-b02b-93cc62c7c562",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "grpc",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "1vSZjvhZO01oAEH3b7eebR1qF5dLU1Dq2E7xu8pwGSs",
+            "fingerprint": "firefox",
+            "serverName": "sso.passport.yandex.ru",
+            "shortId": "428ef87fd47a3a33",
+            "spiderX": "/"
+          },
+          "grpcSettings": {
+            "serviceName": "grpc-vk",
+            "multiMode": false
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇬🇧 🛡️ Резервный обход (Великобритания #10)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.22.235.181",
+              "port": 443,
+              "users": [
+                {
+                  "id": "7043b24d-82f0-4e31-b02b-93cc62c7c562",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "grpc",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "1vSZjvhZO01oAEH3b7eebR1qF5dLU1Dq2E7xu8pwGSs",
+            "fingerprint": "firefox",
+            "serverName": "smartcaptcha.yandexcloud.net",
+            "shortId": "428ef87fd47a3a33",
+            "spiderX": "/"
+          },
+          "grpcSettings": {
+            "serviceName": "grpc-vk",
+            "multiMode": false
+          }
+        }
+      }
+    ]
+  },
+  {
     "remarks": "🇬🇧 🛡️ Резервный обход (Великобритания #11)",
     "outbounds": [
       {
@@ -5452,11 +5849,11 @@
         "settings": {
           "vnext": [
             {
-              "address": "194.55.239.115",
+              "address": "194.55.239.114",
               "port": 443,
               "users": [
                 {
-                  "id": "141a9655-34f0-4ede-9943-fb1cdacbf887",
+                  "id": "7043b24d-82f0-4e31-b02b-93cc62c7c562",
                   "encryption": "none",
                   "level": 0
                 }
@@ -5492,11 +5889,11 @@
         "settings": {
           "vnext": [
             {
-              "address": "185.22.235.63",
+              "address": "194.55.239.113",
               "port": 443,
               "users": [
                 {
-                  "id": "141a9655-34f0-4ede-9943-fb1cdacbf887",
+                  "id": "7043b24d-82f0-4e31-b02b-93cc62c7c562",
                   "encryption": "none",
                   "level": 0
                 }
@@ -5511,7 +5908,7 @@
             "show": false,
             "publicKey": "1vSZjvhZO01oAEH3b7eebR1qF5dLU1Dq2E7xu8pwGSs",
             "fingerprint": "firefox",
-            "serverName": "sso.passport.yandex.ru",
+            "serverName": "smartcaptcha.yandexcloud.net",
             "shortId": "428ef87fd47a3a33",
             "spiderX": "/"
           },
@@ -5524,7 +5921,7 @@
     ]
   },
   {
-    "remarks": "🇱🇹 🛡️ Резервный обход (Сервер #1)",
+    "remarks": "🇬🇧 🛡️ Резервный обход (Великобритания #13)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -5532,11 +5929,11 @@
         "settings": {
           "vnext": [
             {
-              "address": "95.129.236.216",
+              "address": "37.139.42.235",
               "port": 443,
               "users": [
                 {
-                  "id": "2ae77c9b-8751-4f5e-9aa3-ed728eaa13f7",
+                  "id": "80d6ee85-fe70-46f7-a220-161f2ffb84c2",
                   "encryption": "none",
                   "level": 0
                 }
@@ -5549,16 +5946,16 @@
           "security": "tls",
           "tlsSettings": {
             "allowInsecure": false,
-            "serverName": "data-hz32.crm.hourtley.com",
-            "fingerprint": "firefox",
+            "serverName": "katering.coteite.pro",
+            "fingerprint": "edge",
             "alpn": [
               "http/1.1"
             ]
           },
           "wsSettings": {
-            "path": "/origin/190546791/fetch",
+            "path": "/euws",
             "headers": {
-              "Host": "data-hz32.crm.hourtley.com"
+              "Host": "katering.coteite.pro"
             }
           }
         }
@@ -5574,12 +5971,13 @@
         "settings": {
           "vnext": [
             {
-              "address": "46.243.142.192",
-              "port": 8444,
+              "address": "185.91.52.13",
+              "port": 30007,
               "users": [
                 {
-                  "id": "8b417899-6783-4cb0-bbf6-f082cbfc4f2c",
+                  "id": "5bba3558-ad1c-4d97-a360-7d993d503abd",
                   "encryption": "none",
+                  "flow": "xtls-rprx-vision",
                   "level": 0
                 }
               ]
@@ -5587,19 +5985,15 @@
           ]
         },
         "streamSettings": {
-          "network": "grpc",
+          "network": "raw",
           "security": "reality",
           "realitySettings": {
             "show": false,
-            "publicKey": "28g5n3dLFkPoggCYNdyOemaK3r55baTU42SYh0cxzUw",
-            "fingerprint": "edge",
-            "serverName": "ppfu3n-01.p.portshaper.com",
-            "shortId": "",
+            "publicKey": "UR-ELTbCCTAAvg_y8vIznWFkGkCKFFaEAVgTtPYNCCk",
+            "fingerprint": "firefox",
+            "serverName": "storage.yandexcloud.net",
+            "shortId": "54861d36",
             "spiderX": "/"
-          },
-          "grpcSettings": {
-            "serviceName": "google.storage.v2.Storage",
-            "multiMode": false
           }
         }
       }
@@ -5614,11 +6008,85 @@
         "settings": {
           "vnext": [
             {
+              "address": "185.91.52.13",
+              "port": 30007,
+              "users": [
+                {
+                  "id": "5bba3558-ad1c-4d97-a360-7d993d503abd",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "UR-ELTbCCTAAvg_y8vIznWFkGkCKFFaEAVgTtPYNCCk",
+            "fingerprint": "random",
+            "serverName": "storage.yandexcloud.net",
+            "shortId": "54861d36",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇳🇱 🛡️ Резервный обход (Нидерланды #3)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.91.52.13",
+              "port": 30007,
+              "users": [
+                {
+                  "id": "5bba3558-ad1c-4d97-a360-7d993d503abd",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "UR-ELTbCCTAAvg_y8vIznWFkGkCKFFaEAVgTtPYNCCk",
+            "fingerprint": "chrome",
+            "serverName": "storage.yandexcloud.net",
+            "shortId": "54861d36",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇳🇱 🛡️ Резервный обход (Нидерланды #4)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
               "address": "91.215.42.63",
               "port": 443,
               "users": [
                 {
-                  "id": "c5cc5f17-60ca-4a9c-a5ed-6453bf87127c",
+                  "id": "aaeddd52-ec54-4e66-abc2-a03fb1db4d5f",
                   "encryption": "none",
                   "level": 0
                 }
@@ -5687,7 +6155,7 @@
     ]
   },
   {
-    "remarks": "🇳🇱 🛡️ Резервный обход (Нидерланды #3)",
+    "remarks": "🇳🇱 🛡️ Резервный обход (Нидерланды #5)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -5699,7 +6167,7 @@
               "port": 443,
               "users": [
                 {
-                  "id": "c5cc5f17-60ca-4a9c-a5ed-6453bf87127c",
+                  "id": "aaeddd52-ec54-4e66-abc2-a03fb1db4d5f",
                   "encryption": "none",
                   "level": 0
                 }
@@ -5768,83 +6236,6 @@
     ]
   },
   {
-    "remarks": "🇳🇱 🛡️ Резервный обход (Нидерланды #4)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "46.243.142.192",
-              "port": 8444,
-              "users": [
-                {
-                  "id": "114ff808-6275-4458-9cc0-7b5f0260e57c",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "grpc",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "28g5n3dLFkPoggCYNdyOemaK3r55baTU42SYh0cxzUw",
-            "fingerprint": "edge",
-            "serverName": "ppfu3n-01.p.portshaper.com",
-            "shortId": "",
-            "spiderX": "/"
-          },
-          "grpcSettings": {
-            "serviceName": "google.storage.v2.Storage",
-            "multiMode": false
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇳🇱 🛡️ Резервный обход (Нидерланды #5)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "46.243.234.157",
-              "port": 7443,
-              "users": [
-                {
-                  "id": "2ae77c9b-8751-4f5e-9aa3-ed728eaa13f7",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "raw",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "wBB_aSYGm86IhxUcO8jccIsaBJZdNGlo3hTQlJFftkE",
-            "fingerprint": "firefox",
-            "serverName": "s1.cdnguard.org",
-            "shortId": "f7d9e9a2e78e9a17",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
     "remarks": "🇳🇱 🛡️ Резервный обход (Нидерланды #6)",
     "outbounds": [
       {
@@ -5857,7 +6248,7 @@
               "port": 9444,
               "users": [
                 {
-                  "id": "2ae77c9b-8751-4f5e-9aa3-ed728eaa13f7",
+                  "id": "f92190c7-f9d7-4f6f-913c-b6e73ce11af5",
                   "encryption": "none",
                   "flow": "xtls-rprx-vision",
                   "level": 0
@@ -5875,6 +6266,43 @@
             "fingerprint": "firefox",
             "serverName": "res.cdnguard.org",
             "shortId": "413da1312ccce8fb",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇳🇱 🛡️ Резервный обход (Нидерланды #7)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "46.243.234.157",
+              "port": 7443,
+              "users": [
+                {
+                  "id": "f92190c7-f9d7-4f6f-913c-b6e73ce11af5",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "wBB_aSYGm86IhxUcO8jccIsaBJZdNGlo3hTQlJFftkE",
+            "fingerprint": "firefox",
+            "serverName": "s1.cdnguard.org",
+            "shortId": "f7d9e9a2e78e9a17",
             "spiderX": "/"
           }
         }
@@ -5927,6 +6355,83 @@
         "settings": {
           "vnext": [
             {
+              "address": "90.156.218.163",
+              "port": 443,
+              "users": [
+                {
+                  "id": "adc11f30-e4cb-4985-bf5e-f9ded69c019f",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "fNfokzklCF4l_c8k8PciOCjm5ecNoF_sNLjEtaO-xzI",
+            "fingerprint": "firefox",
+            "serverName": "eh.vk.ru",
+            "shortId": "db04ce8bdb8900f1",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇵🇱 🛡️ Резервный обход (Польша #3)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "176.108.241.126",
+              "port": 9892,
+              "users": [
+                {
+                  "id": "5d16ac22-6eea-426f-b778-6f4c2961faef",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "grpc",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "bnRIb3Er1i-K6NGGByCO9UbGfOvu43ZoiK7ulPd1SzU",
+            "fingerprint": "firefox",
+            "serverName": "dl.google.com",
+            "shortId": "aabb",
+            "spiderX": "/"
+          },
+          "grpcSettings": {
+            "serviceName": "grpc-tunnel",
+            "multiMode": false
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇵🇱 🛡️ Резервный обход (Польша #4)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
               "address": "176.108.241.126",
               "port": 9892,
               "users": [
@@ -5959,7 +6464,7 @@
     ]
   },
   {
-    "remarks": "🇵🇱 🛡️ Резервный обход (Польша #3)",
+    "remarks": "🇵🇱 🛡️ Резервный обход (Польша #5)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -5999,47 +6504,7 @@
     ]
   },
   {
-    "remarks": "🇵🇱 🛡️ Резервный обход (Польша #4)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "45.132.177.72",
-              "port": 9844,
-              "users": [
-                {
-                  "id": "5d16ac22-6eea-426f-b778-6f4c2961faef",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "grpc",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "bnRIb3Er1i-K6NGGByCO9UbGfOvu43ZoiK7ulPd1SzU",
-            "fingerprint": "chrome",
-            "serverName": "dl.google.com",
-            "shortId": "aa",
-            "spiderX": "/"
-          },
-          "grpcSettings": {
-            "serviceName": "grpc-tunnel",
-            "multiMode": false
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇵🇱 🛡️ Резервный обход (Польша #5)",
+    "remarks": "🇵🇱 🛡️ Резервный обход (Польша #6)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -6079,7 +6544,7 @@
     ]
   },
   {
-    "remarks": "🇵🇱 🛡️ Резервный обход (Польша #6)",
+    "remarks": "🇵🇱 🛡️ Резервный обход (Польша #7)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -6105,7 +6570,7 @@
           "realitySettings": {
             "show": false,
             "publicKey": "bnRIb3Er1i-K6NGGByCO9UbGfOvu43ZoiK7ulPd1SzU",
-            "fingerprint": "random",
+            "fingerprint": "ios",
             "serverName": "dl.google.com",
             "shortId": "aabb",
             "spiderX": "/"
@@ -6113,43 +6578,6 @@
           "grpcSettings": {
             "serviceName": "grpc-tunnel",
             "multiMode": false
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇵🇱 🛡️ Резервный обход (Польша #7)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "90.156.218.163",
-              "port": 443,
-              "users": [
-                {
-                  "id": "adc11f30-e4cb-4985-bf5e-f9ded69c019f",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "raw",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "fNfokzklCF4l_c8k8PciOCjm5ecNoF_sNLjEtaO-xzI",
-            "fingerprint": "random",
-            "serverName": "eh.vk.ru",
-            "shortId": "db04ce8bdb8900f1",
-            "spiderX": "/"
           }
         }
       }
@@ -6164,7 +6592,47 @@
         "settings": {
           "vnext": [
             {
-              "address": "176.108.253.133",
+              "address": "45.132.177.72",
+              "port": 9844,
+              "users": [
+                {
+                  "id": "5d16ac22-6eea-426f-b778-6f4c2961faef",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "grpc",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "bnRIb3Er1i-K6NGGByCO9UbGfOvu43ZoiK7ulPd1SzU",
+            "fingerprint": "chrome",
+            "serverName": "dl.google.com",
+            "shortId": "aa",
+            "spiderX": "/"
+          },
+          "grpcSettings": {
+            "serviceName": "grpc-tunnel",
+            "multiMode": false
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇵🇱 🛡️ Резервный обход (Польша #9)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "93.188.185.80",
               "port": 443,
               "users": [
                 {
@@ -6196,46 +6664,6 @@
     ]
   },
   {
-    "remarks": "🇵🇱 🛡️ Резервный обход (Польша #9)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "176.108.241.126",
-              "port": 9892,
-              "users": [
-                {
-                  "id": "5d16ac22-6eea-426f-b778-6f4c2961faef",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "grpc",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "bnRIb3Er1i-K6NGGByCO9UbGfOvu43ZoiK7ulPd1SzU",
-            "fingerprint": "safari",
-            "serverName": "dl.google.com",
-            "shortId": "aabb",
-            "spiderX": "/"
-          },
-          "grpcSettings": {
-            "serviceName": "grpc-tunnel",
-            "multiMode": false
-          }
-        }
-      }
-    ]
-  },
-  {
     "remarks": "🇵🇱 🛡️ Резервный обход (Польша #10)",
     "outbounds": [
       {
@@ -6244,7 +6672,7 @@
         "settings": {
           "vnext": [
             {
-              "address": "176.108.253.133",
+              "address": "93.188.185.80",
               "port": 443,
               "users": [
                 {
@@ -6358,7 +6786,7 @@
         "settings": {
           "vnext": [
             {
-              "address": "93.188.185.80",
+              "address": "176.108.253.133",
               "port": 443,
               "users": [
                 {
@@ -6417,7 +6845,7 @@
           "realitySettings": {
             "show": false,
             "publicKey": "QkLK7zt-xvRvN9Dysl2eiN9Z5_8uRDS2r9LRcKG-H28",
-            "fingerprint": "qq",
+            "fingerprint": "edge",
             "serverName": "www.vk.com",
             "shortId": "27e53bbcab7593d7",
             "spiderX": "/"
@@ -6454,7 +6882,7 @@
           "realitySettings": {
             "show": false,
             "publicKey": "QkLK7zt-xvRvN9Dysl2eiN9Z5_8uRDS2r9LRcKG-H28",
-            "fingerprint": "firefox",
+            "fingerprint": "qq",
             "serverName": "www.vk.com",
             "shortId": "27e53bbcab7593d7",
             "spiderX": "/"
@@ -6491,130 +6919,10 @@
           "realitySettings": {
             "show": false,
             "publicKey": "QkLK7zt-xvRvN9Dysl2eiN9Z5_8uRDS2r9LRcKG-H28",
-            "fingerprint": "random",
+            "fingerprint": "firefox",
             "serverName": "www.vk.com",
             "shortId": "27e53bbcab7593d7",
             "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇸 🛡️ Резервный обход (Сербия #1)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "45.132.177.96",
-              "port": 9889,
-              "users": [
-                {
-                  "id": "5d16ac22-6eea-426f-b778-6f4c2961faef",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "grpc",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "ycPIUcY6ci2yi7YA_OHc20e4gzxEdJTqpmeShxSuHRU",
-            "fingerprint": "firefox",
-            "serverName": "dl.google.com",
-            "shortId": "",
-            "spiderX": "/"
-          },
-          "grpcSettings": {
-            "serviceName": "grpc-tunnel",
-            "multiMode": false
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇸 🛡️ Резервный обход (Сербия #2)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "45.132.177.96",
-              "port": 9889,
-              "users": [
-                {
-                  "id": "5d16ac22-6eea-426f-b778-6f4c2961faef",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "grpc",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "ycPIUcY6ci2yi7YA_OHc20e4gzxEdJTqpmeShxSuHRU",
-            "fingerprint": "random",
-            "serverName": "dl.google.com",
-            "shortId": "",
-            "spiderX": "/"
-          },
-          "grpcSettings": {
-            "serviceName": "grpc-tunnel",
-            "multiMode": false
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇸 🛡️ Резервный обход (Сербия #3)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "45.132.177.96",
-              "port": 9889,
-              "users": [
-                {
-                  "id": "5d16ac22-6eea-426f-b778-6f4c2961faef",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "grpc",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "ycPIUcY6ci2yi7YA_OHc20e4gzxEdJTqpmeShxSuHRU",
-            "fingerprint": "chrome",
-            "serverName": "dl.google.com",
-            "shortId": "",
-            "spiderX": "/"
-          },
-          "grpcSettings": {
-            "serviceName": "grpc-tunnel",
-            "multiMode": false
           }
         }
       }
@@ -6749,46 +7057,6 @@
         "settings": {
           "vnext": [
             {
-              "address": "176.109.109.105",
-              "port": 9830,
-              "users": [
-                {
-                  "id": "5d16ac22-6eea-426f-b778-6f4c2961faef",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "grpc",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "bnRIb3Er1i-K6NGGByCO9UbGfOvu43ZoiK7ulPd1SzU",
-            "fingerprint": "random",
-            "serverName": "dl.google.com",
-            "shortId": "aabb",
-            "spiderX": "/"
-          },
-          "grpcSettings": {
-            "serviceName": "grpc-tunnel",
-            "multiMode": false
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇸🇪 🛡️ Резервный обход (Швеция #5)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
               "address": "45.132.176.157",
               "port": 9872,
               "users": [
@@ -6821,7 +7089,7 @@
     ]
   },
   {
-    "remarks": "🇸🇪 🛡️ Резервный обход (Швеция #6)",
+    "remarks": "🇸🇪 🛡️ Резервный обход (Швеция #5)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -6861,7 +7129,7 @@
     ]
   },
   {
-    "remarks": "🇸🇪 🛡️ Резервный обход (Швеция #7)",
+    "remarks": "🇸🇪 🛡️ Резервный обход (Швеция #6)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -6901,7 +7169,7 @@
     ]
   },
   {
-    "remarks": "🇸🇪 🛡️ Резервный обход (Швеция #8)",
+    "remarks": "🇸🇪 🛡️ Резервный обход (Швеция #7)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -6941,87 +7209,7 @@
     ]
   },
   {
-    "remarks": "🇸🇪 🛡️ Резервный обход (Швеция #9)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "45.132.176.157",
-              "port": 9872,
-              "users": [
-                {
-                  "id": "5d16ac22-6eea-426f-b778-6f4c2961faef",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "grpc",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "sm3E3hjmT6_Gmg_O9rBz4nfXYrHpnl6-LvcCp6T6_xc",
-            "fingerprint": "chrome",
-            "serverName": "dl.google.com",
-            "shortId": "aa",
-            "spiderX": "/"
-          },
-          "grpcSettings": {
-            "serviceName": "grpc-tunnel",
-            "multiMode": false
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇸🇪 🛡️ Резервный обход (Швеция #10)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "45.132.176.157",
-              "port": 9872,
-              "users": [
-                {
-                  "id": "5d16ac22-6eea-426f-b778-6f4c2961faef",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "grpc",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "sm3E3hjmT6_Gmg_O9rBz4nfXYrHpnl6-LvcCp6T6_xc",
-            "fingerprint": "edge",
-            "serverName": "dl.google.com",
-            "shortId": "aa",
-            "spiderX": "/"
-          },
-          "grpcSettings": {
-            "serviceName": "grpc-tunnel",
-            "multiMode": false
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇸🇪 🛡️ Резервный обход (Швеция #11)",
+    "remarks": "🇸🇪 🛡️ Резервный обход (Швеция #8)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -7061,7 +7249,7 @@
     ]
   },
   {
-    "remarks": "🇸🇪 🛡️ Резервный обход (Швеция #12)",
+    "remarks": "🇸🇪 🛡️ Резервный обход (Швеция #9)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -7073,7 +7261,7 @@
               "port": 1443,
               "users": [
                 {
-                  "id": "0cb30c12-9afe-4011-a2cd-6f244681b421",
+                  "id": "c5ef208a-7308-4f62-addc-aafb3f8d25f5",
                   "encryption": "none",
                   "level": 0
                 }
