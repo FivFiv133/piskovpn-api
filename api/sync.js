@@ -54,8 +54,11 @@ function formatRemarkForHapp(rawRemark) {
   const lower = remark.toLowerCase();
 
   // Если уже сформировано
-  if (remark.includes("Обход блокировок")) {
+  if (remark.includes("Обход белых списков")) {
     return remark;
+  }
+  if (remark.includes("Обход блокировок")) {
+    return remark.replace("Обход блокировок", "Обход белых списков");
   }
 
   // Исключаем разделители и текстовые баннеры
@@ -68,7 +71,7 @@ function formatRemarkForHapp(rawRemark) {
     return "🇪🇺 🔄 Авто-выбор";
   }
 
-  // Обход блокировок
+  // Обход белых списков
   if (lower.includes("обход")) {
     let flag = "🛡️";
     let country = "";
@@ -91,7 +94,7 @@ function formatRemarkForHapp(rawRemark) {
     const num = numMatch ? "#" + numMatch[1] : "";
     const countryWithNum = [country, num].filter(Boolean).join(" ");
     const namePart = countryWithNum ? " (" + countryWithNum + ")" : (num ? " " + num : "");
-    return flag + " 🛡️ Обход блокировок" + namePart;
+    return flag + " 🛡️ Обход белых списков" + namePart;
   }
 
   // Белые списки: сохраняем номер #1, #2, #3
