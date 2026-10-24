@@ -49,7 +49,7 @@ function isAuthed(req) {
   return cookies.auth_token && verifyToken(cookies.auth_token);
 }
 
-function formatRemarkForHapp(rawRemark) {
+function formatRemarkForHapp(rawRemark, protocol = "") {
   let remark = (rawRemark || "").trim();
   const lower = remark.toLowerCase();
 
@@ -66,9 +66,17 @@ function formatRemarkForHapp(rawRemark) {
     return null;
   }
 
+  const isHysteria = /hysteria|hy2/i.test(remark) || /hysteria/i.test(protocol);
+  const hysteriaSuffix = isHysteria ? " (Hysteria 2)" : "";
+
   // Автовыбор / Авто-выбор
   if (lower.includes("fastest") || lower.includes("автовыбор") || lower.includes("авто-выбор") || (lower.includes("🇪🇺") && lower.includes("авто"))) {
     return "🇪🇺 🔄 Авто-выбор";
+  }
+
+  // Игровой сервер (обычно Hysteria 2)
+  if (lower.includes("игров")) {
+    return `🎮 ⚡ Игровой сервер${hysteriaSuffix}`;
   }
 
   // Обход белых списков
@@ -87,14 +95,14 @@ function formatRemarkForHapp(rawRemark) {
     }
 
     if (flag === "🇸🇴" && (lower.includes("авто-обход") || lower.includes("автообход"))) {
-      return "🇸🇴 🛡️ Авто-обход";
+      return "🇸🇴 🛡️ Авто-обход" + hysteriaSuffix;
     }
 
     const numMatch = remark.match(/(?:#|№|\[)?\s*(\d+(?:\.\d+)?)(?:\])?/);
     const num = numMatch ? "#" + numMatch[1] : "";
     const countryWithNum = [country, num].filter(Boolean).join(" ");
     const namePart = countryWithNum ? " (" + countryWithNum + ")" : (num ? " " + num : "");
-    return flag + " 🛡️ Обход белых списков" + namePart;
+    return flag + " 🛡️ Обход белых списков" + namePart + hysteriaSuffix;
   }
 
   // Белые списки: сохраняем номер #1, #2, #3
@@ -147,7 +155,7 @@ function formatRemarkForHapp(rawRemark) {
 
   for (const c of countries) {
     if (c.match.some((m) => lower.includes(m))) {
-      return `${c.flag} ⚡ ${c.name}${numSuffix}${grpcSuffix}`;
+      return `${c.flag} ⚡ ${c.name}${numSuffix}${grpcSuffix}${hysteriaSuffix}`;
     }
   }
 
@@ -156,15 +164,19 @@ function formatRemarkForHapp(rawRemark) {
   if (flagMatch) {
     const flag = flagMatch[0];
     let rest = remark.slice(flag.length).trim();
-    rest = rest.replace(/⚡?\s*grpc/gi, "").replace(/(?:#|№|\[)\s*\d+\s*\]?\s*$/i, "").trim();
+    rest = rest
+      .replace(/⚡?\s*grpc/gi, "")
+      .replace(/[·•\-–—]?\s*hysteria\s*2?/gi, "")
+      .replace(/(?:#|№|\[)\s*\d+\s*\]?\s*$/i, "")
+      .trim();
 
     if (/^[🛡️🔄⚡]/.test(rest)) {
-      return `${flag} ${rest}${numSuffix}${grpcSuffix}`.trim();
+      return `${flag} ${rest}${numSuffix}${grpcSuffix}${hysteriaSuffix}`.trim();
     }
-    return `${flag} ⚡ ${rest}${numSuffix}${grpcSuffix}`.trim();
+    return `${flag} ⚡ ${rest}${numSuffix}${grpcSuffix}${hysteriaSuffix}`.trim();
   }
 
-  return `🌐 ⚡ ${remark}`.trim();
+  return `🌐 ⚡ ${remark}${hysteriaSuffix}`.trim();
 }
 
 const backupCountryMap = {
@@ -260,12 +272,49 @@ function parseVlessLinks(rawText) {
   return lines.map(parseSingleVless).filter(Boolean);
 }
 
+function hysteriaToUri(proxy, remark) {
+  const settings = proxy.settings || {};
+  const ss = proxy.streamSettings || {};
+  const hy = ss.hysteriaSettings || {};
+  const server = Array.isArray(settings.servers) ? settings.servers[0] : settings;
+  if (!server?.address) return null;
+
+  const address = server.address;
+  const port = server.port || 443;
+  const auth = hy.auth || server.auth || server.password || settings.auth || settings.password || "";
+  const tls = ss.tlsSettings || {};
+
+  const params = new URLSearchParams();
+  if (tls.serverName || server.sni) params.set("sni", tls.serverName || server.sni);
+  if (tls.fingerprint) params.set("fp", tls.fingerprint);
+  if (Array.isArray(tls.alpn) && tls.alpn.length) params.set("alpn", tls.alpn.join(","));
+  if (tls.allowInsecure) params.set("insecure", "1");
+
+  const masks = Array.isArray(ss.finalmask?.udp) ? ss.finalmask.udp : [];
+  const salamander = masks.find((m) => m?.type === "salamander" && m.settings?.password);
+  if (salamander) {
+    params.set("obfs", "salamander");
+    params.set("obfs-password", salamander.settings.password);
+  }
+
+  const qs = params.toString();
+  return `hysteria2://${auth}@${address}:${port}${qs ? "?" + qs : ""}#${encodeURIComponent(remark)}`;
+}
+
 function jsonToVless(cfg) {
   if (!cfg || typeof cfg !== "object") return null;
   const remark = cfg.remarks || "";
   const proxy = (cfg.outbounds || []).find((o) => o.tag === "proxy")
     || (cfg.outbounds || []).find((o) => o.protocol === "vless" && o.settings?.vnext?.[0]?.users?.[0]?.id)
+    || (cfg.outbounds || []).find((o) => o.protocol === "hysteria" || o.protocol === "hysteria2")
     || cfg.outbounds?.[0];
+  if (!proxy) return null;
+
+  // Hysteria 2 outbound (Xray: protocol "hysteria" + version 2)
+  if (proxy.protocol === "hysteria" || proxy.protocol === "hysteria2") {
+    return hysteriaToUri(proxy, remark);
+  }
+
   const vnext = proxy.settings?.vnext?.[0];
   if (!vnext) return null;
   const user = vnext.users?.[0];
@@ -330,31 +379,45 @@ function convertVlessToJson(vlessItems) {
   return vlessItems.map((item) => {
     const params = item.params || {};
 
-    if (item.protocol === "hysteria2") {
+    if (item.protocol === "hysteria2" || item.protocol === "hysteria") {
+      const streamSettings = {
+        network: "hysteria",
+        security: "tls",
+        hysteriaSettings: {
+          version: 2,
+          auth: item.uuid || "",
+        },
+        tlsSettings: {
+          allowInsecure: params.insecure === "1",
+          serverName: params.sni || item.address,
+          fingerprint: params.fp || "chrome",
+          alpn: params.alpn ? params.alpn.split(",") : ["h3"],
+        },
+      };
+
+      if (params.obfs === "salamander" && params["obfs-password"]) {
+        streamSettings.finalmask = {
+          udp: [
+            {
+              type: "salamander",
+              settings: { password: params["obfs-password"] },
+            },
+          ],
+        };
+      }
+
       return {
         remarks: item.remark,
         outbounds: [
           {
             tag: "proxy",
-            protocol: "hysteria2",
+            protocol: "hysteria",
             settings: {
-              servers: [
-                {
-                  address: item.address,
-                  port: parseInt(item.port, 10) || 443,
-                  password: item.uuid,
-                },
-              ],
+              address: item.address,
+              port: parseInt(item.port, 10) || 443,
+              version: 2,
             },
-            streamSettings: {
-              network: "udp",
-              security: "tls",
-              tlsSettings: {
-                allowInsecure: params.insecure === "1",
-                serverName: params.sni || item.address,
-                alpn: params.alpn ? params.alpn.split(",") : ["h3"],
-              },
-            },
+            streamSettings,
           },
         ],
       };
@@ -533,9 +596,13 @@ export default async function handler(req, res) {
       } catch {}
 
       if (isJsonArray && jsonItems) {
+        const skipped = [];
         upstreamItems = jsonItems.map((cfg) => {
           const vlessUrl = jsonToVless(cfg);
-          if (!vlessUrl) return null;
+          if (!vlessUrl) {
+            skipped.push(cfg?.remarks || cfg?.outbounds?.[0]?.protocol || "unknown");
+            return null;
+          }
           const parsed = parseSingleVless(vlessUrl);
           if (!parsed) return null;
           return {
@@ -543,6 +610,9 @@ export default async function handler(req, res) {
             rawJson: cfg,
           };
         }).filter(Boolean);
+        if (skipped.length) {
+          console.warn("[SYNC] Пропущены неподдерживаемые конфиги:", skipped.join(", "));
+        }
       } else {
         let decodedSub = rawSub;
         if (!rawSub.includes("://")) {
@@ -571,13 +641,13 @@ export default async function handler(req, res) {
       }
 
       if (!upstreamItems.length && !backupItems.length) {
-        return res.status(400).json({ error: "В ответе источников не найдено рабочих VLESS ссылок." });
+        return res.status(400).json({ error: "В ответе источников не найдено рабочих ссылок (VLESS / Hysteria 2)." });
       }
 
       // Форматируем основной источник и сортируем: Обходы (0) -> Автовыбор (1) -> Обычные (2, 3)
       const processedMain = upstreamItems
         .map((up) => {
-          const formattedRemark = formatRemarkForHapp(up.remark);
+          const formattedRemark = formatRemarkForHapp(up.remark, up.protocol);
           if (!formattedRemark) return null;
           return { ...up, formattedRemark };
         })
@@ -1213,8 +1283,8 @@ function renderResults(data) {
     else if (item.status === "modified") { badgeClass = "badge-modified"; badgeText = '<svg style="width:12px;height:12px"><use href="#i-edit"/></svg> Изменен'; }
     else if (item.status === "removed") { badgeClass = "badge-removed"; badgeText = '<svg style="width:12px;height:12px"><use href="#i-trash"/></svg> Удален'; }
 
-    const network = (item.params?.type || "tcp").toUpperCase();
-    const security = (item.params?.security || "none").toUpperCase();
+    const network = item.protocol === "hysteria2" ? "HYSTERIA" : (item.params?.type || "tcp").toUpperCase();
+    const security = item.protocol === "hysteria2" ? "TLS" : (item.params?.security || "none").toUpperCase();
 
     return '<tr>' +
       '<td><span class="badge ' + badgeClass + '">' + badgeText + '</span></td>' +
