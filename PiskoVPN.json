@@ -2131,14 +2131,19 @@
         {
           "tag": "auto-bootstrap-balancer",
           "selector": [
+            "proxy-0",
             "proxy-1",
             "proxy-2",
             "proxy-3",
             "proxy-4",
-            "proxy-6",
             "proxy-11",
             "proxy-17",
             "proxy-24",
+            "proxy-29",
+            "proxy-31",
+            "proxy-32",
+            "proxy-33",
+            "proxy-34",
             "proxy-35"
           ],
           "strategy": {
@@ -2215,7 +2220,7 @@
           "realitySettings": {
             "serverName": "cdn1.medoed.store",
             "publicKey": "xG_3hrmCx40pqD6Wh_2bQgmC8nvdjCx-l6HJnEcL6AI",
-            "shortId": "b4f2b5ab63691bd4",
+            "shortId": "2bae290ee8b71973",
             "fingerprint": "firefox"
           }
         }
@@ -2335,7 +2340,7 @@
           "realitySettings": {
             "serverName": "cdn1.medoed.store",
             "publicKey": "xG_3hrmCx40pqD6Wh_2bQgmC8nvdjCx-l6HJnEcL6AI",
-            "shortId": "da6635db58964a27",
+            "shortId": "b4f2b5ab63691bd4",
             "fingerprint": "chrome"
           }
         }
@@ -3265,7 +3270,7 @@
           "realitySettings": {
             "serverName": "cdn6.medoed.store",
             "publicKey": "-Lrpx_u04nZH6dz9PJES5HcPQiysWj5ul1HsT7D15SQ",
-            "shortId": "87cb87ca48539fab",
+            "shortId": "d2b4d2cccdbcc7bf",
             "fingerprint": "firefox"
           }
         }
@@ -3441,13 +3446,6 @@
       "rules": [
         {
           "type": "field",
-          "inboundTag": [
-            "auto-bootstrap"
-          ],
-          "balancerTag": "auto-bootstrap-balancer"
-        },
-        {
-          "type": "field",
           "domain": [
             "full:common.dot.dns.yandex.net"
           ],
@@ -3589,16 +3587,6 @@
           "strategy": {
             "type": "leastPing"
           },
-          "fallbackTag": "auto-bootstrap"
-        },
-        {
-          "tag": "auto-bootstrap-balancer",
-          "selector": [
-            "proxy-1"
-          ],
-          "strategy": {
-            "type": "roundRobin"
-          },
           "fallbackTag": "block"
         }
       ],
@@ -3712,13 +3700,6 @@
       {
         "tag": "block",
         "protocol": "blackhole"
-      },
-      {
-        "tag": "auto-bootstrap",
-        "protocol": "loopback",
-        "settings": {
-          "inboundTag": "auto-bootstrap"
-        }
       },
       {
         "tag": "medoed-pilot-dns-out",
@@ -4450,6 +4431,36 @@
         "settings": {
           "vnext": [
             {
+              "address": "pool-ch.medoed.store",
+              "port": 443,
+              "users": [
+                {
+                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision"
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "tcp",
+          "tcpSettings": {},
+          "security": "reality",
+          "realitySettings": {
+            "serverName": "cdn1.medoed.store",
+            "publicKey": "xG_3hrmCx40pqD6Wh_2bQgmC8nvdjCx-l6HJnEcL6AI",
+            "shortId": "2bae290ee8b71973",
+            "fingerprint": "firefox"
+          }
+        }
+      },
+      {
+        "tag": "proxy-1",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
               "address": "176.65.144.166",
               "port": 9443,
               "users": [
@@ -4910,7 +4921,7 @@
           "realitySettings": {
             "serverName": "cdn1.medoed.store",
             "publicKey": "xG_3hrmCx40pqD6Wh_2bQgmC8nvdjCx-l6HJnEcL6AI",
-            "shortId": "da6635db58964a27",
+            "shortId": "b4f2b5ab63691bd4",
             "fingerprint": "chrome"
           }
         }
@@ -4972,6 +4983,156 @@
             "publicKey": "0_rfdN11lCTXR1IJh-gyRgK96Y96BQbie2teWxHxsV0",
             "shortId": "ae72bb62f6dc8194",
             "fingerprint": "edge"
+          }
+        }
+      },
+      {
+        "tag": "proxy-5",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "96.62.224.252",
+              "port": 443,
+              "users": [
+                {
+                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision"
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "tcp",
+          "tcpSettings": {},
+          "security": "reality",
+          "realitySettings": {
+            "serverName": "cdn6.medoed.store",
+            "publicKey": "rVwICr8C2qmhan9Bj5tqfEJ_OUY8knO_-AVP1Gz7Xmo",
+            "shortId": "56a46d4d19c3dadc",
+            "fingerprint": "firefox"
+          }
+        }
+      },
+      {
+        "tag": "proxy-6",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "151.240.151.208",
+              "port": 443,
+              "users": [
+                {
+                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision"
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "tcp",
+          "tcpSettings": {},
+          "security": "reality",
+          "realitySettings": {
+            "serverName": "cdn6.medoed.store",
+            "publicKey": "rVwICr8C2qmhan9Bj5tqfEJ_OUY8knO_-AVP1Gz7Xmo",
+            "shortId": "56a46d4d19c3dadc",
+            "fingerprint": "firefox"
+          }
+        }
+      },
+      {
+        "tag": "proxy-7",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "96.62.224.120",
+              "port": 443,
+              "users": [
+                {
+                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision"
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "tcp",
+          "tcpSettings": {},
+          "security": "reality",
+          "realitySettings": {
+            "serverName": "cdn6.medoed.store",
+            "publicKey": "rVwICr8C2qmhan9Bj5tqfEJ_OUY8knO_-AVP1Gz7Xmo",
+            "shortId": "56a46d4d19c3dadc",
+            "fingerprint": "firefox"
+          }
+        }
+      },
+      {
+        "tag": "proxy-8",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "96.62.224.111",
+              "port": 443,
+              "users": [
+                {
+                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision"
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "tcp",
+          "tcpSettings": {},
+          "security": "reality",
+          "realitySettings": {
+            "serverName": "cdn6.medoed.store",
+            "publicKey": "rVwICr8C2qmhan9Bj5tqfEJ_OUY8knO_-AVP1Gz7Xmo",
+            "shortId": "56a46d4d19c3dadc",
+            "fingerprint": "firefox"
+          }
+        }
+      },
+      {
+        "tag": "proxy-9",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "96.62.224.118",
+              "port": 443,
+              "users": [
+                {
+                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision"
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "tcp",
+          "tcpSettings": {},
+          "security": "reality",
+          "realitySettings": {
+            "serverName": "cdn6.medoed.store",
+            "publicKey": "rVwICr8C2qmhan9Bj5tqfEJ_OUY8knO_-AVP1Gz7Xmo",
+            "shortId": "56a46d4d19c3dadc",
+            "fingerprint": "firefox"
           }
         }
       },
@@ -5334,7 +5495,7 @@
           "realitySettings": {
             "serverName": "cdn6.medoed.store",
             "publicKey": "-Lrpx_u04nZH6dz9PJES5HcPQiysWj5ul1HsT7D15SQ",
-            "shortId": "36ae7f502d887fa2",
+            "shortId": "d2b4d2cccdbcc7bf",
             "fingerprint": "firefox"
           }
         }
@@ -7083,6 +7244,86 @@
                 "type": "salamander",
                 "settings": {
                   "password": "ROSG7Geau30rQu7ui6ub_hhvqbGYPJWn"
+                }
+              }
+            ],
+            "quicParams": {
+              "congestion": "bbr",
+              "maxIdleTimeout": 30,
+              "keepAlivePeriod": 10,
+              "maxIncomingStreams": 1024
+            }
+          }
+        }
+      },
+      {
+        "tag": "proxy-1",
+        "protocol": "hysteria",
+        "settings": {
+          "address": "96.62.224.252",
+          "port": 2443,
+          "version": 2
+        },
+        "streamSettings": {
+          "network": "hysteria",
+          "hysteriaSettings": {
+            "version": 2,
+            "auth": "ede00777-92b5-4e90-8288-6c66ca63c0cd"
+          },
+          "security": "tls",
+          "tlsSettings": {
+            "serverName": "96.62.224.252",
+            "fingerprint": "chrome",
+            "alpn": [
+              "h3"
+            ]
+          },
+          "finalmask": {
+            "udp": [
+              {
+                "type": "salamander",
+                "settings": {
+                  "password": "D5w9JTjASIJ0H-zyaj0Ic8vu8DODo_vquWJNNwXNxUc"
+                }
+              }
+            ],
+            "quicParams": {
+              "congestion": "bbr",
+              "maxIdleTimeout": 30,
+              "keepAlivePeriod": 10,
+              "maxIncomingStreams": 1024
+            }
+          }
+        }
+      },
+      {
+        "tag": "proxy-2",
+        "protocol": "hysteria",
+        "settings": {
+          "address": "151.240.151.208",
+          "port": 2443,
+          "version": 2
+        },
+        "streamSettings": {
+          "network": "hysteria",
+          "hysteriaSettings": {
+            "version": 2,
+            "auth": "ede00777-92b5-4e90-8288-6c66ca63c0cd"
+          },
+          "security": "tls",
+          "tlsSettings": {
+            "serverName": "96.62.224.252",
+            "fingerprint": "chrome",
+            "alpn": [
+              "h3"
+            ]
+          },
+          "finalmask": {
+            "udp": [
+              {
+                "type": "salamander",
+                "settings": {
+                  "password": "D5w9JTjASIJ0H-zyaj0Ic8vu8DODo_vquWJNNwXNxUc"
                 }
               }
             ],
@@ -10026,7 +10267,7 @@
           "tlsSettings": {
             "allowInsecure": false,
             "serverName": "fitindoor.net",
-            "fingerprint": "chrome"
+            "fingerprint": "random"
           },
           "xhttpSettings": {
             "path": "/api/v1/upload",
@@ -10280,48 +10521,6 @@
         "settings": {
           "vnext": [
             {
-              "address": "78.159.246.179",
-              "port": 2053,
-              "users": [
-                {
-                  "id": "95a608b6-bff1-4e10-bb61-0a39f221bb7d",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "randomquaint.net",
-            "fingerprint": "firefox",
-            "alpn": [
-              "h2",
-              "http/1.1"
-            ]
-          },
-          "xhttpSettings": {
-            "path": "/api/v1/upload",
-            "host": "randomquaint.net",
-            "mode": "auto"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #9)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
               "address": "78.159.246.85",
               "port": 2053,
               "users": [
@@ -10340,7 +10539,7 @@
           "tlsSettings": {
             "allowInsecure": false,
             "serverName": "fitindoor.net",
-            "fingerprint": "random"
+            "fingerprint": "chrome"
           },
           "xhttpSettings": {
             "path": "/api/v1/upload",
@@ -10391,7 +10590,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #10)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #9)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -10404,6 +10603,86 @@
               "users": [
                 {
                   "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "xhttp",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "78.159.246.85",
+            "fingerprint": "chrome"
+          },
+          "xhttpSettings": {
+            "path": "/api/v1/upload",
+            "host": "fitindoor.net",
+            "mode": "auto"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #10)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "78.159.246.179",
+              "port": 2053,
+              "users": [
+                {
+                  "id": "95a608b6-bff1-4e10-bb61-0a39f221bb7d",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "xhttp",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "randomquaint.net",
+            "fingerprint": "firefox",
+            "alpn": [
+              "h2",
+              "http/1.1"
+            ]
+          },
+          "xhttpSettings": {
+            "path": "/api/v1/upload",
+            "host": "randomquaint.net",
+            "mode": "auto"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #11)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "78.159.246.85",
+              "port": 2053,
+              "users": [
+                {
+                  "id": "95a608b6-bff1-4e10-bb61-0a39f221bb7d",
                   "encryption": "none",
                   "level": 0
                 }
@@ -10468,44 +10747,6 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #11)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "78.159.246.85",
-              "port": 2053,
-              "users": [
-                {
-                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "78.159.246.85",
-            "fingerprint": "chrome"
-          },
-          "xhttpSettings": {
-            "path": "/api/v1/upload",
-            "host": "fitindoor.net",
-            "mode": "auto"
-          }
-        }
-      }
-    ]
-  },
-  {
     "remarks": "🇷🇺 🛡️ Резервный обход (Россия #12)",
     "outbounds": [
       {
@@ -10518,7 +10759,7 @@
               "port": 2053,
               "users": [
                 {
-                  "id": "95a608b6-bff1-4e10-bb61-0a39f221bb7d",
+                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
                   "encryption": "none",
                   "level": 0
                 }
@@ -10629,6 +10870,87 @@
         "settings": {
           "vnext": [
             {
+              "address": "78.159.246.85",
+              "port": 2053,
+              "users": [
+                {
+                  "id": "95a608b6-bff1-4e10-bb61-0a39f221bb7d",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "xhttp",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "fitindoor.net",
+            "fingerprint": "chrome",
+            "alpn": [
+              "h2",
+              "http/1.1"
+            ]
+          },
+          "xhttpSettings": {
+            "path": "/api/v1/upload",
+            "host": "fitindoor.net",
+            "mode": "auto",
+            "extra": {
+              "host": "",
+              "path": "",
+              "mode": "",
+              "headers": null,
+              "xPaddingBytes": "100-1000",
+              "xPaddingObfsMode": false,
+              "xPaddingKey": "",
+              "xPaddingHeader": "",
+              "xPaddingPlacement": "",
+              "xPaddingMethod": "",
+              "uplinkHTTPMethod": "",
+              "sessionIDPlacement": "",
+              "sessionIDKey": "",
+              "sessionIDTable": "",
+              "sessionIDLength": "0",
+              "seqPlacement": "",
+              "seqKey": "",
+              "uplinkDataPlacement": "",
+              "uplinkDataKey": "",
+              "uplinkChunkSize": "0",
+              "noGRPCHeader": false,
+              "noSSEHeader": false,
+              "scMaxEachPostBytes": "1000000",
+              "scMinPostsIntervalMs": "30",
+              "scMaxBufferedPosts": 0,
+              "scStreamUpServerSecs": "0",
+              "serverMaxHeaderBytes": 0,
+              "xmux": {
+                "maxConcurrency": "16-32",
+                "maxConnections": "0",
+                "cMaxReuseTimes": "64-128",
+                "hMaxRequestTimes": "0",
+                "hMaxReusableSecs": "0",
+                "hKeepAlivePeriod": 0
+              },
+              "downloadSettings": null,
+              "extra": null
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #15)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
               "address": "78.159.246.179",
               "port": 2053,
               "users": [
@@ -10653,44 +10975,6 @@
             "path": "/api/v1/upload",
             "host": "randomquaint.net",
             "mode": "auto"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #15)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "78.159.246.85",
-              "port": 2053,
-              "users": [
-                {
-                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "fitindoor.net",
-            "fingerprint": "chrome"
-          },
-          "xhttpSettings": {
-            "path": "/api/v1/upload",
-            "host": "fitindoor.net",
-            "mode": "packet-up"
           }
         }
       }
@@ -10895,7 +11179,7 @@
         "settings": {
           "vnext": [
             {
-              "address": "78.159.246.85",
+              "address": "78.159.246.179",
               "port": 2053,
               "users": [
                 {
@@ -10912,7 +11196,7 @@
           "security": "tls",
           "tlsSettings": {
             "allowInsecure": false,
-            "serverName": "fitindoor.net",
+            "serverName": "randomquaint.net",
             "fingerprint": "chrome",
             "alpn": [
               "h2",
@@ -10921,47 +11205,8 @@
           },
           "xhttpSettings": {
             "path": "/api/v1/upload",
-            "host": "fitindoor.net",
-            "mode": "auto",
-            "extra": {
-              "host": "",
-              "path": "",
-              "mode": "",
-              "headers": null,
-              "xPaddingBytes": "100-1000",
-              "xPaddingObfsMode": false,
-              "xPaddingKey": "",
-              "xPaddingHeader": "",
-              "xPaddingPlacement": "",
-              "xPaddingMethod": "",
-              "uplinkHTTPMethod": "",
-              "sessionIDPlacement": "",
-              "sessionIDKey": "",
-              "sessionIDTable": "",
-              "sessionIDLength": "0",
-              "seqPlacement": "",
-              "seqKey": "",
-              "uplinkDataPlacement": "",
-              "uplinkDataKey": "",
-              "uplinkChunkSize": "0",
-              "noGRPCHeader": false,
-              "noSSEHeader": false,
-              "scMaxEachPostBytes": "1000000",
-              "scMinPostsIntervalMs": "30",
-              "scMaxBufferedPosts": 0,
-              "scStreamUpServerSecs": "0",
-              "serverMaxHeaderBytes": 0,
-              "xmux": {
-                "maxConcurrency": "16-32",
-                "maxConnections": "0",
-                "cMaxReuseTimes": "64-128",
-                "hMaxRequestTimes": "0",
-                "hMaxReusableSecs": "0",
-                "hKeepAlivePeriod": 0
-              },
-              "downloadSettings": null,
-              "extra": null
-            }
+            "host": "randomquaint.net",
+            "mode": "auto"
           }
         }
       }
@@ -10994,11 +11239,7 @@
           "tlsSettings": {
             "allowInsecure": false,
             "serverName": "randomquaint.net",
-            "fingerprint": "chrome",
-            "alpn": [
-              "h2",
-              "http/1.1"
-            ]
+            "fingerprint": "firefox"
           },
           "xhttpSettings": {
             "path": "/api/v1/upload",
@@ -11018,11 +11259,11 @@
         "settings": {
           "vnext": [
             {
-              "address": "78.159.246.179",
+              "address": "78.159.246.85",
               "port": 2053,
               "users": [
                 {
-                  "id": "95a608b6-bff1-4e10-bb61-0a39f221bb7d",
+                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
                   "encryption": "none",
                   "level": 0
                 }
@@ -11035,13 +11276,13 @@
           "security": "tls",
           "tlsSettings": {
             "allowInsecure": false,
-            "serverName": "randomquaint.net",
-            "fingerprint": "firefox"
+            "serverName": "fitindoor.net",
+            "fingerprint": "chrome"
           },
           "xhttpSettings": {
             "path": "/api/v1/upload",
-            "host": "randomquaint.net",
-            "mode": "auto"
+            "host": "fitindoor.net",
+            "mode": "packet-up"
           }
         }
       }
@@ -11178,44 +11419,6 @@
               "port": 2053,
               "users": [
                 {
-                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "fitindoor.net",
-            "fingerprint": "firefox"
-          },
-          "xhttpSettings": {
-            "path": "/api/v1/upload",
-            "host": "fitindoor.net",
-            "mode": "auto"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #28)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "78.159.246.85",
-              "port": 2053,
-              "users": [
-                {
                   "id": "95a608b6-bff1-4e10-bb61-0a39f221bb7d",
                   "encryption": "none",
                   "level": 0
@@ -11230,7 +11433,7 @@
           "tlsSettings": {
             "allowInsecure": false,
             "serverName": "fitindoor.net",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           },
           "xhttpSettings": {
             "path": "/api/v1/upload",
@@ -11259,8 +11462,8 @@
               "uplinkChunkSize": "0",
               "noGRPCHeader": false,
               "noSSEHeader": false,
-              "scMaxEachPostBytes": "1000000",
-              "scMinPostsIntervalMs": "30",
+              "scMaxEachPostBytes": "0",
+              "scMinPostsIntervalMs": "0",
               "scMaxBufferedPosts": 0,
               "scStreamUpServerSecs": "0",
               "serverMaxHeaderBytes": 0,
@@ -11275,6 +11478,44 @@
               "downloadSettings": null,
               "extra": null
             }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #28)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "78.159.246.85",
+              "port": 2053,
+              "users": [
+                {
+                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "xhttp",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "fitindoor.net",
+            "fingerprint": "firefox"
+          },
+          "xhttpSettings": {
+            "path": "/api/v1/upload",
+            "host": "fitindoor.net",
+            "mode": "auto"
           }
         }
       }
@@ -11307,12 +11548,12 @@
           "tlsSettings": {
             "allowInsecure": false,
             "serverName": "fitindoor.net",
-            "fingerprint": "firefox"
+            "fingerprint": "chrome"
           },
           "xhttpSettings": {
             "path": "/api/v1/upload",
             "host": "fitindoor.net",
-            "mode": "packet-up",
+            "mode": "auto",
             "extra": {
               "host": "",
               "path": "",
@@ -11443,11 +11684,126 @@
         "settings": {
           "vnext": [
             {
+              "address": "78.159.246.179",
+              "port": 2053,
+              "users": [
+                {
+                  "id": "95a608b6-bff1-4e10-bb61-0a39f221bb7d",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "xhttp",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "randomquaint.net",
+            "fingerprint": "firefox"
+          },
+          "xhttpSettings": {
+            "path": "/api/v1/upload",
+            "host": "randomquaint.net",
+            "mode": "packet-up"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #32)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
               "address": "78.159.246.85",
               "port": 2053,
               "users": [
                 {
                   "id": "95a608b6-bff1-4e10-bb61-0a39f221bb7d",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "xhttp",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "fitindoor.net",
+            "fingerprint": "firefox"
+          },
+          "xhttpSettings": {
+            "path": "/api/v1/upload",
+            "host": "fitindoor.net",
+            "mode": "packet-up",
+            "extra": {
+              "host": "",
+              "path": "",
+              "mode": "",
+              "headers": null,
+              "xPaddingBytes": "100-1000",
+              "xPaddingObfsMode": false,
+              "xPaddingKey": "",
+              "xPaddingHeader": "",
+              "xPaddingPlacement": "",
+              "xPaddingMethod": "",
+              "uplinkHTTPMethod": "",
+              "sessionIDPlacement": "",
+              "sessionIDKey": "",
+              "sessionIDTable": "",
+              "sessionIDLength": "0",
+              "seqPlacement": "",
+              "seqKey": "",
+              "uplinkDataPlacement": "",
+              "uplinkDataKey": "",
+              "uplinkChunkSize": "0",
+              "noGRPCHeader": false,
+              "noSSEHeader": false,
+              "scMaxEachPostBytes": "1000000",
+              "scMinPostsIntervalMs": "30",
+              "scMaxBufferedPosts": 0,
+              "scStreamUpServerSecs": "0",
+              "serverMaxHeaderBytes": 0,
+              "xmux": {
+                "maxConcurrency": "16-32",
+                "maxConnections": "0",
+                "cMaxReuseTimes": "64-128",
+                "hMaxRequestTimes": "0",
+                "hMaxReusableSecs": "0",
+                "hKeepAlivePeriod": 0
+              },
+              "downloadSettings": null,
+              "extra": null
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #33)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "78.159.246.85",
+              "port": 2053,
+              "users": [
+                {
+                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
                   "encryption": "none",
                   "level": 0
                 }
@@ -11512,7 +11868,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #32)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #34)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -11550,7 +11906,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #33)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #35)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -11592,7 +11948,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #34)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #36)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -11669,45 +12025,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #35)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "78.159.246.179",
-              "port": 2053,
-              "users": [
-                {
-                  "id": "95a608b6-bff1-4e10-bb61-0a39f221bb7d",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "randomquaint.net",
-            "fingerprint": "firefox"
-          },
-          "xhttpSettings": {
-            "path": "/api/v1/upload",
-            "host": "randomquaint.net",
-            "mode": "packet-up"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #36)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #37)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -11745,7 +12063,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #37)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #38)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -11757,7 +12075,7 @@
               "port": 2053,
               "users": [
                 {
-                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
+                  "id": "95a608b6-bff1-4e10-bb61-0a39f221bb7d",
                   "encryption": "none",
                   "level": 0
                 }
@@ -11771,58 +12089,19 @@
           "tlsSettings": {
             "allowInsecure": false,
             "serverName": "fitindoor.net",
-            "fingerprint": "firefox"
+            "fingerprint": "chrome"
           },
           "xhttpSettings": {
             "path": "/api/v1/upload",
             "host": "fitindoor.net",
-            "mode": "auto",
-            "extra": {
-              "host": "",
-              "path": "",
-              "mode": "",
-              "headers": null,
-              "xPaddingBytes": "100-1000",
-              "xPaddingObfsMode": false,
-              "xPaddingKey": "",
-              "xPaddingHeader": "",
-              "xPaddingPlacement": "",
-              "xPaddingMethod": "",
-              "uplinkHTTPMethod": "",
-              "sessionIDPlacement": "",
-              "sessionIDKey": "",
-              "sessionIDTable": "",
-              "sessionIDLength": "0",
-              "seqPlacement": "",
-              "seqKey": "",
-              "uplinkDataPlacement": "",
-              "uplinkDataKey": "",
-              "uplinkChunkSize": "0",
-              "noGRPCHeader": false,
-              "noSSEHeader": false,
-              "scMaxEachPostBytes": "0",
-              "scMinPostsIntervalMs": "0",
-              "scMaxBufferedPosts": 0,
-              "scStreamUpServerSecs": "0",
-              "serverMaxHeaderBytes": 0,
-              "xmux": {
-                "maxConcurrency": "16-32",
-                "maxConnections": "0",
-                "cMaxReuseTimes": "64-128",
-                "hMaxRequestTimes": "0",
-                "hMaxReusableSecs": "0",
-                "hKeepAlivePeriod": 0
-              },
-              "downloadSettings": null,
-              "extra": null
-            }
+            "mode": "auto"
           }
         }
       }
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #38)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #39)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -11860,7 +12139,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #39)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #40)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -11937,7 +12216,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #40)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #41)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -12014,7 +12293,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #41)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #42)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -12095,7 +12374,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #42)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #43)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -12133,7 +12412,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #43)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #44)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -12210,7 +12489,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #44)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #45)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -12242,44 +12521,6 @@
             "path": "/api/v1/upload",
             "host": "fitindoor.net",
             "mode": "packet-up"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #45)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "78.159.246.85",
-              "port": 2053,
-              "users": [
-                {
-                  "id": "95a608b6-bff1-4e10-bb61-0a39f221bb7d",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "fitindoor.net",
-            "fingerprint": "chrome"
-          },
-          "xhttpSettings": {
-            "path": "/api/v1/upload",
-            "host": "fitindoor.net",
-            "mode": "auto"
           }
         }
       }
@@ -12889,44 +13130,6 @@
         "settings": {
           "vnext": [
             {
-              "address": "78.159.246.85",
-              "port": 2053,
-              "users": [
-                {
-                  "id": "95a608b6-bff1-4e10-bb61-0a39f221bb7d",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "fitindoor.net",
-            "fingerprint": "safari"
-          },
-          "xhttpSettings": {
-            "path": "/api/v1/upload",
-            "host": "fitindoor.net",
-            "mode": "auto"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #57)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
               "address": "81.94.148.232",
               "port": 2053,
               "users": [
@@ -12961,7 +13164,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #58)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #57)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -12999,7 +13202,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #59)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #58)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -13041,7 +13244,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #60)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #59)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -13079,7 +13282,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #61)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #60)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -13156,7 +13359,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #62)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #61)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -13194,7 +13397,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #63)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #62)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -13232,7 +13435,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #64)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #63)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -13309,7 +13512,169 @@
     ]
   },
   {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #64)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "95.163.232.242",
+              "port": 2053,
+              "users": [
+                {
+                  "id": "7dd69047-047e-422e-a2ba-ed773c34fd1a",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "xhttp",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "fitindoor.net",
+            "fingerprint": "firefox",
+            "alpn": [
+              "http/1.1",
+              "h2"
+            ]
+          },
+          "xhttpSettings": {
+            "path": "/api/v1/upload",
+            "host": "fitindoor.net",
+            "mode": "auto",
+            "extra": {
+              "host": "",
+              "path": "",
+              "mode": "",
+              "headers": null,
+              "xPaddingBytes": "100-1000",
+              "xPaddingObfsMode": false,
+              "xPaddingKey": "",
+              "xPaddingHeader": "",
+              "xPaddingPlacement": "",
+              "xPaddingMethod": "",
+              "uplinkHTTPMethod": "",
+              "sessionIDPlacement": "",
+              "sessionIDKey": "",
+              "sessionIDTable": "",
+              "sessionIDLength": "0",
+              "seqPlacement": "",
+              "seqKey": "",
+              "uplinkDataPlacement": "",
+              "uplinkDataKey": "",
+              "uplinkChunkSize": "0",
+              "noGRPCHeader": false,
+              "noSSEHeader": false,
+              "scMaxEachPostBytes": "1000000",
+              "scMinPostsIntervalMs": "30",
+              "scMaxBufferedPosts": 0,
+              "scStreamUpServerSecs": "0",
+              "serverMaxHeaderBytes": 0,
+              "xmux": {
+                "maxConcurrency": "16-32",
+                "maxConnections": "0",
+                "cMaxReuseTimes": "64-128",
+                "hMaxRequestTimes": "0",
+                "hMaxReusableSecs": "0",
+                "hKeepAlivePeriod": 0
+              },
+              "downloadSettings": null,
+              "extra": null
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
     "remarks": "🇷🇺 🛡️ Резервный обход (Россия #65)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "95.163.232.242",
+              "port": 2053,
+              "users": [
+                {
+                  "id": "7dd69047-047e-422e-a2ba-ed773c34fd1a",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "xhttp",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "fitindoor.net",
+            "fingerprint": "chrome",
+            "alpn": [
+              "http/1.1",
+              "h2"
+            ]
+          },
+          "xhttpSettings": {
+            "path": "/api/v1/upload",
+            "host": "fitindoor.net",
+            "mode": "auto",
+            "extra": {
+              "host": "",
+              "path": "",
+              "mode": "",
+              "headers": null,
+              "xPaddingBytes": "100-1000",
+              "xPaddingObfsMode": false,
+              "xPaddingKey": "",
+              "xPaddingHeader": "",
+              "xPaddingPlacement": "",
+              "xPaddingMethod": "",
+              "uplinkHTTPMethod": "",
+              "sessionIDPlacement": "",
+              "sessionIDKey": "",
+              "sessionIDTable": "",
+              "sessionIDLength": "0",
+              "seqPlacement": "",
+              "seqKey": "",
+              "uplinkDataPlacement": "",
+              "uplinkDataKey": "",
+              "uplinkChunkSize": "0",
+              "noGRPCHeader": false,
+              "noSSEHeader": false,
+              "scMaxEachPostBytes": "1000000",
+              "scMinPostsIntervalMs": "30",
+              "scMaxBufferedPosts": 0,
+              "scStreamUpServerSecs": "0",
+              "serverMaxHeaderBytes": 0,
+              "xmux": {
+                "maxConcurrency": "16-32",
+                "maxConnections": "0",
+                "cMaxReuseTimes": "64-128",
+                "hMaxRequestTimes": "0",
+                "hMaxReusableSecs": "0",
+                "hKeepAlivePeriod": 0
+              },
+              "downloadSettings": null,
+              "extra": null
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #66)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -13345,7 +13710,79 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #66)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #67)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "45.12.75.242",
+              "port": 26424,
+              "users": [
+                {
+                  "id": "633f424e-2b11-48da-a6b3-a849dd71456f",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "l8AubqcxQO-HRFJy4pZL1vbLOo-eXit69s-XulSELE0",
+            "fingerprint": "qq",
+            "serverName": "ya.ru",
+            "shortId": "23103e1e",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #68)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "45.12.75.242",
+              "port": 26424,
+              "users": [
+                {
+                  "id": "633f424e-2b11-48da-a6b3-a849dd71456f",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "l8AubqcxQO-HRFJy4pZL1vbLOo-eXit69s-XulSELE0",
+            "fingerprint": "chrome",
+            "serverName": "ya.ru",
+            "shortId": "23103e1e",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #69)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -13375,83 +13812,6 @@
             "serverName": "ya.ru",
             "shortId": "23103e1e",
             "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #1)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "188.72.103.4",
-              "port": 443,
-              "users": [
-                {
-                  "id": "9737cc16-7266-45ce-94d9-6e05a45e0b9c",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "ru.nnight.cfd",
-            "fingerprint": "firefox"
-          },
-          "xhttpSettings": {
-            "path": "/api/v4/media/session/poll",
-            "host": "ru.nnight.cfd",
-            "mode": "packet-up",
-            "extra": {
-              "host": "",
-              "path": "",
-              "mode": "",
-              "headers": null,
-              "xPaddingBytes": "48-320",
-              "xPaddingObfsMode": true,
-              "xPaddingKey": "q",
-              "xPaddingHeader": "",
-              "xPaddingPlacement": "query",
-              "xPaddingMethod": "tokenish",
-              "uplinkHTTPMethod": "GET",
-              "sessionIDPlacement": "",
-              "sessionIDKey": "",
-              "sessionIDTable": "",
-              "sessionIDLength": "0",
-              "seqPlacement": "query",
-              "seqKey": "offset",
-              "uplinkDataPlacement": "header",
-              "uplinkDataKey": "X-Playback-Token",
-              "uplinkChunkSize": "0",
-              "noGRPCHeader": false,
-              "noSSEHeader": false,
-              "scMaxEachPostBytes": "0",
-              "scMinPostsIntervalMs": "0",
-              "scMaxBufferedPosts": 0,
-              "scStreamUpServerSecs": "0",
-              "serverMaxHeaderBytes": 0,
-              "xmux": {
-                "maxConcurrency": "0",
-                "maxConnections": "0",
-                "cMaxReuseTimes": "0",
-                "hMaxRequestTimes": "0",
-                "hMaxReusableSecs": "0",
-                "hKeepAlivePeriod": 0
-              },
-              "downloadSettings": null,
-              "extra": null
-            }
           }
         }
       }
@@ -13666,7 +14026,7 @@
         "settings": {
           "vnext": [
             {
-              "address": "78.159.246.85",
+              "address": "78.159.246.179",
               "port": 8443,
               "users": [
                 {
@@ -13683,12 +14043,12 @@
           "security": "tls",
           "tlsSettings": {
             "allowInsecure": false,
-            "serverName": "fitindoor.net",
-            "fingerprint": "chrome"
+            "serverName": "randomquaint.net",
+            "fingerprint": "firefox"
           },
           "xhttpSettings": {
             "path": "/api/v1/upload",
-            "host": "fitindoor.net",
+            "host": "randomquaint.net",
             "mode": "auto"
           }
         }
@@ -13704,82 +14064,6 @@
         "settings": {
           "vnext": [
             {
-              "address": "78.159.246.85",
-              "port": 8443,
-              "users": [
-                {
-                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "fitindoor.net",
-            "fingerprint": "firefox"
-          },
-          "xhttpSettings": {
-            "path": "/api/v1/upload",
-            "host": "fitindoor.net",
-            "mode": "packet-up"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #6)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "78.159.246.179",
-              "port": 8443,
-              "users": [
-                {
-                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "randomquaint.net",
-            "fingerprint": "firefox"
-          },
-          "xhttpSettings": {
-            "path": "/api/v1/upload",
-            "host": "randomquaint.net",
-            "mode": "auto"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #7)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
               "address": "78.159.246.179",
               "port": 8443,
               "users": [
@@ -13810,7 +14094,7 @@
     ]
   },
   {
-    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #8)",
+    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #6)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -13848,7 +14132,7 @@
     ]
   },
   {
-    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #9)",
+    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #7)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -13886,7 +14170,7 @@
     ]
   },
   {
-    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #10)",
+    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #8)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -13928,7 +14212,7 @@
     ]
   },
   {
-    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #11)",
+    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #9)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -13954,7 +14238,7 @@
           "tlsSettings": {
             "allowInsecure": false,
             "serverName": "fitindoor.net",
-            "fingerprint": "firefox"
+            "fingerprint": "chrome"
           },
           "xhttpSettings": {
             "path": "/api/v1/upload",
@@ -13966,7 +14250,45 @@
     ]
   },
   {
-    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #12)",
+    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #10)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "78.159.246.179",
+              "port": 8443,
+              "users": [
+                {
+                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "xhttp",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "randomquaint.net",
+            "fingerprint": "chrome"
+          },
+          "xhttpSettings": {
+            "path": "/api/v1/upload",
+            "host": "randomquaint.net",
+            "mode": "auto"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #11)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -14008,7 +14330,7 @@
     ]
   },
   {
-    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #13)",
+    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #12)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -14046,7 +14368,7 @@
     ]
   },
   {
-    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #14)",
+    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #13)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -14123,7 +14445,7 @@
     ]
   },
   {
-    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #15)",
+    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #14)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -14161,7 +14483,7 @@
     ]
   },
   {
-    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #16)",
+    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #15)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -14199,45 +14521,7 @@
     ]
   },
   {
-    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #17)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "78.159.246.179",
-              "port": 8443,
-              "users": [
-                {
-                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "randomquaint.net",
-            "fingerprint": "chrome"
-          },
-          "xhttpSettings": {
-            "path": "/api/v1/upload",
-            "host": "randomquaint.net",
-            "mode": "auto"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #18)",
+    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #16)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -14275,7 +14559,7 @@
     ]
   },
   {
-    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #19)",
+    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #17)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -14283,11 +14567,11 @@
         "settings": {
           "vnext": [
             {
-              "address": "78.159.246.85",
+              "address": "95.163.232.242",
               "port": 8443,
               "users": [
                 {
-                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
+                  "id": "7dd69047-047e-422e-a2ba-ed773c34fd1a",
                   "encryption": "none",
                   "level": 0
                 }
@@ -14301,19 +14585,62 @@
           "tlsSettings": {
             "allowInsecure": false,
             "serverName": "fitindoor.net",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox",
+            "alpn": [
+              "http/1.1",
+              "h2"
+            ]
           },
           "xhttpSettings": {
             "path": "/api/v1/upload",
             "host": "fitindoor.net",
-            "mode": "packet-up"
+            "mode": "auto",
+            "extra": {
+              "host": "",
+              "path": "",
+              "mode": "",
+              "headers": null,
+              "xPaddingBytes": "100-1000",
+              "xPaddingObfsMode": false,
+              "xPaddingKey": "",
+              "xPaddingHeader": "",
+              "xPaddingPlacement": "",
+              "xPaddingMethod": "",
+              "uplinkHTTPMethod": "",
+              "sessionIDPlacement": "",
+              "sessionIDKey": "",
+              "sessionIDTable": "",
+              "sessionIDLength": "0",
+              "seqPlacement": "",
+              "seqKey": "",
+              "uplinkDataPlacement": "",
+              "uplinkDataKey": "",
+              "uplinkChunkSize": "0",
+              "noGRPCHeader": false,
+              "noSSEHeader": false,
+              "scMaxEachPostBytes": "1000000",
+              "scMinPostsIntervalMs": "30",
+              "scMaxBufferedPosts": 0,
+              "scStreamUpServerSecs": "0",
+              "serverMaxHeaderBytes": 0,
+              "xmux": {
+                "maxConcurrency": "16-32",
+                "maxConnections": "0",
+                "cMaxReuseTimes": "64-128",
+                "hMaxRequestTimes": "0",
+                "hMaxReusableSecs": "0",
+                "hKeepAlivePeriod": 0
+              },
+              "downloadSettings": null,
+              "extra": null
+            }
           }
         }
       }
     ]
   },
   {
-    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #20)",
+    "remarks": "🇧🇬 🛡️ Резервный обход (Болгария #18)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -14321,11 +14648,11 @@
         "settings": {
           "vnext": [
             {
-              "address": "37.18.14.168",
-              "port": 444,
+              "address": "95.163.232.242",
+              "port": 8443,
               "users": [
                 {
-                  "id": "2c634977-584e-4e1f-b501-1b70c77a6743",
+                  "id": "7dd69047-047e-422e-a2ba-ed773c34fd1a",
                   "encryption": "none",
                   "level": 0
                 }
@@ -14334,19 +14661,56 @@
           ]
         },
         "streamSettings": {
-          "network": "grpc",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "VHWmCkZwC5XE-ctv0p8BinjoIx4SWgJUIsZPrhNf6TA",
-            "fingerprint": "firefox",
-            "serverName": "passport.yandex.ru",
-            "shortId": "",
-            "spiderX": "/"
+          "network": "xhttp",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "fitindoor.net",
+            "fingerprint": "firefox"
           },
-          "grpcSettings": {
-            "serviceName": "grpc",
-            "multiMode": false
+          "xhttpSettings": {
+            "path": "/api/v1/upload",
+            "host": "fitindoor.net",
+            "mode": "auto",
+            "extra": {
+              "host": "",
+              "path": "",
+              "mode": "",
+              "headers": null,
+              "xPaddingBytes": "100-1000",
+              "xPaddingObfsMode": false,
+              "xPaddingKey": "",
+              "xPaddingHeader": "",
+              "xPaddingPlacement": "",
+              "xPaddingMethod": "",
+              "uplinkHTTPMethod": "",
+              "sessionIDPlacement": "",
+              "sessionIDKey": "",
+              "sessionIDTable": "",
+              "sessionIDLength": "0",
+              "seqPlacement": "",
+              "seqKey": "",
+              "uplinkDataPlacement": "",
+              "uplinkDataKey": "",
+              "uplinkChunkSize": "0",
+              "noGRPCHeader": false,
+              "noSSEHeader": false,
+              "scMaxEachPostBytes": "1000000",
+              "scMinPostsIntervalMs": "30",
+              "scMaxBufferedPosts": 0,
+              "scStreamUpServerSecs": "0",
+              "serverMaxHeaderBytes": 0,
+              "xmux": {
+                "maxConcurrency": "16-32",
+                "maxConnections": "0",
+                "cMaxReuseTimes": "64-128",
+                "hMaxRequestTimes": "0",
+                "hMaxReusableSecs": "0",
+                "hKeepAlivePeriod": 0
+              },
+              "downloadSettings": null,
+              "extra": null
+            }
           }
         }
       }
@@ -14922,6 +15286,120 @@
     ]
   },
   {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #14)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "188.225.56.39",
+              "port": 444,
+              "users": [
+                {
+                  "id": "e1efdede-93d6-4ce4-8ca8-077aeb5e94a8",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "-P8DgKISSG4jnLuj6ihZDqZs1_zt-juBrhVhTylHiAo",
+            "fingerprint": "firefox",
+            "serverName": "statics.mcufa.pro",
+            "shortId": "",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #15)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "188.72.103.4",
+              "port": 443,
+              "users": [
+                {
+                  "id": "8c8a8681-5444-4e18-a427-54f19eea6a77",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "xhttp",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "newlisten.secondtest.shop",
+            "fingerprint": "chrome"
+          },
+          "xhttpSettings": {
+            "path": "/",
+            "host": "newlisten.secondtest.shop",
+            "mode": "packet-up",
+            "extra": {
+              "host": "",
+              "path": "/",
+              "mode": "packet-up",
+              "headers": null,
+              "xPaddingBytes": "0",
+              "xPaddingObfsMode": true,
+              "xPaddingKey": "_dc",
+              "xPaddingHeader": "X-Cache",
+              "xPaddingPlacement": "queryInHeader",
+              "xPaddingMethod": "tokenish",
+              "uplinkHTTPMethod": "GET",
+              "sessionIDPlacement": "",
+              "sessionIDKey": "",
+              "sessionIDTable": "",
+              "sessionIDLength": "0",
+              "seqPlacement": "",
+              "seqKey": "",
+              "uplinkDataPlacement": "header",
+              "uplinkDataKey": "X-Request-Trace",
+              "uplinkChunkSize": "0",
+              "noGRPCHeader": false,
+              "noSSEHeader": false,
+              "scMaxEachPostBytes": "24000",
+              "scMinPostsIntervalMs": "10",
+              "scMaxBufferedPosts": 0,
+              "scStreamUpServerSecs": "0",
+              "serverMaxHeaderBytes": 65536,
+              "xmux": {
+                "maxConcurrency": "0",
+                "maxConnections": "0",
+                "cMaxReuseTimes": "0",
+                "hMaxRequestTimes": "0",
+                "hMaxReusableSecs": "0",
+                "hKeepAlivePeriod": 0
+              },
+              "downloadSettings": null,
+              "extra": null
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
     "remarks": "🇪🇪 🛡️ Резервный обход (Эстония #1)",
     "outbounds": [
       {
@@ -14965,6 +15443,45 @@
   },
   {
     "remarks": "🇪🇪 🛡️ Резервный обход (Эстония #2)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.178.208.167",
+              "port": 443,
+              "users": [
+                {
+                  "id": "d49f7cc7-0c15-4a49-9644-ef72e00d8e56",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "dropstyle.lol",
+            "fingerprint": "firefox"
+          },
+          "wsSettings": {
+            "path": "/service/metrics/51dec2df3071/",
+            "headers": {
+              "Host": "dropstyle.lol"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇪🇪 🛡️ Резервный обход (Эстония #3)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -15030,6 +15547,83 @@
                 "cMaxReuseTimes": "36-96",
                 "hMaxRequestTimes": "320-640",
                 "hMaxReusableSecs": "720-1800",
+                "hKeepAlivePeriod": 0
+              },
+              "downloadSettings": null,
+              "extra": null
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇪🇪 🛡️ Резервный обход (Эстония #4)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "188.72.103.4",
+              "port": 443,
+              "users": [
+                {
+                  "id": "2b0e5676-fb62-4bf0-9607-6e7818421e8e",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "xhttp",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "rjexek.whitechannel-x1-cdn.ru",
+            "fingerprint": "chrome"
+          },
+          "xhttpSettings": {
+            "path": "/api/v1/vmvp3nqx/sync/",
+            "host": "rjexek.whitechannel-x1-cdn.ru",
+            "mode": "packet-up",
+            "extra": {
+              "host": "",
+              "path": "",
+              "mode": "packet-up",
+              "headers": null,
+              "xPaddingBytes": "0",
+              "xPaddingObfsMode": false,
+              "xPaddingKey": "",
+              "xPaddingHeader": "",
+              "xPaddingPlacement": "",
+              "xPaddingMethod": "",
+              "uplinkHTTPMethod": "GET",
+              "sessionIDPlacement": "",
+              "sessionIDKey": "",
+              "sessionIDTable": "",
+              "sessionIDLength": "0",
+              "seqPlacement": "",
+              "seqKey": "",
+              "uplinkDataPlacement": "header",
+              "uplinkDataKey": "",
+              "uplinkChunkSize": "0",
+              "noGRPCHeader": false,
+              "noSSEHeader": false,
+              "scMaxEachPostBytes": "32768",
+              "scMinPostsIntervalMs": "0",
+              "scMaxBufferedPosts": 0,
+              "scStreamUpServerSecs": "0",
+              "serverMaxHeaderBytes": 0,
+              "xmux": {
+                "maxConcurrency": "0",
+                "maxConnections": "0",
+                "cMaxReuseTimes": "0",
+                "hMaxRequestTimes": "0",
+                "hMaxReusableSecs": "0",
                 "hKeepAlivePeriod": 0
               },
               "downloadSettings": null,
@@ -15112,6 +15706,43 @@
               "downloadSettings": null,
               "extra": null
             }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇳🇱 🛡️ Резервный обход (Нидерланды #1)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "188.225.45.99",
+              "port": 8443,
+              "users": [
+                {
+                  "id": "e1efdede-93d6-4ce4-8ca8-077aeb5e94a8",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "-P8DgKISSG4jnLuj6ihZDqZs1_zt-juBrhVhTylHiAo",
+            "fingerprint": "firefox",
+            "serverName": "luckyping.mcufa.pro",
+            "shortId": "",
+            "spiderX": "/"
           }
         }
       }
