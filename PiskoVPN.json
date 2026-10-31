@@ -1816,13 +1816,15 @@
         {
           "tag": "auto-bootstrap-balancer",
           "selector": [
+            "proxy-1",
             "proxy-2",
             "proxy-4",
-            "proxy-6",
+            "proxy-7",
+            "proxy-8",
+            "proxy-10",
             "proxy-11",
             "proxy-13",
             "proxy-14",
-            "proxy-15",
             "proxy-18",
             "proxy-24",
             "proxy-35"
@@ -1901,7 +1903,7 @@
           "realitySettings": {
             "serverName": "cdn1.medoed.store",
             "publicKey": "xG_3hrmCx40pqD6Wh_2bQgmC8nvdjCx-l6HJnEcL6AI",
-            "shortId": "da6635db58964a27",
+            "shortId": "95bea85c7d777c1e",
             "fingerprint": "firefox"
           }
         }
@@ -1931,7 +1933,7 @@
           "realitySettings": {
             "serverName": "cdn1.medoed.store",
             "publicKey": "xG_3hrmCx40pqD6Wh_2bQgmC8nvdjCx-l6HJnEcL6AI",
-            "shortId": "b4f2b5ab63691bd4",
+            "shortId": "2bae290ee8b71973",
             "fingerprint": "firefox"
           }
         }
@@ -2021,7 +2023,7 @@
           "realitySettings": {
             "serverName": "cdn1.medoed.store",
             "publicKey": "xG_3hrmCx40pqD6Wh_2bQgmC8nvdjCx-l6HJnEcL6AI",
-            "shortId": "da6635db58964a27",
+            "shortId": "b4f2b5ab63691bd4",
             "fingerprint": "firefox"
           }
         }
@@ -2951,7 +2953,7 @@
           "realitySettings": {
             "serverName": "cdn6.medoed.store",
             "publicKey": "-Lrpx_u04nZH6dz9PJES5HcPQiysWj5ul1HsT7D15SQ",
-            "shortId": "341f6c02f5b9453f",
+            "shortId": "87cb87ca48539fab",
             "fingerprint": "firefox"
           }
         }
@@ -3133,13 +3135,6 @@
       "rules": [
         {
           "type": "field",
-          "inboundTag": [
-            "auto-bootstrap"
-          ],
-          "balancerTag": "auto-bootstrap-balancer"
-        },
-        {
-          "type": "field",
           "domain": [
             "full:common.dot.dns.yandex.net"
           ],
@@ -3284,16 +3279,6 @@
           "strategy": {
             "type": "leastPing"
           },
-          "fallbackTag": "auto-bootstrap"
-        },
-        {
-          "tag": "auto-bootstrap-balancer",
-          "selector": [
-            "proxy-1"
-          ],
-          "strategy": {
-            "type": "roundRobin"
-          },
           "fallbackTag": "block"
         }
       ],
@@ -3407,13 +3392,6 @@
       {
         "tag": "block",
         "protocol": "blackhole"
-      },
-      {
-        "tag": "auto-bootstrap",
-        "protocol": "loopback",
-        "settings": {
-          "inboundTag": "auto-bootstrap"
-        }
       },
       {
         "tag": "medoed-pilot-dns-out",
@@ -3721,7 +3699,7 @@
           "strategy": {
             "type": "leastPing"
           },
-          "fallbackTag": "proxy-0"
+          "fallbackTag": "proxy-3"
         }
       ],
       "domainMatcher": "hybrid",
@@ -3773,8 +3751,8 @@
         "settings": {
           "vnext": [
             {
-              "address": "93.152.215.93",
-              "port": 61044,
+              "address": "217.60.34.243",
+              "port": 47444,
               "users": [
                 {
                   "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
@@ -3790,15 +3768,75 @@
           "tcpSettings": {},
           "security": "reality",
           "realitySettings": {
-            "serverName": "www.apple.com",
-            "publicKey": "dnzdK85IWbRshczDnzpMnH7VPiJW7beaQK_qyO5okSE",
+            "serverName": "pixel.cdntrahatel.store",
+            "publicKey": "ZIAN68JiqOEthSx8jz6bAS920eWNw4thArzSNt6NpC8",
+            "shortId": "90871d77a4cf3339",
+            "fingerprint": "chrome"
+          }
+        }
+      },
+      {
+        "tag": "proxy-1",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "217.60.34.76",
+              "port": 47444,
+              "users": [
+                {
+                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision"
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "tcp",
+          "tcpSettings": {},
+          "security": "reality",
+          "realitySettings": {
+            "serverName": "pixel.cdntrahatel.store",
+            "publicKey": "ZIAN68JiqOEthSx8jz6bAS920eWNw4thArzSNt6NpC8",
             "shortId": "90871d77a4cf3339",
             "fingerprint": "firefox"
           }
         }
       },
       {
-        "tag": "proxy-1",
+        "tag": "proxy-2",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "217.60.34.250",
+              "port": 47444,
+              "users": [
+                {
+                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision"
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "tcp",
+          "tcpSettings": {},
+          "security": "reality",
+          "realitySettings": {
+            "serverName": "pixel.cdntrahatel.store",
+            "publicKey": "ZIAN68JiqOEthSx8jz6bAS920eWNw4thArzSNt6NpC8",
+            "shortId": "90871d77a4cf3339",
+            "fingerprint": "firefox"
+          }
+        }
+      },
+      {
+        "tag": "proxy-3",
         "protocol": "vless",
         "settings": {
           "vnext": [
@@ -4621,7 +4659,7 @@
           "strategy": {
             "type": "leastPing"
           },
-          "fallbackTag": "proxy-0"
+          "fallbackTag": "proxy-2"
         }
       ],
       "domainMatcher": "hybrid",
@@ -4673,6 +4711,36 @@
         "settings": {
           "vnext": [
             {
+              "address": "2.27.4.115",
+              "port": 443,
+              "users": [
+                {
+                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision"
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "tcp",
+          "tcpSettings": {},
+          "security": "reality",
+          "realitySettings": {
+            "serverName": "cdn1.medoed.store",
+            "publicKey": "xG_3hrmCx40pqD6Wh_2bQgmC8nvdjCx-l6HJnEcL6AI",
+            "shortId": "2bae290ee8b71973",
+            "fingerprint": "firefox"
+          }
+        }
+      },
+      {
+        "tag": "proxy-1",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
               "address": "85.239.146.128",
               "port": 443,
               "users": [
@@ -4692,13 +4760,13 @@
           "realitySettings": {
             "serverName": "cdn1.medoed.store",
             "publicKey": "xG_3hrmCx40pqD6Wh_2bQgmC8nvdjCx-l6HJnEcL6AI",
-            "shortId": "da6635db58964a27",
+            "shortId": "b4f2b5ab63691bd4",
             "fingerprint": "firefox"
           }
         }
       },
       {
-        "tag": "proxy-1",
+        "tag": "proxy-2",
         "protocol": "vless",
         "settings": {
           "vnext": [
@@ -5095,7 +5163,7 @@
           "realitySettings": {
             "serverName": "cdn6.medoed.store",
             "publicKey": "-Lrpx_u04nZH6dz9PJES5HcPQiysWj5ul1HsT7D15SQ",
-            "shortId": "341f6c02f5b9453f",
+            "shortId": "36ae7f502d887fa2",
             "fingerprint": "firefox"
           }
         }
@@ -9763,7 +9831,115 @@
           "realitySettings": {
             "show": false,
             "publicKey": "l8AubqcxQO-HRFJy4pZL1vbLOo-eXit69s-XulSELE0",
+            "fingerprint": "chrome",
+            "serverName": "ya.ru",
+            "shortId": "23103e1e",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #2)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "45.12.75.242",
+              "port": 26424,
+              "users": [
+                {
+                  "id": "633f424e-2b11-48da-a6b3-a849dd71456f",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "l8AubqcxQO-HRFJy4pZL1vbLOo-eXit69s-XulSELE0",
             "fingerprint": "qq",
+            "serverName": "ya.ru",
+            "shortId": "23103e1e",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #3)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "45.12.75.242",
+              "port": 26424,
+              "users": [
+                {
+                  "id": "633f424e-2b11-48da-a6b3-a849dd71456f",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "l8AubqcxQO-HRFJy4pZL1vbLOo-eXit69s-XulSELE0",
+            "fingerprint": "chrome",
+            "serverName": "ya.ru",
+            "shortId": "23103e1e",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #4)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "45.12.75.242",
+              "port": 26424,
+              "users": [
+                {
+                  "id": "633f424e-2b11-48da-a6b3-a849dd71456f",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "l8AubqcxQO-HRFJy4pZL1vbLOo-eXit69s-XulSELE0",
+            "fingerprint": "firefox",
             "serverName": "ya.ru",
             "shortId": "23103e1e",
             "spiderX": "/"
@@ -9799,10 +9975,7 @@
           "tlsSettings": {
             "allowInsecure": false,
             "serverName": "ru.nnight.cfd",
-            "fingerprint": "firefox",
-            "alpn": [
-              "h2"
-            ]
+            "fingerprint": "firefox"
           },
           "xhttpSettings": {
             "path": "/api/v4/media/session/poll",
@@ -9812,12 +9985,7 @@
               "host": "",
               "path": "",
               "mode": "",
-              "headers": {
-                "Accept": "application/vnd.api json, application/json, text/plain, */*",
-                "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
-                "Cache-Control": "no-cache",
-                "Pragma": "no-cache"
-              },
+              "headers": null,
               "xPaddingBytes": "48-320",
               "xPaddingObfsMode": true,
               "xPaddingKey": "q",
@@ -9836,18 +10004,18 @@
               "uplinkChunkSize": "0",
               "noGRPCHeader": false,
               "noSSEHeader": false,
-              "scMaxEachPostBytes": "1536-6144",
-              "scMinPostsIntervalMs": "10-30",
-              "scMaxBufferedPosts": 64,
+              "scMaxEachPostBytes": "0",
+              "scMinPostsIntervalMs": "0",
+              "scMaxBufferedPosts": 0,
               "scStreamUpServerSecs": "0",
-              "serverMaxHeaderBytes": 32768,
+              "serverMaxHeaderBytes": 0,
               "xmux": {
-                "maxConcurrency": "8-16",
+                "maxConcurrency": "0",
                 "maxConnections": "0",
-                "cMaxReuseTimes": "128-256",
-                "hMaxRequestTimes": "600-1000",
-                "hMaxReusableSecs": "1800-3600",
-                "hKeepAlivePeriod": 30
+                "cMaxReuseTimes": "0",
+                "hMaxRequestTimes": "0",
+                "hMaxReusableSecs": "0",
+                "hKeepAlivePeriod": 0
               },
               "downloadSettings": null,
               "extra": null
@@ -9858,7 +10026,530 @@
     ]
   },
   {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Россия #5)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "95.163.215.8",
+              "port": 5003,
+              "users": [
+                {
+                  "id": "4f4e8129-56ae-4b6e-baeb-ebdd07d8b2c5",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "raw",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "SHIYN7zN9aFVxwKK-bIvDbhUgtHvlBhDi1qSl2sWwRw",
+            "fingerprint": "firefox",
+            "serverName": "eh.vk.com",
+            "shortId": "e7",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
     "remarks": "🇩🇪 🛡️ Резервный обход (Германия #1)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "217.19.122.156",
+              "port": 443,
+              "users": [
+                {
+                  "id": "c720cb74-4c84-4fce-b8ae-637dbaa16199",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "z1q3pv4g78.rucdncomp.pro",
+            "fingerprint": "safari"
+          },
+          "wsSettings": {
+            "path": "/useraction/events/b892639b7195/",
+            "headers": {
+              "Host": "z1q3pv4g78.rucdncomp.pro"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #2)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "217.19.122.156",
+              "port": 443,
+              "users": [
+                {
+                  "id": "c720cb74-4c84-4fce-b8ae-637dbaa16199",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "z1q3pv4g78.rucdncomp.pro",
+            "fingerprint": "firefox"
+          },
+          "wsSettings": {
+            "path": "/useraction/events/b892639b7195/",
+            "headers": {
+              "Host": "z1q3pv4g78.rucdncomp.pro"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #3)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "217.19.122.156",
+              "port": 443,
+              "users": [
+                {
+                  "id": "c720cb74-4c84-4fce-b8ae-637dbaa16199",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "z1q3pv4g78.rucdncomp.pro",
+            "fingerprint": "chrome"
+          },
+          "wsSettings": {
+            "path": "/useraction/events/b892639b7195/",
+            "headers": {
+              "Host": "z1q3pv4g78.rucdncomp.pro"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #4)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "217.19.122.156",
+              "port": 443,
+              "users": [
+                {
+                  "id": "c720cb74-4c84-4fce-b8ae-637dbaa16199",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "z1q3pv4g78.rucdncomp.pro",
+            "fingerprint": "chrome",
+            "alpn": [
+              "http/1.1"
+            ]
+          },
+          "wsSettings": {
+            "path": "/useraction/events/b892639b7195/",
+            "headers": {
+              "Host": "z1q3pv4g78.rucdncomp.pro"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #5)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "217.19.122.156",
+              "port": 443,
+              "users": [
+                {
+                  "id": "c720cb74-4c84-4fce-b8ae-637dbaa16199",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "z1q3pv4g78.rucdncomp.pro",
+            "fingerprint": "firefox",
+            "alpn": [
+              "http/1.1"
+            ]
+          },
+          "wsSettings": {
+            "path": "/useraction/events/b892639b7195/",
+            "headers": {
+              "Host": "z1q3pv4g78.rucdncomp.pro"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #6)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "217.19.122.156",
+              "port": 443,
+              "users": [
+                {
+                  "id": "c720cb74-4c84-4fce-b8ae-637dbaa16199",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "z1q3pv4g78.rucdncomp.pro",
+            "fingerprint": "ios",
+            "alpn": [
+              "http/1.1"
+            ]
+          },
+          "wsSettings": {
+            "path": "/useraction/events/b892639b7195/",
+            "headers": {
+              "Host": "z1q3pv4g78.rucdncomp.pro"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #7)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "217.19.122.156",
+              "port": 443,
+              "users": [
+                {
+                  "id": "c720cb74-4c84-4fce-b8ae-637dbaa16199",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "z1q3pv4g78.rucdncomp.pro",
+            "fingerprint": "safari",
+            "alpn": [
+              "http/1.1"
+            ]
+          },
+          "wsSettings": {
+            "path": "/useraction/events/b892639b7195/",
+            "headers": {
+              "Host": "z1q3pv4g78.rucdncomp.pro"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #8)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "217.19.122.156",
+              "port": 443,
+              "users": [
+                {
+                  "id": "c720cb74-4c84-4fce-b8ae-637dbaa16199",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "z1q3pv4g78.rucdncomp.pro",
+            "fingerprint": "random",
+            "alpn": [
+              "http/1.1"
+            ]
+          },
+          "wsSettings": {
+            "path": "/useraction/events/b892639b7195/",
+            "headers": {
+              "Host": "z1q3pv4g78.rucdncomp.pro"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #9)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "217.19.122.156",
+              "port": 443,
+              "users": [
+                {
+                  "id": "c720cb74-4c84-4fce-b8ae-637dbaa16199",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "z1q3pv4g78.rucdncomp.pro",
+            "fingerprint": "ios"
+          },
+          "wsSettings": {
+            "path": "/useraction/events/b892639b7195/",
+            "headers": {
+              "Host": "z1q3pv4g78.rucdncomp.pro"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #10)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "217.19.122.156",
+              "port": 443,
+              "users": [
+                {
+                  "id": "c720cb74-4c84-4fce-b8ae-637dbaa16199",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "z1q3pv4g78.rucdncomp.pro",
+            "fingerprint": "random"
+          },
+          "wsSettings": {
+            "path": "/useraction/events/b892639b7195/",
+            "headers": {
+              "Host": "z1q3pv4g78.rucdncomp.pro"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #11)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "217.19.122.156",
+              "port": 443,
+              "users": [
+                {
+                  "id": "c720cb74-4c84-4fce-b8ae-637dbaa16199",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "z1q3pv4g78.rucdncomp.pro",
+            "fingerprint": "chrome",
+            "alpn": [
+              "http/1.1"
+            ]
+          },
+          "wsSettings": {
+            "path": "/useraction/events/b892639b7195/",
+            "headers": {
+              "Host": "z1q3pv4g78.rucdncomp.pro"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #12)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "217.19.122.156",
+              "port": 443,
+              "users": [
+                {
+                  "id": "c720cb74-4c84-4fce-b8ae-637dbaa16199",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "z1q3pv4g78.rucdncomp.pro",
+            "fingerprint": "chrome"
+          },
+          "wsSettings": {
+            "path": "/useraction/events/b892639b7195/",
+            "headers": {
+              "Host": "z1q3pv4g78.rucdncomp.pro"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇩🇪 🛡️ Резервный обход (Германия #13)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -9943,83 +10634,6 @@
     ]
   },
   {
-    "remarks": "🇪🇪 🛡️ Резервный обход (Эстония #1)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "188.72.110.3",
-              "port": 443,
-              "users": [
-                {
-                  "id": "092573fd-82d0-4ac2-bc85-7813dfaa884c",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "rsvnor.6924l9t655.h1cloud.lol",
-            "fingerprint": "firefox"
-          },
-          "xhttpSettings": {
-            "path": "/api/v1/bsmanaged12284/sync/",
-            "host": "rsvnor.6924l9t655.h1cloud.lol",
-            "mode": "packet-up",
-            "extra": {
-              "host": "",
-              "path": "",
-              "mode": "",
-              "headers": null,
-              "xPaddingBytes": "96-1040",
-              "xPaddingObfsMode": true,
-              "xPaddingKey": "_t",
-              "xPaddingHeader": "X-Media-Token",
-              "xPaddingPlacement": "queryInHeader",
-              "xPaddingMethod": "tokenish",
-              "uplinkHTTPMethod": "GET",
-              "sessionIDPlacement": "",
-              "sessionIDKey": "",
-              "sessionIDTable": "",
-              "sessionIDLength": "0",
-              "seqPlacement": "",
-              "seqKey": "",
-              "uplinkDataPlacement": "header",
-              "uplinkDataKey": "X-Media-Chunk",
-              "uplinkChunkSize": "4096",
-              "noGRPCHeader": false,
-              "noSSEHeader": false,
-              "scMaxEachPostBytes": "32768",
-              "scMinPostsIntervalMs": "15",
-              "scMaxBufferedPosts": 1000,
-              "scStreamUpServerSecs": "0",
-              "serverMaxHeaderBytes": 3932160,
-              "xmux": {
-                "maxConcurrency": "0",
-                "maxConnections": "8",
-                "cMaxReuseTimes": "36-96",
-                "hMaxRequestTimes": "320-640",
-                "hMaxReusableSecs": "720-1800",
-                "hKeepAlivePeriod": 0
-              },
-              "downloadSettings": null,
-              "extra": null
-            }
-          }
-        }
-      }
-    ]
-  },
-  {
     "remarks": "🇳🇱 🛡️ Резервный обход (Нидерланды #1)",
     "outbounds": [
       {
@@ -10088,10 +10702,7 @@
           "tlsSettings": {
             "allowInsecure": false,
             "serverName": "ara.rtkdvbr.cc",
-            "fingerprint": "firefox",
-            "alpn": [
-              "http/1.1"
-            ]
+            "fingerprint": "edge"
           },
           "wsSettings": {
             "path": "/amws",
@@ -10130,7 +10741,7 @@
           "tlsSettings": {
             "allowInsecure": false,
             "serverName": "ara.rtkdvbr.cc",
-            "fingerprint": "edge"
+            "fingerprint": "firefox"
           },
           "wsSettings": {
             "path": "/amws",
@@ -10169,7 +10780,10 @@
           "tlsSettings": {
             "allowInsecure": false,
             "serverName": "ara.rtkdvbr.cc",
-            "fingerprint": "firefox"
+            "fingerprint": "firefox",
+            "alpn": [
+              "http/1.1"
+            ]
           },
           "wsSettings": {
             "path": "/amws",
@@ -10183,6 +10797,48 @@
   },
   {
     "remarks": "🇳🇱 🛡️ Резервный обход (Нидерланды #5)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.86.145.37",
+              "port": 443,
+              "users": [
+                {
+                  "id": "e37ebf3b-ac32-48a8-8f56-d113967eaf29",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "ws",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "ara.rtkdvbr.cc",
+            "fingerprint": "safari",
+            "alpn": [
+              "http/1.1"
+            ]
+          },
+          "wsSettings": {
+            "path": "/amws",
+            "headers": {
+              "Host": "ara.rtkdvbr.cc"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇳🇱 🛡️ Резервный обход (Нидерланды #6)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -11019,11 +11675,11 @@
         "settings": {
           "vnext": [
             {
-              "address": "185.178.208.140",
+              "address": "188.72.103.4",
               "port": 443,
               "users": [
                 {
-                  "id": "ea277838-a188-44f1-a2e8-94aa110c4f27",
+                  "id": "9737cc16-7266-45ce-94d9-6e05a45e0b9c",
                   "encryption": "none",
                   "level": 0
                 }
@@ -11036,13 +11692,52 @@
           "security": "tls",
           "tlsSettings": {
             "allowInsecure": false,
-            "serverName": "static.bakarova-top.ru",
-            "fingerprint": "edge"
+            "serverName": "poland.nnight.cfd",
+            "fingerprint": "firefox"
           },
           "xhttpSettings": {
-            "path": "/api/v2/events",
-            "host": "static.bakarova-top.ru",
-            "mode": "auto"
+            "path": "/api/v4/media/session/poll",
+            "host": "poland.nnight.cfd",
+            "mode": "packet-up",
+            "extra": {
+              "host": "",
+              "path": "",
+              "mode": "",
+              "headers": null,
+              "xPaddingBytes": "48-320",
+              "xPaddingObfsMode": true,
+              "xPaddingKey": "q",
+              "xPaddingHeader": "",
+              "xPaddingPlacement": "query",
+              "xPaddingMethod": "tokenish",
+              "uplinkHTTPMethod": "GET",
+              "sessionIDPlacement": "",
+              "sessionIDKey": "",
+              "sessionIDTable": "",
+              "sessionIDLength": "0",
+              "seqPlacement": "query",
+              "seqKey": "offset",
+              "uplinkDataPlacement": "header",
+              "uplinkDataKey": "X-Playback-Token",
+              "uplinkChunkSize": "0",
+              "noGRPCHeader": false,
+              "noSSEHeader": false,
+              "scMaxEachPostBytes": "1536-6144",
+              "scMinPostsIntervalMs": "10-30",
+              "scMaxBufferedPosts": 64,
+              "scStreamUpServerSecs": "0",
+              "serverMaxHeaderBytes": 0,
+              "xmux": {
+                "maxConcurrency": "8-16",
+                "maxConnections": "0",
+                "cMaxReuseTimes": "128-256",
+                "hMaxRequestTimes": "600-1000",
+                "hMaxReusableSecs": "1800-3600",
+                "hKeepAlivePeriod": 30
+              },
+              "downloadSettings": null,
+              "extra": null
+            }
           }
         }
       }
@@ -11075,7 +11770,7 @@
           "tlsSettings": {
             "allowInsecure": false,
             "serverName": "static.bakarova-top.ru",
-            "fingerprint": "qq"
+            "fingerprint": "edge"
           },
           "xhttpSettings": {
             "path": "/api/v2/events",
@@ -11113,7 +11808,7 @@
           "tlsSettings": {
             "allowInsecure": false,
             "serverName": "static.bakarova-top.ru",
-            "fingerprint": "chrome"
+            "fingerprint": "qq"
           },
           "xhttpSettings": {
             "path": "/api/v2/events",
@@ -11126,6 +11821,44 @@
   },
   {
     "remarks": "🇵🇱 🛡️ Резервный обход (Польша #24)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "185.178.208.140",
+              "port": 443,
+              "users": [
+                {
+                  "id": "ea277838-a188-44f1-a2e8-94aa110c4f27",
+                  "encryption": "none",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "xhttp",
+          "security": "tls",
+          "tlsSettings": {
+            "allowInsecure": false,
+            "serverName": "static.bakarova-top.ru",
+            "fingerprint": "chrome"
+          },
+          "xhttpSettings": {
+            "path": "/api/v2/events",
+            "host": "static.bakarova-top.ru",
+            "mode": "auto"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇵🇱 🛡️ Резервный обход (Польша #25)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -11166,7 +11899,7 @@
     ]
   },
   {
-    "remarks": "🇵🇱 🛡️ Резервный обход (Польша #25)",
+    "remarks": "🇵🇱 🛡️ Резервный обход (Польша #26)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -11204,7 +11937,7 @@
     ]
   },
   {
-    "remarks": "🇵🇱 🛡️ Резервный обход (Польша #26)",
+    "remarks": "🇵🇱 🛡️ Резервный обход (Польша #27)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -11245,7 +11978,7 @@
     ]
   },
   {
-    "remarks": "🇵🇱 🛡️ Резервный обход (Польша #27)",
+    "remarks": "🇵🇱 🛡️ Резервный обход (Польша #28)",
     "outbounds": [
       {
         "tag": "proxy",
