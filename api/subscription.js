@@ -64,7 +64,8 @@ async function resolveSubscriptionBody() {
   if (bundled) return bundled;
 
   try {
-    const resp = await fetch(RAW_URL, { headers: { "Cache-Control": "no-cache" }, signal: AbortSignal.timeout(GITHUB_FETCH_MS) });
+    const freshUrl = `${RAW_URL}?t=${Date.now()}`;
+    const resp = await fetch(freshUrl, { headers: { "Cache-Control": "no-cache" }, signal: AbortSignal.timeout(GITHUB_FETCH_MS) });
     if (resp.ok) return await resp.text();
   } catch (e) {
     console.error("[SUB] Failed to fetch raw:", e.message);
@@ -84,7 +85,8 @@ async function resolveJsonArrayBody(bBuild = 0, cBuild = 0) {
   if (bundled) return bundled;
 
   try {
-    const resp = await fetch(RAW_JSON_URL, { headers: { "Cache-Control": "no-cache" }, signal: AbortSignal.timeout(GITHUB_FETCH_MS) });
+    const freshUrl = `${RAW_JSON_URL}?t=${Date.now()}`;
+    const resp = await fetch(freshUrl, { headers: { "Cache-Control": "no-cache" }, signal: AbortSignal.timeout(GITHUB_FETCH_MS) });
     if (resp.ok) return await resp.text();
   } catch (e) {
     console.error("[SUB] Failed to fetch raw JSON:", e.message);
@@ -107,7 +109,8 @@ export async function getSubscriptionText(r) {
   }
 
   try {
-    const resp = await fetch(RAW_URL, { headers: { "Cache-Control": "no-cache" }, signal: AbortSignal.timeout(5000) });
+    const freshUrl = `${RAW_URL}?t=${Date.now()}`;
+    const resp = await fetch(freshUrl, { headers: { "Cache-Control": "no-cache" }, signal: AbortSignal.timeout(5000) });
     if (resp.ok) {
       const text = await resp.text();
       await r.set("sub_cache", text, "EX", 60).catch(() => {});
@@ -138,7 +141,8 @@ export async function getSubscriptionJson(r) {
   }
 
   try {
-    const resp = await fetch(RAW_JSON_URL, { headers: { "Cache-Control": "no-cache" }, signal: AbortSignal.timeout(5000) });
+    const freshUrl = `${RAW_JSON_URL}?t=${Date.now()}`;
+    const resp = await fetch(freshUrl, { headers: { "Cache-Control": "no-cache" }, signal: AbortSignal.timeout(5000) });
     if (resp.ok) {
       const text = await resp.text();
       await r.set("sub_json_cache", text, "EX", 60).catch(() => {});

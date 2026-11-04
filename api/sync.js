@@ -49,7 +49,7 @@ function isAuthed(req) {
   return cookies.auth_token && verifyToken(cookies.auth_token);
 }
 
-function formatRemarkForHapp(rawRemark, protocol = "") {
+function formatRemarkForHapp(rawRemark, protocol = "", countryCounters = {}) {
   let remark = (rawRemark || "").trim();
   const lower = remark.toLowerCase();
 
@@ -117,14 +117,16 @@ function formatRemarkForHapp(rawRemark, protocol = "") {
     return "🇳🇱 ⚡ Только Torrent";
   }
 
-  // Номер сервера: #1 -> пусто, #2 -> [2], #3 -> [3], #4 -> [4]
-  let numSuffix = "";
-  if (/(?:#|№|\[)\s*2\s*\]?\s*$/i.test(remark)) {
-    numSuffix = " [2]";
-  } else if (/(?:#|№|\[)\s*3\s*\]?\s*$/i.test(remark)) {
-    numSuffix = " [3]";
-  } else if (/(?:#|№|\[)\s*4\s*\]?\s*$/i.test(remark)) {
-    numSuffix = " [4]";
+  // Извлекаем явный номер сервера, если указан (#2, [2], №2, - 2, 2)
+  // Предварительно отсекаем слово "hysteria 2", чтобы цифра 2 из протокола не воспринималась как номер сервера
+  const cleanedForNum = remark.replace(/[·•\-–—]?\s*hysteria\s*2?/gi, "").trim();
+  let explicitNum = null;
+  const numMatch = cleanedForNum.match(/(?:#|№|\[)\s*(\d+)\s*\]?\s*$/i) || cleanedForNum.match(/(?:\s|-)\s*(\d+)\s*$/);
+  if (numMatch) {
+    const parsed = parseInt(numMatch[1], 10);
+    if (!isNaN(parsed) && parsed > 1) {
+      explicitNum = parsed;
+    }
   }
 
   const isGrpc = /grpc/i.test(remark);
@@ -155,6 +157,16 @@ function formatRemarkForHapp(rawRemark, protocol = "") {
 
   for (const c of countries) {
     if (c.match.some((m) => lower.includes(m))) {
+      const countKey = `${c.flag}_${c.name}_${isGrpc ? "grpc" : ""}_${isHysteria ? "hy2" : ""}`;
+      let numSuffix = "";
+      if (explicitNum) {
+        countryCounters[countKey] = Math.max(countryCounters[countKey] || 0, explicitNum);
+        numSuffix = ` [${explicitNum}]`;
+      } else {
+        countryCounters[countKey] = (countryCounters[countKey] || 0) + 1;
+        const currentCount = countryCounters[countKey];
+        numSuffix = currentCount > 1 ? ` [${currentCount}]` : "";
+      }
       return `${c.flag} ⚡ ${c.name}${numSuffix}${grpcSuffix}${hysteriaSuffix}`;
     }
   }
@@ -167,8 +179,19 @@ function formatRemarkForHapp(rawRemark, protocol = "") {
     rest = rest
       .replace(/⚡?\s*grpc/gi, "")
       .replace(/[·•\-–—]?\s*hysteria\s*2?/gi, "")
-      .replace(/(?:#|№|\[)\s*\d+\s*\]?\s*$/i, "")
+      .replace(/(?:#|№|\[|\s|-)\s*\d+\s*\]?\s*$/i, "")
       .trim();
+
+    const countKey = `${flag}_${rest}_${isGrpc ? "grpc" : ""}_${isHysteria ? "hy2" : ""}`;
+    let numSuffix = "";
+    if (explicitNum) {
+      countryCounters[countKey] = Math.max(countryCounters[countKey] || 0, explicitNum);
+      numSuffix = ` [${explicitNum}]`;
+    } else {
+      countryCounters[countKey] = (countryCounters[countKey] || 0) + 1;
+      const currentCount = countryCounters[countKey];
+      numSuffix = currentCount > 1 ? ` [${currentCount}]` : "";
+    }
 
     if (/^[🛡️🔄⚡]/.test(rest)) {
       return `${flag} ${rest}${numSuffix}${grpcSuffix}${hysteriaSuffix}`.trim();
@@ -645,9 +668,10 @@ export default async function handler(req, res) {
       }
 
       // Форматируем основной источник и сортируем: Обходы (0) -> Автовыбор (1) -> Обычные (2, 3)
+      const mainCountryCounters = {};
       const processedMain = upstreamItems
         .map((up) => {
-          const formattedRemark = formatRemarkForHapp(up.remark, up.protocol);
+          const formattedRemark = formatRemarkForHapp(up.remark, up.protocol, mainCountryCounters);
           if (!formattedRemark) return null;
           return { ...up, formattedRemark };
         })
@@ -681,61 +705,96 @@ export default async function handler(req, res) {
       const currentBuildNum = parseInt(parseBuildFromSub(currentTxt) || "104", 10);
       const nextBuildNum = isNaN(currentBuildNum) ? 105 : currentBuildNum + 1;
 
-      // Анализ различий (Diff) с точным поиском по названию и параметрам
+      // Анализ различий (Diff) с многопроходным сопоставлением серверов
       const added = [];
       const modified = [];
       const unchanged = [];
-      const currentMap = new Map();
+      const usedCurrentIndices = new Set();
+      const matchedPairs = new Array(allUpstream.length).fill(null);
 
-      currentItems.forEach((item) => {
-        currentMap.set(item.remark, item);
+      // Проход 1: Точное совпадение по имени И эндпоинту (адрес + порт)
+      allUpstream.forEach((up, upIdx) => {
+        const currIdx = currentItems.findIndex(
+          (c, i) => !usedCurrentIndices.has(i) && c.remark === up.formattedRemark && c.address === up.address && c.port === up.port
+        );
+        if (currIdx !== -1) {
+          usedCurrentIndices.add(currIdx);
+          matchedPairs[upIdx] = currentItems[currIdx];
+        }
       });
 
-      const processedUpstream = allUpstream
-        .map((up) => {
-          const curr = currentMap.get(up.formattedRemark);
+      // Проход 2: Совпадение по имени (сервер тот же, но адрес/порт/ключи сменились)
+      allUpstream.forEach((up, upIdx) => {
+        if (matchedPairs[upIdx]) return;
+        const currIdx = currentItems.findIndex(
+          (c, i) => !usedCurrentIndices.has(i) && c.remark === up.formattedRemark
+        );
+        if (currIdx !== -1) {
+          usedCurrentIndices.add(currIdx);
+          matchedPairs[upIdx] = currentItems[currIdx];
+        }
+      });
 
-          let status = "added";
-          let changeDesc = "";
+      // Проход 3: Совпадение по эндпоинту (адрес + порт + протокол), если сервер был переименован
+      allUpstream.forEach((up, upIdx) => {
+        if (matchedPairs[upIdx]) return;
+        const currIdx = currentItems.findIndex(
+          (c, i) => !usedCurrentIndices.has(i) && c.address === up.address && c.port === up.port && (c.protocol || "vless") === (up.protocol || "vless")
+        );
+        if (currIdx !== -1) {
+          usedCurrentIndices.add(currIdx);
+          matchedPairs[upIdx] = currentItems[currIdx];
+        }
+      });
 
-          if (curr) {
-            currentMap.delete(up.formattedRemark);
-            const sameUuid = curr.uuid === up.uuid;
-            const samePbk = curr.params?.pbk === up.params?.pbk;
-            const sameSni = curr.params?.sni === up.params?.sni;
-            const samePort = curr.port === up.port;
-            const sameAddress = curr.address === up.address;
+      const processedUpstream = allUpstream.map((up, upIdx) => {
+        const curr = matchedPairs[upIdx];
+        let status = "added";
+        let changeDesc = "";
 
-            if (sameUuid && samePbk && sameSni && samePort && sameAddress) {
-              status = "unchanged";
-              unchanged.push(up);
-            } else {
-              status = "modified";
-              const changes = [];
-              if (!sameAddress) changes.push(`Адрес: ${curr.address} → ${up.address}`);
-              if (!samePort) changes.push(`Порт: ${curr.port} → ${up.port}`);
-              if (!sameUuid) changes.push("UUID");
-              if (!samePbk) changes.push("Reality PBK");
-              if (!sameSni) changes.push("SNI");
-              changeDesc = `Изменено: ${changes.join(", ")}`;
-              modified.push({ ...up, changeDesc });
-            }
+        if (curr) {
+          const sameUuid = curr.uuid === up.uuid;
+          const samePbk = curr.params?.pbk === up.params?.pbk;
+          const sameSni = curr.params?.sni === up.params?.sni;
+          const samePort = curr.port === up.port;
+          const sameAddress = curr.address === up.address;
+          const sameRemark = curr.remark === up.formattedRemark;
+
+          if (sameUuid && samePbk && sameSni && samePort && sameAddress && sameRemark) {
+            status = "unchanged";
+            unchanged.push(up);
           } else {
-            status = "added";
-            changeDesc = "Новый сервер";
-            added.push(up);
+            status = "modified";
+            const changes = [];
+            if (!sameRemark) changes.push(`Имя: ${curr.remark} → ${up.formattedRemark}`);
+            if (!sameAddress) changes.push(`Адрес: ${curr.address} → ${up.address}`);
+            if (!samePort) changes.push(`Порт: ${curr.port} → ${up.port}`);
+            if (!sameUuid) changes.push("UUID");
+            if (!samePbk) changes.push("Reality PBK");
+            if (!sameSni) changes.push("SNI");
+            changeDesc = `Изменено: ${changes.join(", ")}`;
+            modified.push({ ...up, changeDesc });
           }
+        } else {
+          status = "added";
+          changeDesc = "Новый сервер";
+          added.push(up);
+        }
 
-          return { ...up, status, changeDesc };
+        return { ...up, status, changeDesc };
+      });
+
+      const removed = currentItems
+        .map((item, idx) => {
+          if (usedCurrentIndices.has(idx)) return null;
+          return {
+            ...item,
+            formattedRemark: item.remark,
+            status: "removed",
+            changeDesc: "Удален в источнике",
+          };
         })
         .filter(Boolean);
-
-      const removed = Array.from(currentMap.values()).map((item) => ({
-        ...item,
-        formattedRemark: item.remark,
-        status: "removed",
-        changeDesc: "Удален в источнике",
-      }));
 
       // Формируем готовый TXT
       const updatedUrls = processedUpstream.map((item) => {
