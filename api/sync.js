@@ -229,6 +229,16 @@ function formatBackupRemark(originalRemark, countryCounters) {
   let rem = (originalRemark || "").trim();
   try { rem = decodeURIComponent(rem); } catch {}
 
+  const lower = rem.toLowerCase();
+
+  // Если сервер из источника CYBERPORTAL
+  if (lower.includes("cyberportal")) {
+    const countKey = "🇷🇺_Сервер";
+    countryCounters[countKey] = (countryCounters[countKey] || 0) + 1;
+    const num = countryCounters[countKey];
+    return `🇷🇺 🛡️ Резервный обход (Сервер #${num})`;
+  }
+
   const flagMatch = rem.match(/^([\uD83C][\uDDE6-\uDDFF]){2}/);
   let flag = flagMatch ? flagMatch[0] : "";
 
@@ -236,11 +246,11 @@ function formatBackupRemark(originalRemark, countryCounters) {
   if (flag) text = text.slice(flag.length).trim();
   text = text.replace(/—?\s*#\d+.*$/i, "").trim();
 
-  const lower = text.toLowerCase();
+  const lowerText = text.toLowerCase();
   let countryName = "Сервер";
 
   for (const [key, val] of Object.entries(backupCountryMap)) {
-    if (lower === key || lower.includes(key)) {
+    if (lowerText === key || lowerText.includes(key)) {
       if (!flag) flag = val.flag;
       countryName = val.name;
       break;
@@ -589,7 +599,7 @@ export default async function handler(req, res) {
     try {
       const { upstreamUrl, backupUrl, customHeaders } = req.body || {};
       const targetUrl = (upstreamUrl || "").trim() || "https://sub.medoed.store/4hokxg5sBXqNRXnL";
-      const targetBackupUrl = (backupUrl !== undefined ? backupUrl : "https://raw.githubusercontent.com/zieng2/wl/refs/heads/main/vless_universal.txt").trim();
+      const targetBackupUrl = (backupUrl !== undefined ? backupUrl : "https://raw.githubusercontent.com/whoahaow/rjsxrd/refs/heads/main/githubmirror/bypass/bypass-all.txt").trim();
 
       const headers = {
         "User-Agent": "Happ/3.3.6/Windows/2607171516500",
@@ -661,6 +671,11 @@ export default async function handler(req, res) {
         } catch (e) {
           console.error("Backup fetch failed:", e.message);
         }
+      }
+
+      // Фильтруем: извлекаем только конфигурации CYBERPORTAL
+      if (backupItems.some((b) => /cyberportal/i.test(b.remark || "") || /cyberportal/i.test(b.url || ""))) {
+        backupItems = backupItems.filter((b) => /cyberportal/i.test(b.remark || "") || /cyberportal/i.test(b.url || ""));
       }
 
       if (!upstreamItems.length && !backupItems.length) {
@@ -1218,9 +1233,9 @@ export default async function handler(req, res) {
     <div>
       <div class="source-label" style="margin-bottom: 8px;">
         <span style="font-weight: 700; color: #a78bfa;">Резервный источник (GitHub):</span>
-        <span style="color: var(--text-muted); font-size: 11px;">Резервные обходы блокировок (vless_universal.txt)</span>
+        <span style="color: var(--text-muted); font-size: 11px;">Резервные обходы блокировок (CYBERPORTAL)</span>
       </div>
-      <input type="text" id="backupUrl" class="source-input" style="width: 100%; box-sizing: border-box;" value="https://raw.githubusercontent.com/zieng2/wl/refs/heads/main/vless_universal.txt" placeholder="https://raw.githubusercontent.com/.../vless_universal.txt">
+      <input type="text" id="backupUrl" class="source-input" style="width: 100%; box-sizing: border-box;" value="https://raw.githubusercontent.com/whoahaow/rjsxrd/refs/heads/main/githubmirror/bypass/bypass-all.txt" placeholder="https://raw.githubusercontent.com/.../bypass-all.txt">
     </div>
 
     <div style="display: flex; justify-content: flex-end; margin-top: 4px;">
