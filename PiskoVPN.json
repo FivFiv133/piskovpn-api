@@ -1241,790 +1241,6 @@
       "rules": [
         {
           "type": "field",
-          "domain": [
-            "full:common.dot.dns.yandex.net"
-          ],
-          "outboundTag": "direct"
-        },
-        {
-          "type": "field",
-          "inboundTag": [
-            "medoed-pilot-dns"
-          ],
-          "ip": [
-            "77.88.8.8",
-            "77.88.8.1"
-          ],
-          "port": "53,443",
-          "outboundTag": "direct"
-        },
-        {
-          "type": "field",
-          "inboundTag": [
-            "medoed-pilot-dns"
-          ],
-          "ip": [
-            "1.1.1.1",
-            "1.0.0.1"
-          ],
-          "port": "53,443",
-          "outboundTag": "proxy"
-        },
-        {
-          "type": "field",
-          "port": "53",
-          "outboundTag": "medoed-pilot-dns-out"
-        },
-        {
-          "type": "field",
-          "domain": [
-            "domain:telegram.org",
-            "domain:telegram.me",
-            "domain:t.me",
-            "domain:telegra.ph",
-            "domain:telesco.pe",
-            "domain:telegram-cdn.org",
-            "domain:cdn-telegram.org"
-          ],
-          "outboundTag": "proxy"
-        },
-        {
-          "type": "field",
-          "ip": [
-            "149.154.160.0/20",
-            "91.108.4.0/22",
-            "91.108.8.0/22",
-            "91.108.12.0/22",
-            "91.108.16.0/22",
-            "91.108.56.0/22",
-            "91.105.192.0/23",
-            "185.76.151.0/24"
-          ],
-          "outboundTag": "proxy"
-        },
-        {
-          "type": "field",
-          "domain": [
-            "domain:ru",
-            "domain:xn--p1ai",
-            "domain:lemana.pro",
-            "domain:kwork.com",
-            "domain:gosuslugi.ru",
-            "domain:gov.ru",
-            "domain:nalog.ru",
-            "domain:mos.ru",
-            "domain:mosreg.ru",
-            "domain:umias.ru",
-            "domain:pfrf.ru",
-            "domain:sberbank.ru",
-            "domain:sber.ru",
-            "domain:sberbank.com",
-            "domain:sberbankonline.ru",
-            "domain:domclick.ru",
-            "domain:vtb.ru",
-            "domain:alfabank.ru",
-            "domain:alfa-bank.ru",
-            "domain:tbank.ru",
-            "domain:tinkoff.ru",
-            "domain:tinkoffbank.ru",
-            "domain:tinkoffcdn.ru",
-            "domain:cdn-tinkoff.ru",
-            "domain:tbank-online.com",
-            "domain:gazprombank.ru",
-            "domain:rshb.ru",
-            "domain:psbank.ru",
-            "domain:sovcombank.ru",
-            "domain:rosbank.ru",
-            "domain:raiffeisen.ru",
-            "domain:otpbank.ru",
-            "domain:pochtabank.ru",
-            "domain:homecredit.ru",
-            "domain:nspk.ru",
-            "domain:mironline.ru",
-            "domain:ozon.ru",
-            "domain:ozonstatic.ru",
-            "domain:ozonusercontent.com",
-            "domain:wildberries.ru",
-            "domain:wildberries.net",
-            "domain:wb.ru",
-            "domain:wbbasket.ru",
-            "domain:wbstatic.net",
-            "domain:avito.ru",
-            "domain:avito.st",
-            "domain:rzd.ru",
-            "domain:pochta.ru",
-            "domain:pochta.com",
-            "domain:cdek.ru",
-            "domain:smartcaptcha.yandexcloud.net",
-            "domain:smartcaptcha.cloud.yandex.ru",
-            "domain:yandex.net",
-            "domain:yandex.com",
-            "domain:yastatic.net"
-          ],
-          "outboundTag": "medoed-pilot-direct"
-        },
-        {
-          "type": "field",
-          "protocol": [
-            "bittorrent"
-          ],
-          "outboundTag": "direct"
-        }
-      ],
-      "domainMatcher": "hybrid",
-      "domainStrategy": "AsIs"
-    },
-    "inbounds": [
-      {
-        "tag": "socks",
-        "port": 10808,
-        "listen": "127.0.0.1",
-        "protocol": "socks",
-        "settings": {
-          "udp": true,
-          "auth": "noauth"
-        },
-        "sniffing": {
-          "enabled": true,
-          "routeOnly": false,
-          "destOverride": [
-            "http",
-            "tls",
-            "quic"
-          ]
-        }
-      },
-      {
-        "tag": "http",
-        "port": 10809,
-        "listen": "127.0.0.1",
-        "protocol": "http",
-        "settings": {
-          "allowTransparent": false
-        },
-        "sniffing": {
-          "enabled": true,
-          "routeOnly": false,
-          "destOverride": [
-            "http",
-            "tls",
-            "quic"
-          ]
-        }
-      }
-    ],
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "188.72.112.1",
-              "port": 443,
-              "users": [
-                {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
-                  "encryption": "none",
-                  "flow": ""
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "xhttpSettings": {
-            "mode": "packet-up",
-            "host": "yc-de-01.vesbenztyt.space",
-            "path": "/assets/js/chunk-07a061c79082/",
-            "extra": {
-              "host": "yc-de-01.vesbenztyt.space",
-              "seqKey": "chunk_id",
-              "sessionKey": "X-Upload-Token",
-              "xPaddingKey": "hash",
-              "seqPlacement": "query",
-              "sessionIDKey": "X-Upload-Token",
-              "uplinkDataKey": "X-Data",
-              "xPaddingBytes": "100-200",
-              "xPaddingHeader": "X-Client-Version",
-              "xPaddingMethod": "tokenish",
-              "uplinkChunkSize": 2000,
-              "sessionPlacement": "header",
-              "uplinkHTTPMethod": "GET",
-              "xPaddingObfsMode": true,
-              "xPaddingPlacement": "queryInHeader",
-              "scMaxEachPostBytes": 32769,
-              "sessionIDPlacement": "header",
-              "uplinkDataPlacement": "header",
-              "scMinPostsIntervalMs": 100
-            }
-          },
-          "security": "tls",
-          "tlsSettings": {
-            "serverName": "yc-de-01.vesbenztyt.space",
-            "fingerprint": "firefox",
-            "alpn": [
-              "h2",
-              "http/1.1"
-            ]
-          }
-        }
-      },
-      {
-        "tag": "direct",
-        "protocol": "freedom"
-      },
-      {
-        "tag": "block",
-        "protocol": "blackhole"
-      },
-      {
-        "tag": "medoed-pilot-dns-out",
-        "protocol": "dns",
-        "settings": {}
-      },
-      {
-        "tag": "medoed-pilot-direct",
-        "protocol": "freedom",
-        "settings": {
-          "domainStrategy": "UseIPv4"
-        }
-      }
-    ],
-    "remarks": "🇩🇪 🛡️ Обход белых списков (Германия #4)"
-  },
-  {
-    "dns": {
-      "servers": [
-        {
-          "address": "https://common.dot.dns.yandex.net/dns-query",
-          "domains": [
-            "domain:ru",
-            "domain:xn--p1ai",
-            "domain:lemana.pro",
-            "domain:kwork.com",
-            "domain:gosuslugi.ru",
-            "domain:gov.ru",
-            "domain:nalog.ru",
-            "domain:mos.ru",
-            "domain:mosreg.ru",
-            "domain:umias.ru",
-            "domain:pfrf.ru",
-            "domain:sberbank.ru",
-            "domain:sber.ru",
-            "domain:sberbank.com",
-            "domain:sberbankonline.ru",
-            "domain:domclick.ru",
-            "domain:vtb.ru",
-            "domain:alfabank.ru",
-            "domain:alfa-bank.ru",
-            "domain:tbank.ru",
-            "domain:tinkoff.ru",
-            "domain:tinkoffbank.ru",
-            "domain:tinkoffcdn.ru",
-            "domain:cdn-tinkoff.ru",
-            "domain:tbank-online.com",
-            "domain:gazprombank.ru",
-            "domain:rshb.ru",
-            "domain:psbank.ru",
-            "domain:sovcombank.ru",
-            "domain:rosbank.ru",
-            "domain:raiffeisen.ru",
-            "domain:otpbank.ru",
-            "domain:pochtabank.ru",
-            "domain:homecredit.ru",
-            "domain:nspk.ru",
-            "domain:mironline.ru",
-            "domain:ozon.ru",
-            "domain:ozonstatic.ru",
-            "domain:ozonusercontent.com",
-            "domain:wildberries.ru",
-            "domain:wildberries.net",
-            "domain:wb.ru",
-            "domain:wbbasket.ru",
-            "domain:wbstatic.net",
-            "domain:avito.ru",
-            "domain:avito.st",
-            "domain:rzd.ru",
-            "domain:pochta.ru",
-            "domain:pochta.com",
-            "domain:cdek.ru",
-            "domain:smartcaptcha.yandexcloud.net",
-            "domain:smartcaptcha.cloud.yandex.ru",
-            "domain:yandex.net",
-            "domain:yandex.com",
-            "domain:yastatic.net"
-          ],
-          "skipFallback": true
-        },
-        {
-          "address": "77.88.8.1",
-          "domains": [
-            "domain:ru",
-            "domain:xn--p1ai",
-            "domain:lemana.pro",
-            "domain:kwork.com",
-            "domain:gosuslugi.ru",
-            "domain:gov.ru",
-            "domain:nalog.ru",
-            "domain:mos.ru",
-            "domain:mosreg.ru",
-            "domain:umias.ru",
-            "domain:pfrf.ru",
-            "domain:sberbank.ru",
-            "domain:sber.ru",
-            "domain:sberbank.com",
-            "domain:sberbankonline.ru",
-            "domain:domclick.ru",
-            "domain:vtb.ru",
-            "domain:alfabank.ru",
-            "domain:alfa-bank.ru",
-            "domain:tbank.ru",
-            "domain:tinkoff.ru",
-            "domain:tinkoffbank.ru",
-            "domain:tinkoffcdn.ru",
-            "domain:cdn-tinkoff.ru",
-            "domain:tbank-online.com",
-            "domain:gazprombank.ru",
-            "domain:rshb.ru",
-            "domain:psbank.ru",
-            "domain:sovcombank.ru",
-            "domain:rosbank.ru",
-            "domain:raiffeisen.ru",
-            "domain:otpbank.ru",
-            "domain:pochtabank.ru",
-            "domain:homecredit.ru",
-            "domain:nspk.ru",
-            "domain:mironline.ru",
-            "domain:ozon.ru",
-            "domain:ozonstatic.ru",
-            "domain:ozonusercontent.com",
-            "domain:wildberries.ru",
-            "domain:wildberries.net",
-            "domain:wb.ru",
-            "domain:wbbasket.ru",
-            "domain:wbstatic.net",
-            "domain:avito.ru",
-            "domain:avito.st",
-            "domain:rzd.ru",
-            "domain:pochta.ru",
-            "domain:pochta.com",
-            "domain:cdek.ru",
-            "domain:smartcaptcha.yandexcloud.net",
-            "domain:smartcaptcha.cloud.yandex.ru",
-            "domain:yandex.net",
-            "domain:yandex.com",
-            "domain:yastatic.net"
-          ],
-          "skipFallback": true
-        },
-        "https://1.1.1.1/dns-query",
-        "https://1.0.0.1/dns-query"
-      ],
-      "queryStrategy": "UseIPv4",
-      "hosts": {
-        "common.dot.dns.yandex.net": "77.88.8.8"
-      },
-      "tag": "medoed-pilot-dns",
-      "disableFallbackIfMatch": true
-    },
-    "routing": {
-      "rules": [
-        {
-          "type": "field",
-          "domain": [
-            "full:common.dot.dns.yandex.net"
-          ],
-          "outboundTag": "direct"
-        },
-        {
-          "type": "field",
-          "inboundTag": [
-            "medoed-pilot-dns"
-          ],
-          "ip": [
-            "77.88.8.8",
-            "77.88.8.1"
-          ],
-          "port": "53,443",
-          "outboundTag": "direct"
-        },
-        {
-          "type": "field",
-          "inboundTag": [
-            "medoed-pilot-dns"
-          ],
-          "ip": [
-            "1.1.1.1",
-            "1.0.0.1"
-          ],
-          "port": "53,443",
-          "outboundTag": "proxy"
-        },
-        {
-          "type": "field",
-          "port": "53",
-          "outboundTag": "medoed-pilot-dns-out"
-        },
-        {
-          "type": "field",
-          "domain": [
-            "domain:telegram.org",
-            "domain:telegram.me",
-            "domain:t.me",
-            "domain:telegra.ph",
-            "domain:telesco.pe",
-            "domain:telegram-cdn.org",
-            "domain:cdn-telegram.org"
-          ],
-          "outboundTag": "proxy"
-        },
-        {
-          "type": "field",
-          "ip": [
-            "149.154.160.0/20",
-            "91.108.4.0/22",
-            "91.108.8.0/22",
-            "91.108.12.0/22",
-            "91.108.16.0/22",
-            "91.108.56.0/22",
-            "91.105.192.0/23",
-            "185.76.151.0/24"
-          ],
-          "outboundTag": "proxy"
-        },
-        {
-          "type": "field",
-          "domain": [
-            "domain:ru",
-            "domain:xn--p1ai",
-            "domain:lemana.pro",
-            "domain:kwork.com",
-            "domain:gosuslugi.ru",
-            "domain:gov.ru",
-            "domain:nalog.ru",
-            "domain:mos.ru",
-            "domain:mosreg.ru",
-            "domain:umias.ru",
-            "domain:pfrf.ru",
-            "domain:sberbank.ru",
-            "domain:sber.ru",
-            "domain:sberbank.com",
-            "domain:sberbankonline.ru",
-            "domain:domclick.ru",
-            "domain:vtb.ru",
-            "domain:alfabank.ru",
-            "domain:alfa-bank.ru",
-            "domain:tbank.ru",
-            "domain:tinkoff.ru",
-            "domain:tinkoffbank.ru",
-            "domain:tinkoffcdn.ru",
-            "domain:cdn-tinkoff.ru",
-            "domain:tbank-online.com",
-            "domain:gazprombank.ru",
-            "domain:rshb.ru",
-            "domain:psbank.ru",
-            "domain:sovcombank.ru",
-            "domain:rosbank.ru",
-            "domain:raiffeisen.ru",
-            "domain:otpbank.ru",
-            "domain:pochtabank.ru",
-            "domain:homecredit.ru",
-            "domain:nspk.ru",
-            "domain:mironline.ru",
-            "domain:ozon.ru",
-            "domain:ozonstatic.ru",
-            "domain:ozonusercontent.com",
-            "domain:wildberries.ru",
-            "domain:wildberries.net",
-            "domain:wb.ru",
-            "domain:wbbasket.ru",
-            "domain:wbstatic.net",
-            "domain:avito.ru",
-            "domain:avito.st",
-            "domain:rzd.ru",
-            "domain:pochta.ru",
-            "domain:pochta.com",
-            "domain:cdek.ru",
-            "domain:smartcaptcha.yandexcloud.net",
-            "domain:smartcaptcha.cloud.yandex.ru",
-            "domain:yandex.net",
-            "domain:yandex.com",
-            "domain:yastatic.net"
-          ],
-          "outboundTag": "medoed-pilot-direct"
-        },
-        {
-          "type": "field",
-          "protocol": [
-            "bittorrent"
-          ],
-          "outboundTag": "direct"
-        }
-      ],
-      "domainMatcher": "hybrid",
-      "domainStrategy": "AsIs"
-    },
-    "inbounds": [
-      {
-        "tag": "socks",
-        "port": 10808,
-        "listen": "127.0.0.1",
-        "protocol": "socks",
-        "settings": {
-          "udp": true,
-          "auth": "noauth"
-        },
-        "sniffing": {
-          "enabled": true,
-          "routeOnly": false,
-          "destOverride": [
-            "http",
-            "tls",
-            "quic"
-          ]
-        }
-      },
-      {
-        "tag": "http",
-        "port": 10809,
-        "listen": "127.0.0.1",
-        "protocol": "http",
-        "settings": {
-          "allowTransparent": false
-        },
-        "sniffing": {
-          "enabled": true,
-          "routeOnly": false,
-          "destOverride": [
-            "http",
-            "tls",
-            "quic"
-          ]
-        }
-      }
-    ],
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "188.72.112.1",
-              "port": 443,
-              "users": [
-                {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
-                  "encryption": "none",
-                  "flow": ""
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "xhttpSettings": {
-            "mode": "packet-up",
-            "host": "yc-de-03.vesbenztyt.space",
-            "path": "/assets/js/chunk-07a061c79082/",
-            "extra": {
-              "host": "yc-de-03.vesbenztyt.space",
-              "seqKey": "chunk_id",
-              "sessionKey": "X-Upload-Token",
-              "xPaddingKey": "hash",
-              "seqPlacement": "query",
-              "sessionIDKey": "X-Upload-Token",
-              "uplinkDataKey": "X-Data",
-              "xPaddingBytes": "100-200",
-              "xPaddingHeader": "X-Client-Version",
-              "xPaddingMethod": "tokenish",
-              "uplinkChunkSize": 2000,
-              "sessionPlacement": "header",
-              "uplinkHTTPMethod": "GET",
-              "xPaddingObfsMode": true,
-              "xPaddingPlacement": "queryInHeader",
-              "scMaxEachPostBytes": 32769,
-              "sessionIDPlacement": "header",
-              "uplinkDataPlacement": "header",
-              "scMinPostsIntervalMs": 100
-            }
-          },
-          "security": "tls",
-          "tlsSettings": {
-            "serverName": "yc-de-03.vesbenztyt.space",
-            "fingerprint": "edge",
-            "alpn": [
-              "h2",
-              "http/1.1"
-            ]
-          }
-        }
-      },
-      {
-        "tag": "direct",
-        "protocol": "freedom"
-      },
-      {
-        "tag": "block",
-        "protocol": "blackhole"
-      },
-      {
-        "tag": "medoed-pilot-dns-out",
-        "protocol": "dns",
-        "settings": {}
-      },
-      {
-        "tag": "medoed-pilot-direct",
-        "protocol": "freedom",
-        "settings": {
-          "domainStrategy": "UseIPv4"
-        }
-      }
-    ],
-    "remarks": "🇩🇪 🛡️ Обход белых списков (Германия #5)"
-  },
-  {
-    "dns": {
-      "servers": [
-        {
-          "address": "https://common.dot.dns.yandex.net/dns-query",
-          "domains": [
-            "domain:ru",
-            "domain:xn--p1ai",
-            "domain:lemana.pro",
-            "domain:kwork.com",
-            "domain:gosuslugi.ru",
-            "domain:gov.ru",
-            "domain:nalog.ru",
-            "domain:mos.ru",
-            "domain:mosreg.ru",
-            "domain:umias.ru",
-            "domain:pfrf.ru",
-            "domain:sberbank.ru",
-            "domain:sber.ru",
-            "domain:sberbank.com",
-            "domain:sberbankonline.ru",
-            "domain:domclick.ru",
-            "domain:vtb.ru",
-            "domain:alfabank.ru",
-            "domain:alfa-bank.ru",
-            "domain:tbank.ru",
-            "domain:tinkoff.ru",
-            "domain:tinkoffbank.ru",
-            "domain:tinkoffcdn.ru",
-            "domain:cdn-tinkoff.ru",
-            "domain:tbank-online.com",
-            "domain:gazprombank.ru",
-            "domain:rshb.ru",
-            "domain:psbank.ru",
-            "domain:sovcombank.ru",
-            "domain:rosbank.ru",
-            "domain:raiffeisen.ru",
-            "domain:otpbank.ru",
-            "domain:pochtabank.ru",
-            "domain:homecredit.ru",
-            "domain:nspk.ru",
-            "domain:mironline.ru",
-            "domain:ozon.ru",
-            "domain:ozonstatic.ru",
-            "domain:ozonusercontent.com",
-            "domain:wildberries.ru",
-            "domain:wildberries.net",
-            "domain:wb.ru",
-            "domain:wbbasket.ru",
-            "domain:wbstatic.net",
-            "domain:avito.ru",
-            "domain:avito.st",
-            "domain:rzd.ru",
-            "domain:pochta.ru",
-            "domain:pochta.com",
-            "domain:cdek.ru",
-            "domain:smartcaptcha.yandexcloud.net",
-            "domain:smartcaptcha.cloud.yandex.ru",
-            "domain:yandex.net",
-            "domain:yandex.com",
-            "domain:yastatic.net"
-          ],
-          "skipFallback": true
-        },
-        {
-          "address": "77.88.8.1",
-          "domains": [
-            "domain:ru",
-            "domain:xn--p1ai",
-            "domain:lemana.pro",
-            "domain:kwork.com",
-            "domain:gosuslugi.ru",
-            "domain:gov.ru",
-            "domain:nalog.ru",
-            "domain:mos.ru",
-            "domain:mosreg.ru",
-            "domain:umias.ru",
-            "domain:pfrf.ru",
-            "domain:sberbank.ru",
-            "domain:sber.ru",
-            "domain:sberbank.com",
-            "domain:sberbankonline.ru",
-            "domain:domclick.ru",
-            "domain:vtb.ru",
-            "domain:alfabank.ru",
-            "domain:alfa-bank.ru",
-            "domain:tbank.ru",
-            "domain:tinkoff.ru",
-            "domain:tinkoffbank.ru",
-            "domain:tinkoffcdn.ru",
-            "domain:cdn-tinkoff.ru",
-            "domain:tbank-online.com",
-            "domain:gazprombank.ru",
-            "domain:rshb.ru",
-            "domain:psbank.ru",
-            "domain:sovcombank.ru",
-            "domain:rosbank.ru",
-            "domain:raiffeisen.ru",
-            "domain:otpbank.ru",
-            "domain:pochtabank.ru",
-            "domain:homecredit.ru",
-            "domain:nspk.ru",
-            "domain:mironline.ru",
-            "domain:ozon.ru",
-            "domain:ozonstatic.ru",
-            "domain:ozonusercontent.com",
-            "domain:wildberries.ru",
-            "domain:wildberries.net",
-            "domain:wb.ru",
-            "domain:wbbasket.ru",
-            "domain:wbstatic.net",
-            "domain:avito.ru",
-            "domain:avito.st",
-            "domain:rzd.ru",
-            "domain:pochta.ru",
-            "domain:pochta.com",
-            "domain:cdek.ru",
-            "domain:smartcaptcha.yandexcloud.net",
-            "domain:smartcaptcha.cloud.yandex.ru",
-            "domain:yandex.net",
-            "domain:yandex.com",
-            "domain:yastatic.net"
-          ],
-          "skipFallback": true
-        },
-        "https://1.1.1.1/dns-query",
-        "https://1.0.0.1/dns-query"
-      ],
-      "queryStrategy": "UseIPv4",
-      "hosts": {
-        "common.dot.dns.yandex.net": "77.88.8.8"
-      },
-      "tag": "medoed-pilot-dns",
-      "disableFallbackIfMatch": true
-    },
-    "routing": {
-      "rules": [
-        {
-          "type": "field",
           "inboundTag": [
             "auto-bootstrap"
           ],
@@ -2183,32 +1399,11 @@
           "selector": [
             "proxy-1-end",
             "proxy-2-end",
-            "proxy-3-end",
-            "proxy-4-end",
-            "proxy-5-end",
-            "proxy-6-end",
-            "proxy-7-end",
-            "proxy-12-end",
-            "proxy-13-end",
-            "proxy-14-end",
             "proxy-16-end",
-            "proxy-17-end",
             "proxy-21-end",
-            "proxy-26-end",
-            "proxy-27-end",
-            "proxy-28-end",
             "proxy-35-end",
             "proxy-36-end",
-            "proxy-37-end",
-            "proxy-38-end",
-            "proxy-40-end",
-            "proxy-41-end",
-            "proxy-42-end",
-            "proxy-44-end",
-            "proxy-45-end",
-            "proxy-46-end",
-            "proxy-47-end",
-            "proxy-48-end"
+            "proxy-37-end"
           ],
           "strategy": {
             "type": "roundRobin"
@@ -2284,7 +1479,7 @@
           "realitySettings": {
             "serverName": "cdn1.medoed.store",
             "publicKey": "xG_3hrmCx40pqD6Wh_2bQgmC8nvdjCx-l6HJnEcL6AI",
-            "shortId": "2bae290ee8b71973",
+            "shortId": "95bea85c7d777c1e",
             "fingerprint": "firefox"
           }
         }
@@ -2314,7 +1509,7 @@
           "realitySettings": {
             "serverName": "cdn1.medoed.store",
             "publicKey": "xG_3hrmCx40pqD6Wh_2bQgmC8nvdjCx-l6HJnEcL6AI",
-            "shortId": "da6635db58964a27",
+            "shortId": "b4f2b5ab63691bd4",
             "fingerprint": "firefox"
           }
         }
@@ -2344,7 +1539,7 @@
           "realitySettings": {
             "serverName": "cdn1.medoed.store",
             "publicKey": "xG_3hrmCx40pqD6Wh_2bQgmC8nvdjCx-l6HJnEcL6AI",
-            "shortId": "da6635db58964a27",
+            "shortId": "2bae290ee8b71973",
             "fingerprint": "firefox"
           }
         }
@@ -2375,7 +1570,7 @@
             "serverName": "pixel.cdntrahatel.store",
             "publicKey": "ZIAN68JiqOEthSx8jz6bAS920eWNw4thArzSNt6NpC8",
             "shortId": "90871d77a4cf3339",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -2435,7 +1630,7 @@
             "serverName": "pixel.cdntrahatel.store",
             "publicKey": "ZIAN68JiqOEthSx8jz6bAS920eWNw4thArzSNt6NpC8",
             "shortId": "90871d77a4cf3339",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -2945,7 +2140,7 @@
             "serverName": "www.apple.com",
             "publicKey": "ZeeprI4YWoCK7OM-33zahvYqQfS4ryldCZ1Ao2nYu08",
             "shortId": "d53f33b9f02b2917",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -2975,7 +2170,7 @@
             "serverName": "www.apple.com",
             "publicKey": "ZeeprI4YWoCK7OM-33zahvYqQfS4ryldCZ1Ao2nYu08",
             "shortId": "d53f33b9f02b2917",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -3005,7 +2200,7 @@
             "serverName": "www.apple.com",
             "publicKey": "ZeeprI4YWoCK7OM-33zahvYqQfS4ryldCZ1Ao2nYu08",
             "shortId": "d53f33b9f02b2917",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -3035,7 +2230,7 @@
             "serverName": "www.apple.com",
             "publicKey": "ZeeprI4YWoCK7OM-33zahvYqQfS4ryldCZ1Ao2nYu08",
             "shortId": "d53f33b9f02b2917",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -3095,7 +2290,7 @@
             "serverName": "swift.cdntrahatel.store",
             "publicKey": "s7UsUFB9xZK3mpB_aSNrj2yr0-u9KpkiG2FaijeU8Wk",
             "shortId": "6fc3cd051b2b1b64",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -3125,7 +2320,7 @@
             "serverName": "swift.cdntrahatel.store",
             "publicKey": "s7UsUFB9xZK3mpB_aSNrj2yr0-u9KpkiG2FaijeU8Wk",
             "shortId": "6fc3cd051b2b1b64",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -3364,7 +2559,7 @@
           "realitySettings": {
             "serverName": "cdn1.medoed.store",
             "publicKey": "xG_3hrmCx40pqD6Wh_2bQgmC8nvdjCx-l6HJnEcL6AI",
-            "shortId": "95bea85c7d777c1e",
+            "shortId": "b4f2b5ab63691bd4",
             "fingerprint": "firefox"
           }
         }
@@ -3455,7 +2650,7 @@
             "serverName": "pixel.cdntrahatel.store",
             "publicKey": "ZIAN68JiqOEthSx8jz6bAS920eWNw4thArzSNt6NpC8",
             "shortId": "90871d77a4cf3339",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -3485,7 +2680,7 @@
             "serverName": "pixel.cdntrahatel.store",
             "publicKey": "ZIAN68JiqOEthSx8jz6bAS920eWNw4thArzSNt6NpC8",
             "shortId": "90871d77a4cf3339",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -3515,7 +2710,7 @@
             "serverName": "pixel.cdntrahatel.store",
             "publicKey": "ZIAN68JiqOEthSx8jz6bAS920eWNw4thArzSNt6NpC8",
             "shortId": "90871d77a4cf3339",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -3545,7 +2740,7 @@
             "serverName": "pixel.cdntrahatel.store",
             "publicKey": "ZIAN68JiqOEthSx8jz6bAS920eWNw4thArzSNt6NpC8",
             "shortId": "90871d77a4cf3339",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -3574,7 +2769,7 @@
           "realitySettings": {
             "serverName": "cdn1.medoed.store",
             "publicKey": "xG_3hrmCx40pqD6Wh_2bQgmC8nvdjCx-l6HJnEcL6AI",
-            "shortId": "da6635db58964a27",
+            "shortId": "95bea85c7d777c1e",
             "fingerprint": "firefox"
           }
         }
@@ -3605,7 +2800,7 @@
             "serverName": "swift.cdntrahatel.store",
             "publicKey": "s7UsUFB9xZK3mpB_aSNrj2yr0-u9KpkiG2FaijeU8Wk",
             "shortId": "6fc3cd051b2b1b64",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -3635,7 +2830,7 @@
             "serverName": "swift.cdntrahatel.store",
             "publicKey": "s7UsUFB9xZK3mpB_aSNrj2yr0-u9KpkiG2FaijeU8Wk",
             "shortId": "6fc3cd051b2b1b64",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -3665,7 +2860,7 @@
             "serverName": "swift.cdntrahatel.store",
             "publicKey": "s7UsUFB9xZK3mpB_aSNrj2yr0-u9KpkiG2FaijeU8Wk",
             "shortId": "6fc3cd051b2b1b64",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -3695,7 +2890,7 @@
             "serverName": "swift.cdntrahatel.store",
             "publicKey": "s7UsUFB9xZK3mpB_aSNrj2yr0-u9KpkiG2FaijeU8Wk",
             "shortId": "6fc3cd051b2b1b64",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -3725,7 +2920,37 @@
             "serverName": "swift.cdntrahatel.store",
             "publicKey": "s7UsUFB9xZK3mpB_aSNrj2yr0-u9KpkiG2FaijeU8Wk",
             "shortId": "6fc3cd051b2b1b64",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
+          }
+        }
+      },
+      {
+        "tag": "proxy-49-end",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "154.86.119.61",
+              "port": 47444,
+              "users": [
+                {
+                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision"
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "tcp",
+          "tcpSettings": {},
+          "security": "reality",
+          "realitySettings": {
+            "serverName": "pixel.cdntrahatel.store",
+            "publicKey": "ZIAN68JiqOEthSx8jz6bAS920eWNw4thArzSNt6NpC8",
+            "shortId": "90871d77a4cf3339",
+            "fingerprint": "firefox"
           }
         }
       },
@@ -3758,7 +2983,7 @@
       }
     ],
     "observatory": {
-      "probeUrl": "https://turboeasy.ru/s-happ-auto/_pool_health?pool=master-auto-json&client=5390bca208705f8719f2cb493d1f3ddd&hosts=8ff2e4e9-f590-45aa-9152-1fb53e9eb695%2C2b5b779c-74aa-42df-98ef-195503b36dc2%2C87fb7218-2519-4401-8909-dc37f6586447%2C237ef10a-bbb3-4698-9995-3f2265549041%2C7ba1bff8-b7f0-46fa-bce0-4a0e888b3bfa%2C489ffc1b-a998-44aa-937e-d0441fb7f793%2Cc86105cd-640d-42de-b56c-6bbc5f576273%2Ce3d6801b-8d9d-4a26-bc80-493efd2aba19%2Cf867dce4-3251-4eb2-bb7c-a1c4858e9996%2C86e8dce6-9818-480e-ab99-dd5e8896f28d%2C6a63d187-40c9-40db-a773-1e965fbe9cf1%2C811c8ec0-6e14-4d8c-9ebd-0ebe48881941%2C589f4331-e67d-4f00-b695-0bed9192a0ff%2C3f1f4d5c-ae1e-4cad-9743-59ea1529a876%2Cbd4da961-1ae2-4389-b883-00d7bab4edc1%2Cee800d04-9dcb-4409-b613-85b3312773ac%2Ca6fa97b6-4157-44ea-a68c-4b5a569cb7f6%2C7f9f395b-abdf-4e50-bd8f-82bf92beea7b%2C7fa0dd9f-cc50-47dd-9022-4ea6c7dd51af%2Cbcb35b6d-5b2e-4ac8-8a88-bb28725de149%2C35c28a75-3438-4c5e-bdff-dcca395d520b%2C0d728036-0e40-4802-9a7c-d6b69f903c3a%2Cea502d3a-6dd5-490a-8d15-85e3920fa42f%2Cfad79920-c3a9-417f-89df-4ac70f4f41d6%2C97e78a82-e578-41ad-963b-d0260962ba1a%2C81a743b0-cdd0-4cad-880b-e698d51d025a%2C62347bae-9802-4758-8b5c-03eda1912644%2Cdae17e39-0243-415e-ac19-0b1d41675d4b%2Cdd98c20b-c957-449c-b5e4-3ed791cb7fd8%2C76ab8ce5-8bac-4b8f-8cf3-1bf2a6acad62%2C68deb41a-1c91-4cc9-be02-77e91f8ee99e%2Cf2165e03-927a-41b7-b827-967c9416382a%2C8787b7c8-d144-438e-9b59-6f8c436c747f%2Cb933a4bb-5065-4f8a-afe6-9e7e99b006ee%2C0d745b04-02b1-4ac5-9530-ab11625f6fe6%2C5e08e543-f70b-45f9-97d5-0c156bd1b2ca%2C585c0249-03d4-469f-b2b5-60ed5ee98c22%2Cb06edf48-db30-4f5b-9154-eae7342e4f4e%2C80752d34-ad19-400b-8f6f-dfa7660ef921%2Cde653095-bcc0-49e5-9dbc-43c8f6260041%2C8f17c720-f749-4eb1-af43-586e70096cd0%2C4f5a1f9f-0245-4eb5-94fe-47a2a0b003ed%2Ca1946b66-be18-49dd-b291-9183dee29e60%2Cfc7cc02b-929a-454d-98e3-52af6996d48f%2Cf14dc38d-d810-498a-846e-bf5b2ae55aba%2C4c14036a-4e88-4769-8f2c-a83d5e9ea22d%2Cb2150c30-51f4-4f80-afa7-bd2022ca232b%2C67090cb3-6e51-49bc-9f5d-9818b4df69d6%2C15fc2760-ce6b-4a5e-994d-183a45bafa4c",
+      "probeUrl": "https://turboeasy.ru/s-happ-auto/_pool_health?pool=master-auto-json&client=5390bca208705f8719f2cb493d1f3ddd&hosts=8ff2e4e9-f590-45aa-9152-1fb53e9eb695%2C2b5b779c-74aa-42df-98ef-195503b36dc2%2C87fb7218-2519-4401-8909-dc37f6586447%2C237ef10a-bbb3-4698-9995-3f2265549041%2C7ba1bff8-b7f0-46fa-bce0-4a0e888b3bfa%2C489ffc1b-a998-44aa-937e-d0441fb7f793%2Cc86105cd-640d-42de-b56c-6bbc5f576273%2Ce3d6801b-8d9d-4a26-bc80-493efd2aba19%2Cf867dce4-3251-4eb2-bb7c-a1c4858e9996%2C86e8dce6-9818-480e-ab99-dd5e8896f28d%2C6a63d187-40c9-40db-a773-1e965fbe9cf1%2C811c8ec0-6e14-4d8c-9ebd-0ebe48881941%2C589f4331-e67d-4f00-b695-0bed9192a0ff%2C3f1f4d5c-ae1e-4cad-9743-59ea1529a876%2Cbd4da961-1ae2-4389-b883-00d7bab4edc1%2Cee800d04-9dcb-4409-b613-85b3312773ac%2Ca6fa97b6-4157-44ea-a68c-4b5a569cb7f6%2C7f9f395b-abdf-4e50-bd8f-82bf92beea7b%2C7fa0dd9f-cc50-47dd-9022-4ea6c7dd51af%2Cbcb35b6d-5b2e-4ac8-8a88-bb28725de149%2C35c28a75-3438-4c5e-bdff-dcca395d520b%2C0d728036-0e40-4802-9a7c-d6b69f903c3a%2Cea502d3a-6dd5-490a-8d15-85e3920fa42f%2Cfad79920-c3a9-417f-89df-4ac70f4f41d6%2C97e78a82-e578-41ad-963b-d0260962ba1a%2C81a743b0-cdd0-4cad-880b-e698d51d025a%2C62347bae-9802-4758-8b5c-03eda1912644%2Cdae17e39-0243-415e-ac19-0b1d41675d4b%2Cdd98c20b-c957-449c-b5e4-3ed791cb7fd8%2C76ab8ce5-8bac-4b8f-8cf3-1bf2a6acad62%2C68deb41a-1c91-4cc9-be02-77e91f8ee99e%2Cf2165e03-927a-41b7-b827-967c9416382a%2C8787b7c8-d144-438e-9b59-6f8c436c747f%2Cb933a4bb-5065-4f8a-afe6-9e7e99b006ee%2C0d745b04-02b1-4ac5-9530-ab11625f6fe6%2C5e08e543-f70b-45f9-97d5-0c156bd1b2ca%2C585c0249-03d4-469f-b2b5-60ed5ee98c22%2Cb06edf48-db30-4f5b-9154-eae7342e4f4e%2C80752d34-ad19-400b-8f6f-dfa7660ef921%2Cde653095-bcc0-49e5-9dbc-43c8f6260041%2C8f17c720-f749-4eb1-af43-586e70096cd0%2C4f5a1f9f-0245-4eb5-94fe-47a2a0b003ed%2Ca1946b66-be18-49dd-b291-9183dee29e60%2Cfc7cc02b-929a-454d-98e3-52af6996d48f%2Cf14dc38d-d810-498a-846e-bf5b2ae55aba%2C4c14036a-4e88-4769-8f2c-a83d5e9ea22d%2Cb2150c30-51f4-4f80-afa7-bd2022ca232b%2C67090cb3-6e51-49bc-9f5d-9818b4df69d6%2C15fc2760-ce6b-4a5e-994d-183a45bafa4c%2C33fbb12c-9421-4077-8736-e52cded35478",
       "probeInterval": "30s",
       "subjectSelector": [
         "proxy-"
@@ -4049,9 +3274,7 @@
           "selector": [
             "bypass-auto-1",
             "bypass-auto-2",
-            "bypass-auto-3",
-            "bypass-auto-4",
-            "bypass-auto-5"
+            "bypass-auto-3"
           ],
           "fallbackTag": "proxy",
           "strategy": {
@@ -4059,16 +3282,7 @@
             "settings": {
               "expected": 1,
               "maxRTT": "5s",
-              "costs": [
-                {
-                  "match": "bypass-auto-4",
-                  "value": 100000000
-                },
-                {
-                  "match": "bypass-auto-5",
-                  "value": 100000000
-                }
-              ]
+              "costs": []
             }
           }
         }
@@ -4235,120 +3449,6 @@
         }
       },
       {
-        "tag": "bypass-auto-4",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "188.72.112.1",
-              "port": 443,
-              "users": [
-                {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
-                  "encryption": "none",
-                  "flow": ""
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "xhttpSettings": {
-            "mode": "packet-up",
-            "host": "yc-de-01.vesbenztyt.space",
-            "path": "/assets/js/chunk-07a061c79082/",
-            "extra": {
-              "host": "yc-de-01.vesbenztyt.space",
-              "seqKey": "chunk_id",
-              "sessionKey": "X-Upload-Token",
-              "xPaddingKey": "hash",
-              "seqPlacement": "query",
-              "sessionIDKey": "X-Upload-Token",
-              "uplinkDataKey": "X-Data",
-              "xPaddingBytes": "100-200",
-              "xPaddingHeader": "X-Client-Version",
-              "xPaddingMethod": "tokenish",
-              "uplinkChunkSize": 2000,
-              "sessionPlacement": "header",
-              "uplinkHTTPMethod": "GET",
-              "xPaddingObfsMode": true,
-              "xPaddingPlacement": "queryInHeader",
-              "scMaxEachPostBytes": 32769,
-              "sessionIDPlacement": "header",
-              "uplinkDataPlacement": "header",
-              "scMinPostsIntervalMs": 100
-            }
-          },
-          "security": "tls",
-          "tlsSettings": {
-            "serverName": "yc-de-01.vesbenztyt.space",
-            "fingerprint": "firefox",
-            "alpn": [
-              "h2",
-              "http/1.1"
-            ]
-          }
-        }
-      },
-      {
-        "tag": "bypass-auto-5",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "188.72.112.1",
-              "port": 443,
-              "users": [
-                {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
-                  "encryption": "none",
-                  "flow": ""
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "xhttp",
-          "xhttpSettings": {
-            "mode": "packet-up",
-            "host": "yc-de-03.vesbenztyt.space",
-            "path": "/assets/js/chunk-07a061c79082/",
-            "extra": {
-              "host": "yc-de-03.vesbenztyt.space",
-              "seqKey": "chunk_id",
-              "sessionKey": "X-Upload-Token",
-              "xPaddingKey": "hash",
-              "seqPlacement": "query",
-              "sessionIDKey": "X-Upload-Token",
-              "uplinkDataKey": "X-Data",
-              "xPaddingBytes": "100-200",
-              "xPaddingHeader": "X-Client-Version",
-              "xPaddingMethod": "tokenish",
-              "uplinkChunkSize": 2000,
-              "sessionPlacement": "header",
-              "uplinkHTTPMethod": "GET",
-              "xPaddingObfsMode": true,
-              "xPaddingPlacement": "queryInHeader",
-              "scMaxEachPostBytes": 32769,
-              "sessionIDPlacement": "header",
-              "uplinkDataPlacement": "header",
-              "scMinPostsIntervalMs": 100
-            }
-          },
-          "security": "tls",
-          "tlsSettings": {
-            "serverName": "yc-de-03.vesbenztyt.space",
-            "fingerprint": "edge",
-            "alpn": [
-              "h2",
-              "http/1.1"
-            ]
-          }
-        }
-      },
-      {
         "tag": "direct",
         "protocol": "freedom"
       },
@@ -4374,9 +3474,7 @@
       "subjectSelector": [
         "bypass-auto-1",
         "bypass-auto-2",
-        "bypass-auto-3",
-        "bypass-auto-4",
-        "bypass-auto-5"
+        "bypass-auto-3"
       ],
       "probeUrl": "https://www.gstatic.com/generate_204",
       "probeInterval": "10s",
@@ -5166,13 +4264,6 @@
       "rules": [
         {
           "type": "field",
-          "inboundTag": [
-            "auto-bootstrap"
-          ],
-          "balancerTag": "auto-bootstrap-balancer"
-        },
-        {
-          "type": "field",
           "domain": [
             "full:common.dot.dns.yandex.net"
           ],
@@ -5317,30 +4408,6 @@
           "strategy": {
             "type": "leastPing"
           },
-          "fallbackTag": "auto-bootstrap"
-        },
-        {
-          "tag": "auto-bootstrap-balancer",
-          "selector": [
-            "proxy-0-end",
-            "proxy-1-end",
-            "proxy-2-end",
-            "proxy-3-end",
-            "proxy-10-end",
-            "proxy-11-end",
-            "proxy-12-end",
-            "proxy-14-end",
-            "proxy-15-end",
-            "proxy-16-end",
-            "proxy-17-end",
-            "proxy-18-end",
-            "proxy-19-end",
-            "proxy-20-end",
-            "proxy-21-end"
-          ],
-          "strategy": {
-            "type": "roundRobin"
-          },
           "fallbackTag": "block"
         }
       ],
@@ -5413,7 +4480,7 @@
             "serverName": "pixel.cdntrahatel.store",
             "publicKey": "ZIAN68JiqOEthSx8jz6bAS920eWNw4thArzSNt6NpC8",
             "shortId": "90871d77a4cf3339",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -5473,7 +4540,7 @@
             "serverName": "pixel.cdntrahatel.store",
             "publicKey": "ZIAN68JiqOEthSx8jz6bAS920eWNw4thArzSNt6NpC8",
             "shortId": "90871d77a4cf3339",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -5593,7 +4660,7 @@
             "serverName": "www.apple.com",
             "publicKey": "ZeeprI4YWoCK7OM-33zahvYqQfS4ryldCZ1Ao2nYu08",
             "shortId": "d53f33b9f02b2917",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -5623,7 +4690,7 @@
             "serverName": "www.apple.com",
             "publicKey": "ZeeprI4YWoCK7OM-33zahvYqQfS4ryldCZ1Ao2nYu08",
             "shortId": "d53f33b9f02b2917",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -5653,7 +4720,7 @@
             "serverName": "www.apple.com",
             "publicKey": "ZeeprI4YWoCK7OM-33zahvYqQfS4ryldCZ1Ao2nYu08",
             "shortId": "d53f33b9f02b2917",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -5683,7 +4750,7 @@
             "serverName": "www.apple.com",
             "publicKey": "ZeeprI4YWoCK7OM-33zahvYqQfS4ryldCZ1Ao2nYu08",
             "shortId": "d53f33b9f02b2917",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -5743,7 +4810,7 @@
             "serverName": "swift.cdntrahatel.store",
             "publicKey": "s7UsUFB9xZK3mpB_aSNrj2yr0-u9KpkiG2FaijeU8Wk",
             "shortId": "6fc3cd051b2b1b64",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -5773,7 +4840,7 @@
             "serverName": "swift.cdntrahatel.store",
             "publicKey": "s7UsUFB9xZK3mpB_aSNrj2yr0-u9KpkiG2FaijeU8Wk",
             "shortId": "6fc3cd051b2b1b64",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -5803,7 +4870,7 @@
             "serverName": "pixel.cdntrahatel.store",
             "publicKey": "ZIAN68JiqOEthSx8jz6bAS920eWNw4thArzSNt6NpC8",
             "shortId": "90871d77a4cf3339",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -5833,7 +4900,7 @@
             "serverName": "pixel.cdntrahatel.store",
             "publicKey": "ZIAN68JiqOEthSx8jz6bAS920eWNw4thArzSNt6NpC8",
             "shortId": "90871d77a4cf3339",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -5863,7 +4930,7 @@
             "serverName": "pixel.cdntrahatel.store",
             "publicKey": "ZIAN68JiqOEthSx8jz6bAS920eWNw4thArzSNt6NpC8",
             "shortId": "90871d77a4cf3339",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -5893,7 +4960,7 @@
             "serverName": "pixel.cdntrahatel.store",
             "publicKey": "ZIAN68JiqOEthSx8jz6bAS920eWNw4thArzSNt6NpC8",
             "shortId": "90871d77a4cf3339",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -5923,7 +4990,7 @@
             "serverName": "swift.cdntrahatel.store",
             "publicKey": "s7UsUFB9xZK3mpB_aSNrj2yr0-u9KpkiG2FaijeU8Wk",
             "shortId": "6fc3cd051b2b1b64",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -5953,7 +5020,7 @@
             "serverName": "swift.cdntrahatel.store",
             "publicKey": "s7UsUFB9xZK3mpB_aSNrj2yr0-u9KpkiG2FaijeU8Wk",
             "shortId": "6fc3cd051b2b1b64",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -5983,7 +5050,7 @@
             "serverName": "swift.cdntrahatel.store",
             "publicKey": "s7UsUFB9xZK3mpB_aSNrj2yr0-u9KpkiG2FaijeU8Wk",
             "shortId": "6fc3cd051b2b1b64",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -6013,7 +5080,7 @@
             "serverName": "swift.cdntrahatel.store",
             "publicKey": "s7UsUFB9xZK3mpB_aSNrj2yr0-u9KpkiG2FaijeU8Wk",
             "shortId": "6fc3cd051b2b1b64",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
           }
         }
       },
@@ -6043,7 +5110,37 @@
             "serverName": "swift.cdntrahatel.store",
             "publicKey": "s7UsUFB9xZK3mpB_aSNrj2yr0-u9KpkiG2FaijeU8Wk",
             "shortId": "6fc3cd051b2b1b64",
-            "fingerprint": "chrome"
+            "fingerprint": "firefox"
+          }
+        }
+      },
+      {
+        "tag": "proxy-22-end",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "154.86.119.61",
+              "port": 47444,
+              "users": [
+                {
+                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision"
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "tcp",
+          "tcpSettings": {},
+          "security": "reality",
+          "realitySettings": {
+            "serverName": "pixel.cdntrahatel.store",
+            "publicKey": "ZIAN68JiqOEthSx8jz6bAS920eWNw4thArzSNt6NpC8",
+            "shortId": "90871d77a4cf3339",
+            "fingerprint": "firefox"
           }
         }
       },
@@ -6054,13 +5151,6 @@
       {
         "tag": "block",
         "protocol": "blackhole"
-      },
-      {
-        "tag": "auto-bootstrap",
-        "protocol": "loopback",
-        "settings": {
-          "inboundTag": "auto-bootstrap"
-        }
       },
       {
         "tag": "medoed-pilot-dns-out",
@@ -6368,7 +5458,7 @@
           "strategy": {
             "type": "leastPing"
           },
-          "fallbackTag": "proxy-6"
+          "fallbackTag": "proxy-2"
         }
       ],
       "domainMatcher": "hybrid",
@@ -6450,96 +5540,6 @@
         "settings": {
           "vnext": [
             {
-              "address": "45.141.232.146",
-              "port": 2083,
-              "users": [
-                {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision"
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "tcpSettings": {},
-          "security": "reality",
-          "realitySettings": {
-            "serverName": "www.apple.com",
-            "publicKey": "-2aN7aHKa70sJhx0jwNIv1BZvt0cSBA9BJayL-k_XD8",
-            "shortId": "90871d77a4cf3339",
-            "fingerprint": "firefox"
-          }
-        }
-      },
-      {
-        "tag": "proxy-2",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "45.141.232.76",
-              "port": 2083,
-              "users": [
-                {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision"
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "tcpSettings": {},
-          "security": "reality",
-          "realitySettings": {
-            "serverName": "www.apple.com",
-            "publicKey": "-2aN7aHKa70sJhx0jwNIv1BZvt0cSBA9BJayL-k_XD8",
-            "shortId": "90871d77a4cf3339",
-            "fingerprint": "firefox"
-          }
-        }
-      },
-      {
-        "tag": "proxy-3",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "45.141.232.142",
-              "port": 2083,
-              "users": [
-                {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision"
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "tcpSettings": {},
-          "security": "reality",
-          "realitySettings": {
-            "serverName": "www.apple.com",
-            "publicKey": "-2aN7aHKa70sJhx0jwNIv1BZvt0cSBA9BJayL-k_XD8",
-            "shortId": "90871d77a4cf3339",
-            "fingerprint": "firefox"
-          }
-        }
-      },
-      {
-        "tag": "proxy-4",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
               "address": "45.141.232.182",
               "port": 2087,
               "users": [
@@ -6565,37 +5565,7 @@
         }
       },
       {
-        "tag": "proxy-5",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "45.141.232.107",
-              "port": 2087,
-              "users": [
-                {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision"
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "tcpSettings": {},
-          "security": "reality",
-          "realitySettings": {
-            "serverName": "www.apple.com",
-            "publicKey": "hZIKCFupF9iyTfj2Wv1uWdHBAfANO-yTDQ8ksPvbG2Q",
-            "shortId": "90871d77a4cf3339",
-            "fingerprint": "firefox"
-          }
-        }
-      },
-      {
-        "tag": "proxy-6",
+        "tag": "proxy-2",
         "protocol": "vless",
         "settings": {
           "vnext": [
@@ -6625,7 +5595,7 @@
         }
       },
       {
-        "tag": "proxy-7",
+        "tag": "proxy-3",
         "protocol": "vless",
         "settings": {
           "vnext": [
@@ -7039,7 +6009,7 @@
           "realitySettings": {
             "serverName": "cdn1.medoed.store",
             "publicKey": "xG_3hrmCx40pqD6Wh_2bQgmC8nvdjCx-l6HJnEcL6AI",
-            "shortId": "da6635db58964a27",
+            "shortId": "b4f2b5ab63691bd4",
             "fingerprint": "firefox"
           }
         }
@@ -7069,43 +6039,13 @@
           "realitySettings": {
             "serverName": "cdn1.medoed.store",
             "publicKey": "xG_3hrmCx40pqD6Wh_2bQgmC8nvdjCx-l6HJnEcL6AI",
-            "shortId": "da6635db58964a27",
+            "shortId": "2bae290ee8b71973",
             "fingerprint": "firefox"
           }
         }
       },
       {
         "tag": "proxy-2",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "85.239.146.140",
-              "port": 2083,
-              "users": [
-                {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision"
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "tcpSettings": {},
-          "security": "reality",
-          "realitySettings": {
-            "serverName": "www.apple.com",
-            "publicKey": "v20XpptrTgmoYM6T4Sh-VU1dqaLu4nCFzHtcmPEoJzQ",
-            "shortId": "90871d77a4cf3339",
-            "fingerprint": "firefox"
-          }
-        }
-      },
-      {
-        "tag": "proxy-3",
         "protocol": "vless",
         "settings": {
           "vnext": [
@@ -7135,7 +6075,7 @@
         }
       },
       {
-        "tag": "proxy-4",
+        "tag": "proxy-3",
         "protocol": "vless",
         "settings": {
           "vnext": [
@@ -7165,7 +6105,7 @@
         }
       },
       {
-        "tag": "proxy-5",
+        "tag": "proxy-4",
         "protocol": "vless",
         "settings": {
           "vnext": [
@@ -7189,13 +6129,13 @@
           "realitySettings": {
             "serverName": "cdn1.medoed.store",
             "publicKey": "xG_3hrmCx40pqD6Wh_2bQgmC8nvdjCx-l6HJnEcL6AI",
-            "shortId": "95bea85c7d777c1e",
+            "shortId": "b4f2b5ab63691bd4",
             "fingerprint": "firefox"
           }
         }
       },
       {
-        "tag": "proxy-6",
+        "tag": "proxy-5",
         "protocol": "vless",
         "settings": {
           "vnext": [
@@ -7221,36 +6161,6 @@
             "publicKey": "0_rfdN11lCTXR1IJh-gyRgK96Y96BQbie2teWxHxsV0",
             "shortId": "ae72bb62f6dc8194",
             "fingerprint": "edge"
-          }
-        }
-      },
-      {
-        "tag": "proxy-7",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "85.239.146.137",
-              "port": 2083,
-              "users": [
-                {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision"
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "tcpSettings": {},
-          "security": "reality",
-          "realitySettings": {
-            "serverName": "www.apple.com",
-            "publicKey": "v20XpptrTgmoYM6T4Sh-VU1dqaLu4nCFzHtcmPEoJzQ",
-            "shortId": "90871d77a4cf3339",
-            "fingerprint": "firefox"
           }
         }
       },
@@ -7284,490 +6194,6 @@
       "enableConcurrency": true
     },
     "remarks": "🇩🇪 ⚡ Германия"
-  },
-  {
-    "dns": {
-      "servers": [
-        {
-          "address": "https://common.dot.dns.yandex.net/dns-query",
-          "domains": [
-            "domain:ru",
-            "domain:xn--p1ai",
-            "domain:lemana.pro",
-            "domain:kwork.com",
-            "domain:gosuslugi.ru",
-            "domain:gov.ru",
-            "domain:nalog.ru",
-            "domain:mos.ru",
-            "domain:mosreg.ru",
-            "domain:umias.ru",
-            "domain:pfrf.ru",
-            "domain:sberbank.ru",
-            "domain:sber.ru",
-            "domain:sberbank.com",
-            "domain:sberbankonline.ru",
-            "domain:domclick.ru",
-            "domain:vtb.ru",
-            "domain:alfabank.ru",
-            "domain:alfa-bank.ru",
-            "domain:tbank.ru",
-            "domain:tinkoff.ru",
-            "domain:tinkoffbank.ru",
-            "domain:tinkoffcdn.ru",
-            "domain:cdn-tinkoff.ru",
-            "domain:tbank-online.com",
-            "domain:gazprombank.ru",
-            "domain:rshb.ru",
-            "domain:psbank.ru",
-            "domain:sovcombank.ru",
-            "domain:rosbank.ru",
-            "domain:raiffeisen.ru",
-            "domain:otpbank.ru",
-            "domain:pochtabank.ru",
-            "domain:homecredit.ru",
-            "domain:nspk.ru",
-            "domain:mironline.ru",
-            "domain:ozon.ru",
-            "domain:ozonstatic.ru",
-            "domain:ozonusercontent.com",
-            "domain:wildberries.ru",
-            "domain:wildberries.net",
-            "domain:wb.ru",
-            "domain:wbbasket.ru",
-            "domain:wbstatic.net",
-            "domain:avito.ru",
-            "domain:avito.st",
-            "domain:rzd.ru",
-            "domain:pochta.ru",
-            "domain:pochta.com",
-            "domain:cdek.ru",
-            "domain:smartcaptcha.yandexcloud.net",
-            "domain:smartcaptcha.cloud.yandex.ru",
-            "domain:yandex.net",
-            "domain:yandex.com",
-            "domain:yastatic.net"
-          ],
-          "skipFallback": true
-        },
-        {
-          "address": "77.88.8.1",
-          "domains": [
-            "domain:ru",
-            "domain:xn--p1ai",
-            "domain:lemana.pro",
-            "domain:kwork.com",
-            "domain:gosuslugi.ru",
-            "domain:gov.ru",
-            "domain:nalog.ru",
-            "domain:mos.ru",
-            "domain:mosreg.ru",
-            "domain:umias.ru",
-            "domain:pfrf.ru",
-            "domain:sberbank.ru",
-            "domain:sber.ru",
-            "domain:sberbank.com",
-            "domain:sberbankonline.ru",
-            "domain:domclick.ru",
-            "domain:vtb.ru",
-            "domain:alfabank.ru",
-            "domain:alfa-bank.ru",
-            "domain:tbank.ru",
-            "domain:tinkoff.ru",
-            "domain:tinkoffbank.ru",
-            "domain:tinkoffcdn.ru",
-            "domain:cdn-tinkoff.ru",
-            "domain:tbank-online.com",
-            "domain:gazprombank.ru",
-            "domain:rshb.ru",
-            "domain:psbank.ru",
-            "domain:sovcombank.ru",
-            "domain:rosbank.ru",
-            "domain:raiffeisen.ru",
-            "domain:otpbank.ru",
-            "domain:pochtabank.ru",
-            "domain:homecredit.ru",
-            "domain:nspk.ru",
-            "domain:mironline.ru",
-            "domain:ozon.ru",
-            "domain:ozonstatic.ru",
-            "domain:ozonusercontent.com",
-            "domain:wildberries.ru",
-            "domain:wildberries.net",
-            "domain:wb.ru",
-            "domain:wbbasket.ru",
-            "domain:wbstatic.net",
-            "domain:avito.ru",
-            "domain:avito.st",
-            "domain:rzd.ru",
-            "domain:pochta.ru",
-            "domain:pochta.com",
-            "domain:cdek.ru",
-            "domain:smartcaptcha.yandexcloud.net",
-            "domain:smartcaptcha.cloud.yandex.ru",
-            "domain:yandex.net",
-            "domain:yandex.com",
-            "domain:yastatic.net"
-          ],
-          "skipFallback": true
-        },
-        "https://1.1.1.1/dns-query",
-        "https://1.0.0.1/dns-query"
-      ],
-      "queryStrategy": "UseIPv4",
-      "hosts": {
-        "common.dot.dns.yandex.net": "77.88.8.8"
-      },
-      "tag": "medoed-pilot-dns",
-      "disableFallbackIfMatch": true
-    },
-    "routing": {
-      "rules": [
-        {
-          "type": "field",
-          "domain": [
-            "full:common.dot.dns.yandex.net"
-          ],
-          "outboundTag": "direct"
-        },
-        {
-          "type": "field",
-          "inboundTag": [
-            "medoed-pilot-dns"
-          ],
-          "ip": [
-            "77.88.8.8",
-            "77.88.8.1"
-          ],
-          "port": "53,443",
-          "outboundTag": "direct"
-        },
-        {
-          "type": "field",
-          "inboundTag": [
-            "medoed-pilot-dns"
-          ],
-          "ip": [
-            "1.1.1.1",
-            "1.0.0.1"
-          ],
-          "port": "53,443",
-          "balancerTag": "entry-balancer"
-        },
-        {
-          "type": "field",
-          "port": "53",
-          "outboundTag": "medoed-pilot-dns-out"
-        },
-        {
-          "type": "field",
-          "domain": [
-            "domain:telegram.org",
-            "domain:telegram.me",
-            "domain:t.me",
-            "domain:telegra.ph",
-            "domain:telesco.pe",
-            "domain:telegram-cdn.org",
-            "domain:cdn-telegram.org"
-          ],
-          "balancerTag": "entry-balancer"
-        },
-        {
-          "type": "field",
-          "ip": [
-            "149.154.160.0/20",
-            "91.108.4.0/22",
-            "91.108.8.0/22",
-            "91.108.12.0/22",
-            "91.108.16.0/22",
-            "91.108.56.0/22",
-            "91.105.192.0/23",
-            "185.76.151.0/24"
-          ],
-          "balancerTag": "entry-balancer"
-        },
-        {
-          "type": "field",
-          "domain": [
-            "domain:ru",
-            "domain:xn--p1ai",
-            "domain:lemana.pro",
-            "domain:kwork.com",
-            "domain:gosuslugi.ru",
-            "domain:gov.ru",
-            "domain:nalog.ru",
-            "domain:mos.ru",
-            "domain:mosreg.ru",
-            "domain:umias.ru",
-            "domain:pfrf.ru",
-            "domain:sberbank.ru",
-            "domain:sber.ru",
-            "domain:sberbank.com",
-            "domain:sberbankonline.ru",
-            "domain:domclick.ru",
-            "domain:vtb.ru",
-            "domain:alfabank.ru",
-            "domain:alfa-bank.ru",
-            "domain:tbank.ru",
-            "domain:tinkoff.ru",
-            "domain:tinkoffbank.ru",
-            "domain:tinkoffcdn.ru",
-            "domain:cdn-tinkoff.ru",
-            "domain:tbank-online.com",
-            "domain:gazprombank.ru",
-            "domain:rshb.ru",
-            "domain:psbank.ru",
-            "domain:sovcombank.ru",
-            "domain:rosbank.ru",
-            "domain:raiffeisen.ru",
-            "domain:otpbank.ru",
-            "domain:pochtabank.ru",
-            "domain:homecredit.ru",
-            "domain:nspk.ru",
-            "domain:mironline.ru",
-            "domain:ozon.ru",
-            "domain:ozonstatic.ru",
-            "domain:ozonusercontent.com",
-            "domain:wildberries.ru",
-            "domain:wildberries.net",
-            "domain:wb.ru",
-            "domain:wbbasket.ru",
-            "domain:wbstatic.net",
-            "domain:avito.ru",
-            "domain:avito.st",
-            "domain:rzd.ru",
-            "domain:pochta.ru",
-            "domain:pochta.com",
-            "domain:cdek.ru",
-            "domain:smartcaptcha.yandexcloud.net",
-            "domain:smartcaptcha.cloud.yandex.ru",
-            "domain:yandex.net",
-            "domain:yandex.com",
-            "domain:yastatic.net"
-          ],
-          "outboundTag": "medoed-pilot-direct"
-        },
-        {
-          "type": "field",
-          "protocol": [
-            "bittorrent"
-          ],
-          "outboundTag": "direct"
-        },
-        {
-          "type": "field",
-          "network": "tcp,udp",
-          "balancerTag": "entry-balancer"
-        }
-      ],
-      "domainMatcher": "hybrid",
-      "domainStrategy": "AsIs",
-      "balancers": [
-        {
-          "tag": "entry-balancer",
-          "selector": [
-            "entry-0-end",
-            "entry-1-end",
-            "entry-2-end"
-          ],
-          "strategy": {
-            "type": "leastPing"
-          },
-          "fallbackTag": "proxy"
-        }
-      ]
-    },
-    "inbounds": [
-      {
-        "tag": "socks",
-        "port": 10808,
-        "listen": "127.0.0.1",
-        "protocol": "socks",
-        "settings": {
-          "udp": true,
-          "auth": "noauth"
-        },
-        "sniffing": {
-          "enabled": true,
-          "routeOnly": false,
-          "destOverride": [
-            "http",
-            "tls",
-            "quic"
-          ]
-        }
-      },
-      {
-        "tag": "http",
-        "port": 10809,
-        "listen": "127.0.0.1",
-        "protocol": "http",
-        "settings": {
-          "allowTransparent": false
-        },
-        "sniffing": {
-          "enabled": true,
-          "routeOnly": false,
-          "destOverride": [
-            "http",
-            "tls",
-            "quic"
-          ]
-        }
-      }
-    ],
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "2.27.4.115",
-              "port": 7443,
-              "users": [
-                {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision"
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "tcpSettings": {},
-          "security": "reality",
-          "realitySettings": {
-            "serverName": "cdn6.medoed.store",
-            "publicKey": "-Lrpx_u04nZH6dz9PJES5HcPQiysWj5ul1HsT7D15SQ",
-            "shortId": "87cb87ca48539fab",
-            "fingerprint": "firefox"
-          }
-        }
-      },
-      {
-        "tag": "direct",
-        "protocol": "freedom"
-      },
-      {
-        "tag": "block",
-        "protocol": "blackhole"
-      },
-      {
-        "tag": "entry-0-end",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "2.27.4.115",
-              "port": 7443,
-              "users": [
-                {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision"
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "tcpSettings": {},
-          "security": "reality",
-          "realitySettings": {
-            "serverName": "cdn6.medoed.store",
-            "publicKey": "-Lrpx_u04nZH6dz9PJES5HcPQiysWj5ul1HsT7D15SQ",
-            "shortId": "87cb87ca48539fab",
-            "fingerprint": "firefox"
-          }
-        }
-      },
-      {
-        "tag": "entry-1-end",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "45.141.232.216",
-              "port": 443,
-              "users": [
-                {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision"
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "tcpSettings": {},
-          "security": "reality",
-          "realitySettings": {
-            "serverName": "cdn6.medoed.store",
-            "publicKey": "-Lrpx_u04nZH6dz9PJES5HcPQiysWj5ul1HsT7D15SQ",
-            "shortId": "87cb87ca48539fab",
-            "fingerprint": "firefox"
-          }
-        }
-      },
-      {
-        "tag": "entry-2-end",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "45.141.232.134",
-              "port": 443,
-              "users": [
-                {
-                  "id": "ede00777-92b5-4e90-8288-6c66ca63c0cd",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision"
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "tcpSettings": {},
-          "security": "reality",
-          "realitySettings": {
-            "serverName": "cdn6.medoed.store",
-            "publicKey": "-Lrpx_u04nZH6dz9PJES5HcPQiysWj5ul1HsT7D15SQ",
-            "shortId": "87cb87ca48539fab",
-            "fingerprint": "firefox"
-          }
-        }
-      },
-      {
-        "tag": "medoed-pilot-dns-out",
-        "protocol": "dns",
-        "settings": {}
-      },
-      {
-        "tag": "medoed-pilot-direct",
-        "protocol": "freedom",
-        "settings": {
-          "domainStrategy": "UseIPv4"
-        }
-      }
-    ],
-    "remarks": "🇳🇴 ⚡ Норвегия",
-    "observatory": {
-      "subjectSelector": [
-        "entry-0-end",
-        "entry-1-end",
-        "entry-2-end"
-      ],
-      "probeUrl": "https://www.gstatic.com/generate_204",
-      "probeInterval": "10s",
-      "enableConcurrency": true
-    }
   },
   {
     "dns": {
@@ -10002,7 +8428,7 @@
           "strategy": {
             "type": "leastPing"
           },
-          "fallbackTag": "proxy-0"
+          "fallbackTag": "proxy-5"
         }
       ],
       "domainMatcher": "hybrid",
@@ -10092,7 +8518,7 @@
         "tag": "proxy-1",
         "protocol": "hysteria",
         "settings": {
-          "address": "96.62.224.252",
+          "address": "85.239.146.141",
           "port": 2443,
           "version": 2
         },
@@ -10132,7 +8558,7 @@
         "tag": "proxy-2",
         "protocol": "hysteria",
         "settings": {
-          "address": "85.239.146.141",
+          "address": "151.240.151.208",
           "port": 2443,
           "version": 2
         },
@@ -10172,7 +8598,7 @@
         "tag": "proxy-3",
         "protocol": "hysteria",
         "settings": {
-          "address": "151.240.151.208",
+          "address": "96.62.224.120",
           "port": 2443,
           "version": 2
         },
@@ -10212,46 +8638,6 @@
         "tag": "proxy-4",
         "protocol": "hysteria",
         "settings": {
-          "address": "96.62.224.120",
-          "port": 2443,
-          "version": 2
-        },
-        "streamSettings": {
-          "network": "hysteria",
-          "hysteriaSettings": {
-            "version": 2,
-            "auth": "ede00777-92b5-4e90-8288-6c66ca63c0cd"
-          },
-          "security": "tls",
-          "tlsSettings": {
-            "serverName": "96.62.224.252",
-            "fingerprint": "chrome",
-            "alpn": [
-              "h3"
-            ]
-          },
-          "finalmask": {
-            "udp": [
-              {
-                "type": "salamander",
-                "settings": {
-                  "password": "D5w9JTjASIJ0H-zyaj0Ic8vu8DODo_vquWJNNwXNxUc"
-                }
-              }
-            ],
-            "quicParams": {
-              "congestion": "bbr",
-              "maxIdleTimeout": 30,
-              "keepAlivePeriod": 10,
-              "maxIncomingStreams": 1024
-            }
-          }
-        }
-      },
-      {
-        "tag": "proxy-5",
-        "protocol": "hysteria",
-        "settings": {
           "address": "96.62.224.111",
           "port": 2443,
           "version": 2
@@ -10289,7 +8675,7 @@
         }
       },
       {
-        "tag": "proxy-6",
+        "tag": "proxy-5",
         "protocol": "hysteria",
         "settings": {
           "address": "96.62.224.118",
@@ -10713,7 +9099,7 @@
         "settings": {
           "vnext": [
             {
-              "address": "74.113.234.81",
+              "address": "103.6.168.193",
               "port": 2083,
               "users": [
                 {
@@ -10751,7 +9137,7 @@
         "settings": {
           "vnext": [
             {
-              "address": "74.113.234.81",
+              "address": "103.6.168.193",
               "port": 2083,
               "users": [
                 {
@@ -12334,7 +10720,7 @@
         "settings": {
           "vnext": [
             {
-              "address": "74.113.234.81",
+              "address": "103.6.168.193",
               "port": 2083,
               "users": [
                 {
@@ -12372,7 +10758,7 @@
         "settings": {
           "vnext": [
             {
-              "address": "74.113.234.81",
+              "address": "103.6.168.193",
               "port": 2083,
               "users": [
                 {
@@ -13464,12 +11850,13 @@
         "settings": {
           "vnext": [
             {
-              "address": "95.129.234.108",
-              "port": 8443,
+              "address": "193.163.203.170",
+              "port": 443,
               "users": [
                 {
-                  "id": "b229d38c-35ec-4a0b-9c86-8fceba243d6c",
+                  "id": "11aabba0-5fd1-4f15-8068-74c1a466cefc",
                   "encryption": "none",
+                  "flow": "xtls-rprx-vision",
                   "level": 0
                 }
               ]
@@ -13477,20 +11864,15 @@
           ]
         },
         "streamSettings": {
-          "network": "xhttp",
-          "security": "tls",
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "hazel-beacon.cdn.cachefleet.com",
-            "fingerprint": "firefox",
-            "alpn": [
-              "h2"
-            ]
-          },
-          "xhttpSettings": {
-            "path": "/ccxf5snr06b8xxb6",
-            "host": "fafeqdhlett2p5la6d.cdn.cachefleet.com",
-            "mode": "auto"
+          "network": "tcp",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "GCCZ1ZZjB_nj7yxqFi22bIIWWr_G6rnWUzDcssN_40o",
+            "fingerprint": "chrome",
+            "serverName": "yandex.ru",
+            "shortId": "b28db60d77c50b4f",
+            "spiderX": "/"
           }
         }
       }
@@ -13524,7 +11906,7 @@
           "realitySettings": {
             "show": false,
             "publicKey": "0oTkcqwLTUNLnSOP-VUWErmy6usAIg-biBE6ioZO-Vo",
-            "fingerprint": "edge",
+            "fingerprint": "firefox",
             "serverName": "ads.x5.ru",
             "shortId": "8debcf36f1cc69ff",
             "spiderX": "/"
@@ -13535,154 +11917,6 @@
   },
   {
     "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #3)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "qq.utiltools.site",
-              "port": 443,
-              "users": [
-                {
-                  "id": "4054fdc2-ee80-4419-8a8e-d937df4719e2",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "raw",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "drY21DHNOr6ezJLA2B10mzTExeJ9-gVBfTBNLwVBtWI",
-            "fingerprint": "safari",
-            "serverName": "qq.utiltools.site",
-            "shortId": "",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #4)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "qq.utiltools.site",
-              "port": 443,
-              "users": [
-                {
-                  "id": "4054fdc2-ee80-4419-8a8e-d937df4719e2",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "drY21DHNOr6ezJLA2B10mzTExeJ9-gVBfTBNLwVBtWI",
-            "fingerprint": "safari",
-            "serverName": "qq.utiltools.site",
-            "shortId": "",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #5)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "178.172.227.228",
-              "port": 10444,
-              "users": [
-                {
-                  "id": "b6e5dc56-836f-48c1-9163-b0b0b43b647d",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "0oTkcqwLTUNLnSOP-VUWErmy6usAIg-biBE6ioZO-Vo",
-            "fingerprint": "firefox",
-            "serverName": "ads.x5.ru",
-            "shortId": "8debcf36f1cc69ff",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #6)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "qq.utiltools.site",
-              "port": 443,
-              "users": [
-                {
-                  "id": "4054fdc2-ee80-4419-8a8e-d937df4719e2",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "raw",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "drY21DHNOr6ezJLA2B10mzTExeJ9-gVBfTBNLwVBtWI",
-            "fingerprint": "firefox",
-            "serverName": "qq.utiltools.site",
-            "shortId": "",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #7)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -13709,7 +11943,7 @@
           "realitySettings": {
             "show": false,
             "publicKey": "GCCZ1ZZjB_nj7yxqFi22bIIWWr_G6rnWUzDcssN_40o",
-            "fingerprint": "safari",
+            "fingerprint": "firefox",
             "serverName": "yandex.ru",
             "shortId": "b28db60d77c50b4f",
             "spiderX": "/"
@@ -13719,7 +11953,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #8)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #4)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -13727,11 +11961,11 @@
         "settings": {
           "vnext": [
             {
-              "address": "72.56.38.83",
+              "address": "193.163.203.170",
               "port": 443,
               "users": [
                 {
-                  "id": "1e2b9c0c-4f9b-56f5-a062-1c4f2d2aa200",
+                  "id": "11aabba0-5fd1-4f15-8068-74c1a466cefc",
                   "encryption": "none",
                   "flow": "xtls-rprx-vision",
                   "level": 0
@@ -13745,10 +11979,10 @@
           "security": "reality",
           "realitySettings": {
             "show": false,
-            "publicKey": "ZzIetLcQtENjIXQ9XZqFo8p3J81p8Emj0wi51Uy07n8",
+            "publicKey": "GCCZ1ZZjB_nj7yxqFi22bIIWWr_G6rnWUzDcssN_40o",
             "fingerprint": "chrome",
-            "serverName": "absolute-disaster.org",
-            "shortId": "",
+            "serverName": "yandex.ru",
+            "shortId": "b28db60d77c50b4f",
             "spiderX": "/"
           }
         }
@@ -13756,7 +11990,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #9)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #5)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -13764,11 +11998,48 @@
         "settings": {
           "vnext": [
             {
-              "address": "qq.utiltools.site",
+              "address": "193.163.203.170",
               "port": 443,
               "users": [
                 {
-                  "id": "4054fdc2-ee80-4419-8a8e-d937df4719e2",
+                  "id": "11aabba0-5fd1-4f15-8068-74c1a466cefc",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "tcp",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "GCCZ1ZZjB_nj7yxqFi22bIIWWr_G6rnWUzDcssN_40o",
+            "fingerprint": "chrome",
+            "serverName": "yandex.ru",
+            "shortId": "b28db60d77c50b4f",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #6)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "193.163.203.170",
+              "port": 443,
+              "users": [
+                {
+                  "id": "11aabba0-5fd1-4f15-8068-74c1a466cefc",
                   "encryption": "none",
                   "flow": "xtls-rprx-vision",
                   "level": 0
@@ -13782,10 +12053,10 @@
           "security": "reality",
           "realitySettings": {
             "show": false,
-            "publicKey": "drY21DHNOr6ezJLA2B10mzTExeJ9-gVBfTBNLwVBtWI",
-            "fingerprint": "safari",
-            "serverName": "qq.utiltools.site",
-            "shortId": "",
+            "publicKey": "GCCZ1ZZjB_nj7yxqFi22bIIWWr_G6rnWUzDcssN_40o",
+            "fingerprint": "chrome",
+            "serverName": "yandex.ru",
+            "shortId": "b28db60d77c50b4f",
             "spiderX": "/"
           }
         }
@@ -13793,7 +12064,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #10)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #7)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -13830,7 +12101,7 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #11)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #8)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -13867,7 +12138,44 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #12)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #9)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "193.163.203.170",
+              "port": 443,
+              "users": [
+                {
+                  "id": "11aabba0-5fd1-4f15-8068-74c1a466cefc",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "tcp",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "GCCZ1ZZjB_nj7yxqFi22bIIWWr_G6rnWUzDcssN_40o",
+            "fingerprint": "safari",
+            "serverName": "yandex.ru",
+            "shortId": "b28db60d77c50b4f",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #10)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -13904,7 +12212,44 @@
     ]
   },
   {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #13)",
+    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #11)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "178.172.227.228",
+              "port": 10444,
+              "users": [
+                {
+                  "id": "b6e5dc56-836f-48c1-9163-b0b0b43b647d",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "tcp",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "0oTkcqwLTUNLnSOP-VUWErmy6usAIg-biBE6ioZO-Vo",
+            "fingerprint": "edge",
+            "serverName": "ads.x5.ru",
+            "shortId": "8debcf36f1cc69ff",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #12)",
     "outbounds": [
       {
         "tag": "proxy",
@@ -13931,9 +12276,46 @@
           "realitySettings": {
             "show": false,
             "publicKey": "drY21DHNOr6ezJLA2B10mzTExeJ9-gVBfTBNLwVBtWI",
-            "fingerprint": "firefox",
+            "fingerprint": "safari",
             "serverName": "qq.utiltools.site",
             "shortId": "",
+            "spiderX": "/"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #13)",
+    "outbounds": [
+      {
+        "tag": "proxy",
+        "protocol": "vless",
+        "settings": {
+          "vnext": [
+            {
+              "address": "193.163.203.170",
+              "port": 443,
+              "users": [
+                {
+                  "id": "11aabba0-5fd1-4f15-8068-74c1a466cefc",
+                  "encryption": "none",
+                  "flow": "xtls-rprx-vision",
+                  "level": 0
+                }
+              ]
+            }
+          ]
+        },
+        "streamSettings": {
+          "network": "tcp",
+          "security": "reality",
+          "realitySettings": {
+            "show": false,
+            "publicKey": "GCCZ1ZZjB_nj7yxqFi22bIIWWr_G6rnWUzDcssN_40o",
+            "fingerprint": "firefox",
+            "serverName": "yandex.ru",
+            "shortId": "b28db60d77c50b4f",
             "spiderX": "/"
           }
         }
@@ -13963,12 +12345,12 @@
           ]
         },
         "streamSettings": {
-          "network": "tcp",
+          "network": "raw",
           "security": "reality",
           "realitySettings": {
             "show": false,
             "publicKey": "GCCZ1ZZjB_nj7yxqFi22bIIWWr_G6rnWUzDcssN_40o",
-            "fingerprint": "chrome",
+            "fingerprint": "firefox",
             "serverName": "yandex.ru",
             "shortId": "b28db60d77c50b4f",
             "spiderX": "/"
@@ -13986,11 +12368,11 @@
         "settings": {
           "vnext": [
             {
-              "address": "193.163.203.170",
-              "port": 443,
+              "address": "67.220.73.204",
+              "port": 18662,
               "users": [
                 {
-                  "id": "11aabba0-5fd1-4f15-8068-74c1a466cefc",
+                  "id": "814bd064-544d-4255-a070-5705c03f6da9",
                   "encryption": "none",
                   "flow": "xtls-rprx-vision",
                   "level": 0
@@ -14000,14 +12382,14 @@
           ]
         },
         "streamSettings": {
-          "network": "raw",
+          "network": "tcp",
           "security": "reality",
           "realitySettings": {
             "show": false,
-            "publicKey": "GCCZ1ZZjB_nj7yxqFi22bIIWWr_G6rnWUzDcssN_40o",
+            "publicKey": "k2hPp0tTW0Da-HK94wYpSCLbuK44LfGqC2MSJIM1Ti0",
             "fingerprint": "chrome",
-            "serverName": "yandex.ru",
-            "shortId": "b28db60d77c50b4f",
+            "serverName": "www.apple.com",
+            "shortId": "48050fab",
             "spiderX": "/"
           }
         }
@@ -14023,11 +12405,11 @@
         "settings": {
           "vnext": [
             {
-              "address": "qq.utiltools.site",
+              "address": "193.163.203.170",
               "port": 443,
               "users": [
                 {
-                  "id": "4054fdc2-ee80-4419-8a8e-d937df4719e2",
+                  "id": "11aabba0-5fd1-4f15-8068-74c1a466cefc",
                   "encryption": "none",
                   "flow": "xtls-rprx-vision",
                   "level": 0
@@ -14041,10 +12423,10 @@
           "security": "reality",
           "realitySettings": {
             "show": false,
-            "publicKey": "drY21DHNOr6ezJLA2B10mzTExeJ9-gVBfTBNLwVBtWI",
+            "publicKey": "GCCZ1ZZjB_nj7yxqFi22bIIWWr_G6rnWUzDcssN_40o",
             "fingerprint": "chrome",
-            "serverName": "qq.utiltools.site",
-            "shortId": "",
+            "serverName": "yandex.ru",
+            "shortId": "b28db60d77c50b4f",
             "spiderX": "/"
           }
         }
@@ -14060,11 +12442,11 @@
         "settings": {
           "vnext": [
             {
-              "address": "193.163.203.170",
+              "address": "72.56.38.83",
               "port": 443,
               "users": [
                 {
-                  "id": "11aabba0-5fd1-4f15-8068-74c1a466cefc",
+                  "id": "1e2b9c0c-4f9b-56f5-a062-1c4f2d2aa200",
                   "encryption": "none",
                   "flow": "xtls-rprx-vision",
                   "level": 0
@@ -14078,522 +12460,10 @@
           "security": "reality",
           "realitySettings": {
             "show": false,
-            "publicKey": "GCCZ1ZZjB_nj7yxqFi22bIIWWr_G6rnWUzDcssN_40o",
-            "fingerprint": "firefox",
-            "serverName": "yandex.ru",
-            "shortId": "b28db60d77c50b4f",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #18)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "178.172.227.228",
-              "port": 10444,
-              "users": [
-                {
-                  "id": "b6e5dc56-836f-48c1-9163-b0b0b43b647d",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "0oTkcqwLTUNLnSOP-VUWErmy6usAIg-biBE6ioZO-Vo",
-            "fingerprint": "firefox",
-            "serverName": "ads.x5.ru",
-            "shortId": "8debcf36f1cc69ff",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #19)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "193.163.203.170",
-              "port": 443,
-              "users": [
-                {
-                  "id": "11aabba0-5fd1-4f15-8068-74c1a466cefc",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "GCCZ1ZZjB_nj7yxqFi22bIIWWr_G6rnWUzDcssN_40o",
-            "fingerprint": "firefox",
-            "serverName": "yandex.ru",
-            "shortId": "b28db60d77c50b4f",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #20)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "193.163.203.170",
-              "port": 443,
-              "users": [
-                {
-                  "id": "11aabba0-5fd1-4f15-8068-74c1a466cefc",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "GCCZ1ZZjB_nj7yxqFi22bIIWWr_G6rnWUzDcssN_40o",
+            "publicKey": "ZzIetLcQtENjIXQ9XZqFo8p3J81p8Emj0wi51Uy07n8",
             "fingerprint": "chrome",
-            "serverName": "yandex.ru",
-            "shortId": "b28db60d77c50b4f",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #21)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "193.163.203.170",
-              "port": 443,
-              "users": [
-                {
-                  "id": "11aabba0-5fd1-4f15-8068-74c1a466cefc",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "raw",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "GCCZ1ZZjB_nj7yxqFi22bIIWWr_G6rnWUzDcssN_40o",
-            "fingerprint": "firefox",
-            "serverName": "yandex.ru",
-            "shortId": "b28db60d77c50b4f",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #22)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "193.163.203.170",
-              "port": 443,
-              "users": [
-                {
-                  "id": "11aabba0-5fd1-4f15-8068-74c1a466cefc",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "GCCZ1ZZjB_nj7yxqFi22bIIWWr_G6rnWUzDcssN_40o",
-            "fingerprint": "chrome",
-            "serverName": "yandex.ru",
-            "shortId": "b28db60d77c50b4f",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #23)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "edge.bookmai.com",
-              "port": 443,
-              "users": [
-                {
-                  "id": "b9bfa54d-bc44-4592-a6d6-89a9665d286f",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc",
-            "fingerprint": "chrome",
-            "serverName": "mother-earth.fyi",
+            "serverName": "absolute-disaster.org",
             "shortId": "",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #24)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "qq.utiltools.site",
-              "port": 443,
-              "users": [
-                {
-                  "id": "4054fdc2-ee80-4419-8a8e-d937df4719e2",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "raw",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "drY21DHNOr6ezJLA2B10mzTExeJ9-gVBfTBNLwVBtWI",
-            "fingerprint": "chrome",
-            "serverName": "qq.utiltools.site",
-            "shortId": "",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #25)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "qq.utiltools.site",
-              "port": 443,
-              "users": [
-                {
-                  "id": "4054fdc2-ee80-4419-8a8e-d937df4719e2",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "raw",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "drY21DHNOr6ezJLA2B10mzTExeJ9-gVBfTBNLwVBtWI",
-            "fingerprint": "chrome",
-            "serverName": "qq.utiltools.site",
-            "shortId": "",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #26)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "edge.bookmai.com",
-              "port": 443,
-              "users": [
-                {
-                  "id": "b9bfa54d-bc44-4592-a6d6-89a9665d286f",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc",
-            "fingerprint": "firefox",
-            "serverName": "mother-earth.fyi",
-            "shortId": "",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #27)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "edge.bookmai.com",
-              "port": 443,
-              "users": [
-                {
-                  "id": "b9bfa54d-bc44-4592-a6d6-89a9665d286f",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc",
-            "fingerprint": "chrome",
-            "serverName": "mother-earth.fyi",
-            "shortId": "",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #28)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "hy2",
-        "settings": {
-          "vnext": [
-            {
-              "address": "152.32.254.68",
-              "port": 5010,
-              "users": [
-                {
-                  "id": "eBTe6Ax2pUts8oMEWoYVDfnSlHfkLffQ",
-                  "encryption": "none",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "security": "none"
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #29)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "23.95.222.127",
-              "port": 8443,
-              "users": [
-                {
-                  "id": "352ff568-f971-4613-bf48-92997a5d44ed",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "ribQDOlZ69PzvZ1EDF0EcmMvbq_T5RQrVRBSGUU2riU",
-            "fingerprint": "firefox",
-            "serverName": "www.apple.com",
-            "shortId": "35cd899f8de04801",
-            "spiderX": "/"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #30)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "hysteria",
-        "settings": {
-          "address": "152.32.254.68",
-          "port": 5010,
-          "version": 2
-        },
-        "streamSettings": {
-          "network": "hysteria",
-          "security": "tls",
-          "hysteriaSettings": {
-            "version": 2,
-            "auth": "eBTe6Ax2pUts8oMEWoYVDfnSlHfkLffQ"
-          },
-          "tlsSettings": {
-            "allowInsecure": false,
-            "serverName": "nas.aizhzo.com",
-            "fingerprint": "chrome",
-            "alpn": [
-              "h3"
-            ]
-          },
-          "finalmask": {
-            "udp": [
-              {
-                "type": "salamander",
-                "settings": {
-                  "password": "7M4RXPFcQyQEGbkxBPfXo4bilMhCW2U9"
-                }
-              }
-            ]
-          }
-        }
-      }
-    ]
-  },
-  {
-    "remarks": "🇷🇺 🛡️ Резервный обход (Сервер #31)",
-    "outbounds": [
-      {
-        "tag": "proxy",
-        "protocol": "vless",
-        "settings": {
-          "vnext": [
-            {
-              "address": "178.172.227.124",
-              "port": 10444,
-              "users": [
-                {
-                  "id": "1af36694-b548-4b18-89a0-bc076eab4ed7",
-                  "encryption": "none",
-                  "flow": "xtls-rprx-vision",
-                  "level": 0
-                }
-              ]
-            }
-          ]
-        },
-        "streamSettings": {
-          "network": "tcp",
-          "security": "reality",
-          "realitySettings": {
-            "show": false,
-            "publicKey": "0oTkcqwLTUNLnSOP-VUWErmy6usAIg-biBE6ioZO-Vo",
-            "fingerprint": "safari",
-            "serverName": "ads.x5.ru",
-            "shortId": "8debcf36f1cc69ff",
             "spiderX": "/"
           }
         }
